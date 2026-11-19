@@ -144,6 +144,8 @@ ol.ex{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
 .d7.on i{background:var(--phys);border-color:var(--phys)}
 .d7.ice i{background:var(--soft);border-color:var(--accent);color:var(--accent)}
 .d7.now{color:var(--ink);font-weight:600}
+.d7.now i{border-color:var(--accent);border-width:3px}
+.d7.fut{opacity:.45}
 .words{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .word{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .word:first-child{border-top:0;padding-top:0}
@@ -2355,8 +2357,12 @@ function genTasks(id,count){
 }
 /* В формат вопроса урока: выбор из трёх или ввод числа */
 function genQ(t,typed){
+  if(!/[а-яё]/i.test(t.q)){var dot=function(x){return String(x).replace(/(\d),(\d)/g,'$1.$2');};var o=genQ0(t,typed);return o[0]==='in'?['in',dot(o[1]),o[2].map(dot).concat(o[2]),dot(o[3])]:o.map(dot);}
+  return genQ0(t,typed);
+}
+function genQ0(t,typed){
   var u=t.u||'',ans=t.s?String(t.a):gF(t.a)+u,ws=t.w.map(function(x){return t.s?String(x):gF(x)+u;});
-  if(typed&&!t.s){var un=u.trim();return ['in',t.q+(un&&un!=='%'?' (ответ — число в '+un+')':' (ответ — число)'),[gF(t.a),gF(t.a)+un,gF(t.a)+u],t.why];}
+  if(typed&&!t.s){var un=u.trim(),en=!/[а-яё]/i.test(t.q);return ['in',t.q+(en?(un&&un!=='%'?' (answer: a number in '+un+')':' (answer: a number)'):(un&&un!=='%'?' (ответ — число в '+un+')':' (ответ — число)')),[gF(t.a),gF(t.a)+un,gF(t.a)+u,String(Math.round(t.a*1000)/1000)],t.why];}
   return [t.q,ans,ws[0],ws[1],t.why];
 }
 /* ---------- Словарь: новые слова и идиомы по уровням ---------- */
@@ -2699,6 +2705,1316 @@ add('logic-combinatorics',[function(n){
   var p=gR(3,6),f=1;for(var i=2;i<=p;i++)f*=i;var d=gP([2,3,4,5]);return T('Сколько существует кодов из '+d+' символов, если каждый символ — одна из '+p+' цифр (цифры могут повторяться)?',Math.pow(p,d),'',gW(Math.pow(p,d),[p*d,Math.pow(d,p)]),'Каждый из '+d+' символов выбираем '+p+' способами: '+p+sup(d)+' = '+Math.pow(p,d)+'.');
 }]);
 GEN['logic-statistics-traps']=GEN['math-statistics'];
+/* ---------- Комбинаторика в курсе математики (10 класс) ---------- */
+var MORE16=[
+{id:'math-combinatorics',g:10,title:'Комбинаторика: перестановки, размещения, сочетания',
+ sum:'Комбинаторика считает, сколькими способами можно что-то выбрать или расставить. Правило произведения: если первое действие можно сделать m способами, а второе — n способами, то оба вместе — m · n способами. Перестановки: n разных предметов можно расставить по порядку Pₙ = n! = 1 · 2 · … · n способами (0! = 1). Размещения: выбрать k предметов из n, когда порядок важен, — Aₙᵏ = n! / (n − k)! = n · (n − 1) · … (k множителей). Сочетания: выбрать k из n, когда порядок не важен, — Cₙᵏ = n! / (k! · (n − k)!). Главный вопрос в каждой задаче: изменится ли ответ, если поменять выбранных местами?',
+ ex:['5 разных книг на полке: P₅ = 5! = 120 способов','Из 20 учеников выбрать старосту и заместителя (роли разные, порядок важен): A₂₀² = 20 · 19 = 380','Из 10 учеников выбрать 3 дежурных (роли одинаковые): C₁₀³ = 10 · 9 · 8 / (1 · 2 · 3) = 120','Трёхзначные числа из цифр 1, 2, 3, 4, 5 без повторов: A₅³ = 5 · 4 · 3 = 60'],
+ tip:'Если поменять выбранных местами и получится то же самое (два дежурных, три пункта меню) — это сочетания, делите на k!. Если получится другое (капитан и вратарь, цифры в числе) — размещения.',
+ qs:[['Сколькими способами можно рассадить 4 человек на 4 стула в ряд?','24','16','4','P₄ = 4! = 1 · 2 · 3 · 4 = 24.'],
+  ['Из 8 учеников выбирают двоих в команду, роли одинаковые. Сколько способов?','28','56','16','Порядок не важен: C₈² = 8 · 7 / 2 = 28.'],
+  ['Чем размещения отличаются от сочетаний?','В размещениях важен порядок','В сочетаниях важен порядок','Ничем','Aₙᵏ учитывает порядок, поэтому Aₙᵏ = Cₙᵏ · k!.'],
+  ['tf','0! = 0.',false,'По определению 0! = 1: пустой набор можно расставить одним способом.'],
+  ['tf','C₁₀³ = C₁₀⁷.',true,'Выбрать 3 из 10 — то же самое, что выбрать 7, которые останутся: Cₙᵏ = Cₙⁿ⁻ᵏ.'],
+  ['in','Из 6 кандидатов выбирают президента и секретаря клуба. Сколько способов?',['30'],'Роли разные, порядок важен: A₆² = 6 · 5 = 30.']]},
+{id:'math-binomial',g:10,title:'Бином Ньютона и треугольник Паскаля',
+ sum:'Бином Ньютона раскрывает скобку (a + b)ⁿ: (a + b)ⁿ = Cₙ⁰aⁿ + Cₙ¹aⁿ⁻¹b + Cₙ²aⁿ⁻²b² + … + Cₙⁿbⁿ. Коэффициенты Cₙᵏ стоят в n-й строке треугольника Паскаля: по краям единицы, а каждое внутреннее число равно сумме двух чисел над ним. В разложении n + 1 слагаемое, а сумма всех коэффициентов равна 2ⁿ (подставьте a = b = 1). Общий член: Tₖ₊₁ = Cₙᵏ · aⁿ⁻ᵏ · bᵏ.',
+ ex:['(a + b)³ = a³ + 3a²b + 3ab² + b³','Строки треугольника Паскаля: 1; 1 1; 1 2 1; 1 3 3 1; 1 4 6 4 1','Коэффициент при x² в (x + 2)⁴: C₄² · 2² = 6 · 4 = 24','(x − 1)⁴ = x⁴ − 4x³ + 6x² − 4x + 1: при минусе знаки чередуются'],
+ tip:'Второе слагаемое тоже возводят в степень: коэффициент при x² в (x + 2)⁴ — это 6 · 2² = 24, а не просто 6.',
+ qs:[['Сколько слагаемых в разложении (a + b)⁶?','7','6','12','Всегда n + 1 слагаемое: 6 + 1 = 7.'],
+  ['Сумма коэффициентов в разложении (a + b)⁵:','32','25','10','Подставим a = b = 1: 2⁵ = 32.'],
+  ['Коэффициент при a²b² в (a + b)⁴:','6','4','2','C₄² = 4 · 3 / 2 = 6.'],
+  ['tf','Пятая строка треугольника Паскаля: 1 5 10 10 5 1.',true,'Из строки 1 4 6 4 1: 1+4 = 5, 4+6 = 10, 6+4 = 10, 4+1 = 5.'],
+  ['tf','(a + b)² = a² + b².',false,'Пропущено среднее слагаемое: (a + b)² = a² + 2ab + b².'],
+  ['in','Коэффициент при a²b в разложении (a + b)³?',['3'],'C₃¹ = 3: (a + b)³ = a³ + 3a²b + 3ab² + b³.']]}
+];
+(function(){
+  var m=DATA.filter(function(s){return s.id==='math';})[0];
+  MORE16.forEach(function(t){m.sections[t.g-7].topics.push(t);});
+  m.sections.forEach(function(sec){sec.topics.forEach(function(t){if(t.id==='math-probability')t.title='Вероятность событий';});});
+})();
+function xp(v,e){return e===1?v:v+sup(e);}
+function fact(n){var f=1;for(var i=2;i<=n;i++)f*=i;return f;}
+function cC(n,k){var r=1;for(var i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);}
+function cA(n,k){var r=1;for(var i=0;i<k;i++)r*=n-i;return r;}
+add('math-combinatorics',[function(n){
+  var k=n%5;
+  if(k===0){var p=gR(3,7),obj=gP(['книг на полке','человек в очереди','учеников в ряд на фото','разных цветов в линию']);
+    return T('Сколькими способами можно расставить '+p+' '+obj+'?',fact(p),'',gW(fact(p),[p*p,fact(p-1),p*(p-1)]),'Это перестановки: P'+sub(p)+' = '+p+'! = '+fact(p)+'.');}
+  if(k===1){var N=gR(5,15),roles=gP([['капитана','вратаря'],['старосту','заместителя'],['президента','секретаря'],['ведущего','помощника']]);
+    return T('Из '+N+' учеников выбирают '+roles[0]+' и '+roles[1]+'. Сколько способов?',cA(N,2),'',gW(cA(N,2),[cC(N,2),N*2,N*N]),'Роли разные, порядок важен — размещения: A = '+N+' · '+(N-1)+' = '+cA(N,2)+'.');}
+  if(k===2){var M=gR(6,12),kk=gP([2,3]);
+    return T('Из '+M+' учеников нужно выбрать '+kk+' дежурных (роли одинаковые). Сколько способов?',cC(M,kk),'',gW(cC(M,kk),[cA(M,kk),M*kk]),'Порядок не важен — сочетания: C = '+cA(M,kk)+' / '+kk+'! = '+cA(M,kk)+' / '+fact(kk)+' = '+cC(M,kk)+'.');}
+  if(k===3){var d=gR(4,7),len=gP([2,3]);
+    return T('Сколько '+(len===2?'двузначных':'трёхзначных')+' чисел можно составить из цифр 1–'+d+', если цифры не повторяются?',cA(d,len),'',gW(cA(d,len),[Math.pow(d,len),cC(d,len)]),'Порядок цифр важен — размещения: A = '+(len===2?d+' · '+(d-1):d+' · '+(d-1)+' · '+(d-2))+' = '+cA(d,len)+'.');}
+  var a=gR(2,5),b=gR(2,6),c=gR(2,4);
+  return T('В кафе '+a+' супа, '+b+' вторых блюд и '+c+' напитка. Сколько разных обедов «суп + второе + напиток»?',a*b*c,'',gW(a*b*c,[a+b+c,a*b+c]),'Правило произведения: '+a+' · '+b+' · '+c+' = '+(a*b*c)+'.');
+}]);
+add('math-binomial',[function(n){
+  var k=n%4,N=gR(3,8);
+  if(k===0)return T('Сколько слагаемых получится в разложении (a + b)'+sup(N)+'?',N+1,'',gW(N+1,[N,2*N]),'В разложении (a + b)ⁿ всегда n + 1 слагаемое: '+N+' + 1 = '+(N+1)+'.');
+  if(k===1)return T('Найдите сумму всех коэффициентов в разложении (a + b)'+sup(N)+'.',Math.pow(2,N),'',gW(Math.pow(2,N),[N*N,2*N]),'Подставим a = b = 1: 2'+sup(N)+' = '+Math.pow(2,N)+'.');
+  if(k===2){var M=gR(4,7),j=gR(1,M-1);return T('Найдите коэффициент при '+xp('a',M-j)+xp('b',j)+' в разложении (a + b)'+sup(M)+'.',cC(M,j),'',gW(cC(M,j),[M*j,cA(M,j)]),'Коэффициент равен C'+sub(M)+sup(j)+' = '+cC(M,j)+'.');}
+  var P=gR(3,5),q=gR(2,3),e=gR(1,P-1),cf=cC(P,e)*Math.pow(q,P-e);
+  return T('Найдите коэффициент при '+xp('x',e)+' в разложении (x + '+q+')'+sup(P)+'.',cf,'',gW(cf,[cC(P,e),cC(P,e)*q]),'Член с '+xp('x',e)+': C'+sub(P)+sup(e)+' · '+xp('x',e)+' · '+q+sup(P-e)+' = '+cC(P,e)+' · '+Math.pow(q,P-e)+' = '+cf+'.');
+}]);
+/* ---------- Настоящие программы: свой список разделов и тем, без ИИ ---------- */
+var PROGS={};
+function progAdd(key,o){PROGS[key]=o;}
+/* ---------- A-level Mathematics (Cambridge International 9709) ---------- */
+progAdd('alevel:math',{en:true,
+desc:'Cambridge International AS & A Level Mathematics (9709): Pure Mathematics 1 и 3, Mechanics, Probability & Statistics 1. Объяснения на русском с английскими терминами, задачи на английском, как на экзамене.',
+note:'Темы подобраны по программе 9709. Перед экзаменом сверяйтесь с официальным syllabus и прошлыми экзаменационными работами (past papers) на сайте Cambridge.',
+sections:[
+{title:'Pure Mathematics 1 (AS)',topics:[
+{id:'alm-quadratics',tag:'P1',title:'Quadratics',
+ sum:'Квадратный трёхчлен ax² + bx + c. Выделение полного квадрата (completing the square): a(x + p)² + q, вершина параболы (−p, q). Дискриминант (discriminant) b² − 4ac: больше 0 — two distinct real roots, равен 0 — one repeated root (парабола касается оси), меньше 0 — no real roots. Пересечение прямой и кривой: подставьте y из уравнения прямой и получите квадратное уравнение; прямая касается кривой (is a tangent), когда discriminant = 0. Квадратные неравенства (quadratic inequalities) решают по корням и эскизу параболы.',
+ ex:['x² − 6x + 11 = (x − 3)² + 2, minimum point (3, 2)','kx² + 4x + 1 = 0 has equal roots: 16 − 4k = 0, k = 4','x² − x − 6 < 0 ⇔ (x − 3)(x + 2) < 0 ⇔ −2 < x < 3'],
+ tip:'Фраза «the line is a tangent to the curve» на экзамене значит: после подстановки дискриминант равен нулю.',
+ qs:[['Express x² + 8x + 5 in the form (x + a)² + b. Find b.','−11','5','11','x² + 8x + 5 = (x + 4)² − 16 + 5 = (x + 4)² − 11.'],
+  ['For which k > 0 does x² + kx + 9 = 0 have equal roots?','6','3','9','b² − 4ac = k² − 36 = 0, k = 6.'],
+  ['Solve x² − 5x + 4 > 0.','x < 1 or x > 4','1 < x < 4','x > 4 only','Roots 1 and 4; the parabola is above the x-axis outside the roots.'],
+  ['tf','If the discriminant is negative, the graph of y = ax² + bx + c does not meet the x-axis.',true,'No real roots — no x-intercepts.'],
+  ['tf','The line y = 2x + c is a tangent to y = x² when c = −1.',true,'x² − 2x − c = 0, discriminant 4 + 4c = 0, c = −1.'],
+  ['in','Find the y-coordinate of the minimum point of y = x² − 10x + 30.',['5'],'(x − 5)² + 5: minimum point (5, 5).']]},
+{id:'alm-functions',tag:'P1',title:'Functions',
+ sum:'Функция f переводит область определения (domain) в множество значений (range). Обратная функция f⁻¹ есть только у взаимно однозначной (one-one) функции: поменяйте x и y и выразите y; график f⁻¹ — отражение графика f в прямой y = x, а domain f⁻¹ = range f. Композиция fg(x) = f(g(x)): сначала g, потом f. Преобразования графиков: y = f(x) + a — сдвиг вверх на a; y = f(x + a) — сдвиг влево на a; y = af(x) — растяжение вдоль оси y (stretch parallel to the y-axis); y = f(ax) — растяжение с коэффициентом 1/a вдоль оси x; y = −f(x) — отражение в оси x.',
+ ex:['f(x) = 2x + 3 ⇒ f⁻¹(x) = (x − 3)/2','f(x) = x², g(x) = x + 1: fg(x) = (x + 1)², gf(x) = x² + 1','f(x) = x² for x ≥ 0 is one-one; for all real x it is not'],
+ tip:'fg(x) значит «сначала g». Порядок важен: обычно fg ≠ gf.',
+ qs:[['f(x) = 3x − 1, g(x) = x². Find fg(2).','11','25','5','g(2) = 4, f(4) = 11.'],
+  ['f(x) = (x + 4)/3. Find f⁻¹(x).','3x − 4','3x + 4','(x − 4)/3','y = (x + 4)/3 ⇒ x = 3y − 4.'],
+  ['The graph of y = f(x − 2) is the graph of y = f(x) translated…','2 units to the right','2 units to the left','2 units up','f(x − a) is a translation by a in the positive x-direction.'],
+  ['tf','The range of f becomes the domain of f⁻¹.',true,'The inverse swaps inputs and outputs.'],
+  ['tf','f(x) = x² with domain all real numbers has an inverse function.',false,'It is not one-one: f(2) = f(−2).'],
+  ['in','f(x) = 2x + 5. Solve f⁻¹(x) = 3.',['11'],'f⁻¹(x) = 3 ⇔ x = f(3) = 11.']]},
+{id:'alm-coord',tag:'P1',title:'Coordinate geometry',
+ sum:'Угловой коэффициент (gradient) m = (y₂ − y₁)/(x₂ − x₁); прямая через точку: y − y₁ = m(x − x₁). Параллельные прямые — равные gradients; перпендикулярные — m₁m₂ = −1. Середина отрезка (midpoint) и длина √((x₂ − x₁)² + (y₂ − y₁)²). Окружность: (x − a)² + (y − b)² = r², centre (a, b). Из вида x² + y² + 2gx + 2fy + c = 0: centre (−g, −f), r² = g² + f² − c. Касательная к окружности перпендикулярна радиусу в точке касания.',
+ ex:['A(1, 2), B(5, 10): gradient 2, midpoint (3, 6), AB = √80 = 4√5','Perpendicular bisector of AB: y − 6 = −½(x − 3)','x² + y² − 6x + 4y − 12 = 0: centre (3, −2), r = 5'],
+ tip:'Перпендикулярный gradient: «переверните и смените знак», 2/3 → −3/2.',
+ qs:[['Gradient of a line perpendicular to y = 4x − 7:','−1/4','4','1/4','m₁m₂ = −1.'],
+  ['Centre of the circle x² + y² − 4x + 10y + 4 = 0:','(2, −5)','(−2, 5)','(4, −10)','(x − 2)² + (y + 5)² = 25.'],
+  ['Distance between (−1, 3) and (5, 11):','10','14','√28','√(6² + 8²) = 10.'],
+  ['tf','The tangent to a circle at P is perpendicular to the radius at P.',true,'Used in every tangent question.'],
+  ['tf','The lines y = 3x + 1 and y = 3x − 5 meet at one point.',false,'Equal gradients: they are parallel.'],
+  ['in','Radius of the circle (x − 1)² + (y + 2)² = 49?',['7'],'r² = 49.']]},
+{id:'alm-radians',tag:'P1',title:'Circular measure',
+ sum:'Радианы: π рад = 180°, 1 рад ≈ 57,3°. Длина дуги (arc length) s = rθ, площадь сектора (sector area) A = ½r²θ — угол θ обязательно в радианах. Площадь треугольника с двумя радиусами ½r² sin θ, поэтому площадь сегмента (segment) ½r²(θ − sin θ). Периметр сектора 2r + rθ.',
+ ex:['60° = π/3, 135° = 3π/4','r = 6, θ = π/3: s = 2π, A = 6π','r = 10, θ = 1.2: s = 12, A = 60'],
+ tip:'Калькулятор — в режиме RAD. Формулы s = rθ и A = ½r²θ работают только с радианами.',
+ qs:[['Arc length for r = 5 cm, θ = 0.8 rad:','4 cm','10 cm','40 cm','s = rθ = 5 · 0.8 = 4.'],
+  ['Sector area for r = 4, θ = π/2:','4π','2π','8π','A = ½ · 16 · π/2 = 4π.'],
+  ['135° in radians:','3π/4','2π/3','5π/6','135/180 · π = 3π/4.'],
+  ['tf','The formula A = ½r²θ needs θ in degrees.',false,'Radians only.'],
+  ['tf','1 radian is about 57.3°.',true,'180/π ≈ 57.3.'],
+  ['in','A sector has r = 6 and arc length 9. Find θ in radians.',['1.5'],'θ = s/r = 1.5.']]},
+{id:'alm-trig',tag:'P1',title:'Trigonometry',
+ sum:'Точные значения: sin 30° = ½, cos 30° = √3/2, sin 45° = cos 45° = √2/2, tan 45° = 1, sin 60° = √3/2, tan 60° = √3. Тождества: tan θ ≡ sin θ / cos θ и sin²θ + cos²θ ≡ 1. Графики: у sin x и cos x период 360°, у tan x — 180°. Уравнения: калькулятор даёт principal value, остальные корни в интервале находят по симметрии: sin x = k → x и 180° − x; cos x = k → x и 360° − x; tan x = k → x и x + 180°. Квадратные уравнения относительно sin или cos решают заменой через sin²θ + cos²θ = 1.',
+ ex:['sin x = 0.5, 0° ≤ x ≤ 360°: x = 30°, 150°','2cos²x + sin x = 1 ⇒ 2sin²x − sin x − 1 = 0 ⇒ sin x = 1 or −½','cos x = −0.5: x = 120°, 240°'],
+ tip:'Не теряйте решения: после principal value всегда проверьте весь заданный интервал.',
+ qs:[['Solve tan x = 1 for 0° ≤ x < 360°.','45° and 225°','45° and 135°','45° only','The period of tan is 180°.'],
+  ['Solve cos x = 0.5 for 0° ≤ x ≤ 360°.','60° and 300°','60° and 120°','30° and 330°','cos x = k ⇒ x and 360° − x.'],
+  ['Simplify (1 − cos²θ)/sin θ.','sin θ','cos θ','1','1 − cos²θ = sin²θ.'],
+  ['tf','sin 120° = sin 60°.',true,'sin(180° − x) = sin x.'],
+  ['tf','The period of y = tan x is 360°.',false,'It is 180°.'],
+  ['in','Exact value of cos 60°?',['1/2','0.5'],'cos 60° = ½.']]},
+{id:'alm-series',tag:'P1',title:'Series: binomial expansion, AP and GP',
+ sum:'Бином: (a + b)ⁿ = Σ ⁿCᵣ aⁿ⁻ʳ bʳ. Арифметическая прогрессия (AP): uₙ = a + (n − 1)d, Sₙ = n/2 · (2a + (n − 1)d). Геометрическая прогрессия (GP): uₙ = arⁿ⁻¹, Sₙ = a(1 − rⁿ)/(1 − r). Сумма бесконечной GP (sum to infinity) S∞ = a/(1 − r) существует только при |r| < 1.',
+ ex:['Term in x² in (2 + x)⁵: ⁵C₂ · 2³ · x² = 80x²','AP a = 3, d = 4: S₁₀ = 5 · (6 + 36) = 210','GP 12, 6, 3, …: S∞ = 12/(1 − ½) = 24'],
+ tip:'Sum to infinity существует только при |r| < 1 — пишите это условие в решении.',
+ qs:[['Coefficient of x² in (1 + 3x)⁴:','54','36','12','⁴C₂ · 3² = 6 · 9 = 54.'],
+  ['AP with a = 5, d = 3. Find u₂₀.','62','65','60','5 + 19 · 3 = 62.'],
+  ['Sum to infinity of 8 + 4 + 2 + …','16','14','It does not exist','a/(1 − r) = 8/(1 − ½) = 16.'],
+  ['tf','A GP with r = 1.5 has a sum to infinity.',false,'Need |r| < 1.'],
+  ['tf','(a + b)⁷ has 8 terms.',true,'n + 1 terms.'],
+  ['in','Find S₁₀ for the AP 2, 5, 8, …',['155'],'S₁₀ = 10/2 · (4 + 27) = 155.']]},
+{id:'alm-diff1',tag:'P1',title:'Differentiation',
+ sum:'d/dx (xⁿ) = nxⁿ⁻¹. Производная dy/dx — gradient кривой. Касательная (tangent): y − y₁ = m(x − x₁); у нормали (normal) gradient −1/m. Стационарные точки (stationary points): dy/dx = 0; характер по второй производной: d²y/dx² > 0 — minimum, < 0 — maximum. Chain rule: d/dx (ax + b)ⁿ = an(ax + b)ⁿ⁻¹. Функция возрастает (increasing), где dy/dx > 0. Связанные скорости (connected rates of change): dA/dt = dA/dr · dr/dt.',
+ ex:['y = x³ − 3x: y′ = 3x² − 3 = 0 ⇒ x = ±1; y″ = 6x: x = 1 minimum, x = −1 maximum','y = (2x + 1)⁴: y′ = 8(2x + 1)³','y = √x = x^½: y′ = 1/(2√x)'],
+ tip:'Сначала запишите корни и дроби как степени: 1/x² = x⁻², √x = x^½ — и только потом дифференцируйте.',
+ qs:[['dy/dx for y = 4x³ − 2x + 7:','12x² − 2','12x² − 2x','4x² − 2','Power rule term by term.'],
+  ['Gradient of y = x² + 3x at x = 2:','7','10','4','y′ = 2x + 3 = 7.'],
+  ['dy/dx for y = (3x − 1)⁵:','15(3x − 1)⁴','5(3x − 1)⁴','15(3x − 1)⁵','Chain rule: 5 · 3 · (3x − 1)⁴.'],
+  ['tf','If d²y/dx² > 0 at a stationary point, it is a maximum.',false,'Positive second derivative means a minimum.'],
+  ['tf','The normal to a curve is perpendicular to the tangent.',true,'Normal gradient = −1/m.'],
+  ['in','y = x² − 8x + 1. At which x is the stationary point?',['4'],'2x − 8 = 0.']]},
+{id:'alm-int1',tag:'P1',title:'Integration',
+ sum:'∫xⁿ dx = xⁿ⁺¹/(n + 1) + c при n ≠ −1; ∫(ax + b)ⁿ dx = (ax + b)ⁿ⁺¹/(a(n + 1)) + c. Если известен gradient и точка на кривой — интегрируйте и найдите c по точке. Определённый интеграл — площадь под кривой; часть под осью x даёт отрицательное значение. Площадь между кривыми ∫(верхняя − нижняя) dx. Объём тела вращения (volume of revolution) вокруг оси x: V = π∫y² dx, вокруг оси y: V = π∫x² dy.',
+ ex:['∫(6x² + 2) dx = 2x³ + 2x + c','∫₀² x³ dx = [x⁴/4]₀² = 4','dy/dx = 2x through (1, 5): y = x² + 4'],
+ tip:'Не забывайте + c в неопределённом интеграле — за это снимают балл.',
+ qs:[['∫ 3x² dx =','x³ + c','6x + c','3x³ + c','3 · x³/3 = x³.'],
+  ['∫₁³ 2x dx =','8','9','4','[x²]₁³ = 9 − 1.'],
+  ['Volume when y = x, 0 ≤ x ≤ 3, is rotated 360° about the x-axis:','9π','3π','27π','π∫₀³ x² dx = π · 27/3 = 9π.'],
+  ['tf','∫ x⁻¹ dx can be found with xⁿ⁺¹/(n + 1).',false,'n = −1 is excluded; the answer is ln|x| (Pure 3).'],
+  ['tf','Area below the x-axis gives a negative definite integral.',true,'Take the modulus for the area.'],
+  ['in','dy/dx = 4x and the curve passes through (0, 3). Find y when x = 2.',['11'],'y = 2x² + 3 = 11.']]}
+]},
+{title:'Pure Mathematics 3 (A Level)',topics:[
+{id:'alm-algebra3',tag:'P3',title:'Algebra: modulus, polynomials, partial fractions',
+ sum:'Модуль: |f(x)| = |g(x)| удобно решать возведением в квадрат или как f(x) = ±g(x); |x − a| < b ⇔ a − b < x < a + b. Теорема о множителе (factor theorem): если p(a) = 0, то (x − a) — множитель p(x). Теорема об остатке (remainder theorem): остаток от деления p(x) на (x − a) равен p(a). Простейшие дроби (partial fractions): (px + q)/((x − a)(x − b)) = A/(x − a) + B/(x − b); для повторного множителя (x − a)² нужны A/(x − a) + B/(x − a)².',
+ ex:['p(x) = x³ − 2x² − 5x + 6: p(1) = 0, so (x − 1) is a factor','Remainder of (x³ + 2x + 1) ÷ (x − 2): 8 + 4 + 1 = 13','5/((x − 1)(x + 4)) = 1/(x − 1) − 1/(x + 4)'],
+ tip:'В partial fractions подставляйте x = корень знаменателя (cover-up) — быстрее, чем решать систему.',
+ qs:[['Remainder when x³ − 4x + 2 is divided by (x − 3):','17','−13','5','p(3) = 27 − 12 + 2 = 17.'],
+  ['Solve |x − 2| < 5.','−3 < x < 7','x < 7','x < −3 or x > 7','−5 < x − 2 < 5.'],
+  ['(x + 7)/((x − 1)(x + 2)) = A/(x − 1) + B/(x + 2). Find A.','8/3','2','7','Put x = 1: A = 8/3.'],
+  ['tf','If p(−2) = 0, then (x + 2) is a factor of p(x).',true,'Factor theorem.'],
+  ['tf','|x| = −3 has two solutions.',false,'A modulus is never negative.'],
+  ['in','(x − 1) is a factor of x³ + ax − 4. Find a.',['3'],'1 + a − 4 = 0.']]},
+{id:'alm-explog',tag:'P3',title:'Logarithms and exponential functions',
+ sum:'logₐ b = c ⇔ aᶜ = b. Законы: log(xy) = log x + log y, log(x/y) = log x − log y, log xⁿ = n log x. Число e ≈ 2,718, ln x = logₑ x, e^(ln x) = x. Уравнение aˣ = b: x = ln b / ln a. Линеаризация (используется с графиками по данным): y = kxⁿ ⇒ ln y = ln k + n ln x — прямая с gradient n; y = k · aˣ ⇒ ln y = ln k + x ln a.',
+ ex:['3ˣ = 20: x = ln 20 / ln 3 ≈ 2.73','log₂ 8 + log₂ 4 = 3 + 2 = 5','ln y against ln x: gradient 3, intercept 0.7 ⇒ y = e^0.7 · x³ ≈ 2.01x³'],
+ tip:'ln(a + b) ≠ ln a + ln b — самая частая ошибка с логарифмами.',
+ qs:[['log₃ 81 =','4','3','27','3⁴ = 81.'],
+  ['Solve eˣ = 5.','x = ln 5','x = 5/e','x = 5e','Take ln of both sides.'],
+  ['ln y = 2 + 3 ln x. Then y =','e²x³','2x³','e^(2 + 3x)','y = e² · x³.'],
+  ['tf','ln(xy) = ln x + ln y.',true,'Product law.'],
+  ['tf','ln 0 = 1.',false,'ln 0 is undefined; ln 1 = 0.'],
+  ['in','log₂ 32 = ?',['5'],'2⁵ = 32.']]},
+{id:'alm-trig3',tag:'P3',title:'Trigonometry: identities and R-formula',
+ sum:'sec θ = 1/cos θ, cosec θ = 1/sin θ, cot θ = 1/tan θ. Тождества: 1 + tan²θ ≡ sec²θ, 1 + cot²θ ≡ cosec²θ. Формулы сложения (compound angles): sin(A ± B) = sin A cos B ± cos A sin B, cos(A ± B) = cos A cos B ∓ sin A sin B. Двойной угол: sin 2A = 2 sin A cos A, cos 2A = cos²A − sin²A = 2cos²A − 1 = 1 − 2sin²A. Выражение a sin θ + b cos θ = R sin(θ + α), где R = √(a² + b²), tan α = b/a.',
+ ex:['3 sin θ + 4 cos θ = 5 sin(θ + 53.13°), greatest value 5','sin 75° = sin(45° + 30°) = (√6 + √2)/4','cos 2θ = 1 − 2sin²θ ⇒ sin²θ = (1 − cos 2θ)/2'],
+ tip:'Максимум R sin(θ + α) равен R — экзамен часто спрашивает «state the greatest value».',
+ qs:[['Greatest value of 5 sin θ + 12 cos θ:','13','17','12','R = √(25 + 144) = 13.'],
+  ['sin 2θ =','2 sin θ cos θ','2 sin θ','sin²θ − cos²θ','Double-angle formula.'],
+  ['1 + tan²θ ≡','sec²θ','cosec²θ','cot²θ','Divide sin²θ + cos²θ = 1 by cos²θ.'],
+  ['tf','cos 2A = 1 − 2sin²A.',true,'One of the three forms.'],
+  ['tf','sec θ = 1/sin θ.',false,'sec θ = 1/cos θ.'],
+  ['in','6 sin θ + 8 cos θ = R sin(θ + α). Find R.',['10'],'√(36 + 64) = 10.']]},
+{id:'alm-diff3',tag:'P3',title:'Differentiation: product, quotient, implicit, parametric',
+ sum:'Производные: (eˣ)′ = eˣ, (ln x)′ = 1/x, (sin x)′ = cos x, (cos x)′ = −sin x, (tan x)′ = sec²x — x в радианах. Product rule: (uv)′ = u′v + uv′. Quotient rule: (u/v)′ = (u′v − uv′)/v². Неявное дифференцирование (implicit): дифференцируйте обе части по x, d/dx(y²) = 2y · dy/dx. Параметрическое задание: dy/dx = (dy/dt)/(dx/dt).',
+ ex:['y = x²eˣ: y′ = 2xeˣ + x²eˣ','y = ln(3x + 1): y′ = 3/(3x + 1)','x² + y² = 25: dy/dx = −x/y; x = t², y = 2t: dy/dx = 1/t'],
+ tip:'Производные тригонометрических функций верны только в радианах.',
+ qs:[['d/dx (e^(3x)) =','3e^(3x)','e^(3x)','3xe^(3x − 1)','Chain rule.'],
+  ['d/dx (ln 5x) =','1/x','5/x','1/(5x)','ln 5x = ln 5 + ln x.'],
+  ['x = 2t + 1, y = t³. dy/dx =','3t²/2','3t²','2/(3t²)','(dy/dt) ÷ (dx/dt).'],
+  ['tf','d/dx (sin x) = cos x when x is in degrees.',false,'Only in radians.'],
+  ['tf','For x² + y² = 25, dy/dx = −x/y.',true,'2x + 2y · dy/dx = 0.'],
+  ['in','y = x ln x. Find dy/dx at x = 1.',['1'],'ln x + 1 = 1.']]},
+{id:'alm-int3',tag:'P3',title:'Integration techniques',
+ sum:'∫eᵃˣ dx = eᵃˣ/a + c; ∫1/x dx = ln|x| + c; ∫1/(ax + b) dx = (1/a) ln|ax + b| + c; ∫cos ax dx = (1/a) sin ax + c; ∫sin ax dx = −(1/a) cos ax + c; ∫sec²x dx = tan x + c. Вид f′(x)/f(x) интегрируется в ln|f(x)|. По частям (integration by parts): ∫u dv = uv − ∫v du, за u берите ln x или многочлен. Замена (substitution): замените x и dx и пересчитайте пределы. Дроби сначала раскладывают на partial fractions. Приближённо — правило трапеций (trapezium rule).',
+ ex:['∫xeˣ dx = xeˣ − eˣ + c','∫2x/(x² + 1) dx = ln(x² + 1) + c','∫₀^(π/2) cos x dx = 1'],
+ tip:'В by parts берите u = ln x, даже если рядом многочлен: ln легче дифференцировать, чем интегрировать.',
+ qs:[['∫ e^(2x) dx =','½e^(2x) + c','2e^(2x) + c','e^(2x) + c','Divide by 2.'],
+  ['∫ 1/(2x + 1) dx =','½ ln|2x + 1| + c','ln|2x + 1| + c','2 ln|2x + 1| + c','Divide by the coefficient of x.'],
+  ['∫₀^π sin x dx =','2','0','1','[−cos x]₀^π = 1 − (−1) = 2.'],
+  ['tf','∫ 3x²/(x³ + 4) dx = ln|x³ + 4| + c.',true,'It has the form f′(x)/f(x).'],
+  ['tf','For ∫ x ln x dx by parts, take u = x.',false,'Take u = ln x.'],
+  ['in','∫₁^e (1/x) dx = ?',['1'],'ln e − ln 1 = 1.']]},
+{id:'alm-numerical',tag:'P3',title:'Numerical solution of equations',
+ sum:'Смена знака (sign change): если f непрерывна и f(a), f(b) разных знаков, между a и b есть корень. Итерация xₙ₊₁ = F(xₙ) сходится к корню α, если |F′(x)| < 1 около α. Чтобы дать ответ с нужной точностью, итерируйте, пока значения не совпадут после округления, а затем подтвердите корень сменой знака на границах интервала.',
+ ex:['f(x) = x³ − x − 1: f(1) = −1, f(2) = 5 ⇒ root in (1, 2)','xₙ₊₁ = ∛(xₙ + 1), x₀ = 1.5: 1.3572, 1.3309, 1.3259, … → 1.32','f(x) = 1/(x − 2) changes sign at x = 2 but has no root there'],
+ tip:'Чтобы доказать, что корень 1.32 верен до 2 d.p., проверьте знаки f(1.315) и f(1.325).',
+ qs:[['f(1) = −2, f(2) = 3 and f is continuous. Then…','there is a root between 1 and 2','x = 1.5 is the root','there are no roots','Sign change.'],
+  ['The iteration xₙ₊₁ = F(xₙ) converges to α if near α…','|F′(x)| < 1','F′(x) > 1','F(α) = 0','Standard condition.'],
+  ['xₙ₊₁ = (xₙ + 6/xₙ)/2 converges to…','√6','6','3','At the limit x = (x + 6/x)/2 ⇒ x² = 6.'],
+  ['tf','A sign change always shows a root.',false,'Not if f is discontinuous, e.g. 1/(x − 2).'],
+  ['tf','To show α = 1.32 to 2 d.p., check the signs of f(1.315) and f(1.325).',true,'These are the bounds of the interval.'],
+  ['in','xₙ₊₁ = (2xₙ + 10/xₙ²)/3 converges to ∛10. Give it to 1 d.p.',['2.2'],'∛10 ≈ 2.154 → 2.2.']]},
+{id:'alm-vectors',tag:'P3',title:'Vectors',
+ sum:'Вектор в пространстве: ai + bj + ck, длина |v| = √(a² + b² + c²). Скалярное произведение (scalar product): a·b = a₁b₁ + a₂b₂ + a₃b₃ = |a||b| cos θ; векторы перпендикулярны ⇔ a·b = 0. Уравнение прямой: r = a + λb (a — точка, b — направляющий вектор, direction vector). Две прямые в 3D бывают параллельными, пересекающимися или скрещивающимися (skew). Угол между прямыми ищут по направляющим векторам.',
+ ex:['a = (1, 2, 2): |a| = 3','(1, 2, 3)·(4, −5, 2) = 4 − 10 + 6 = 0 ⇒ perpendicular','Line through (1, 0, 2), direction (3, 1, −1): r = (1, 0, 2) + λ(3, 1, −1)'],
+ tip:'Skew lines не параллельны и не пересекаются — такое возможно только в пространстве.',
+ qs:[['|2i − 3j + 6k| =','7','5','11','√(4 + 9 + 36) = 7.'],
+  ['(1, 2, −1)·(3, 0, 4) =','−1','7','3','3 + 0 − 4.'],
+  ['Two vectors are perpendicular when…','their scalar product is 0','their magnitudes are equal','one is a multiple of the other','cos 90° = 0.'],
+  ['tf','Two non-parallel lines in 3D always intersect.',false,'They may be skew.'],
+  ['tf','In r = a + λb, b is the direction vector.',true,'a is the position vector of a point.'],
+  ['in','Find p if (2, p, 1)·(1, 3, −8) = 0.',['2'],'2 + 3p − 8 = 0.']]},
+{id:'alm-de',tag:'P3',title:'Differential equations',
+ sum:'Уравнения с разделяющимися переменными (separable): dy/dx = f(x)g(y) ⇒ ∫dy/g(y) = ∫f(x) dx. Общее решение (general solution) содержит константу c, частное (particular) находят по начальному условию. Модели: «rate proportional to N» значит dN/dt = kN, решение N = Ae^(kt); убывание — со знаком минус.',
+ ex:['dy/dx = 2xy ⇒ ln|y| = x² + c ⇒ y = Ae^(x²)','dN/dt = −0.1N, N(0) = 500 ⇒ N = 500e^(−0.1t)','dy/dx = x/y ⇒ y² = x² + c'],
+ tip:'Одну константу ставьте сразу после интегрирования — две константы с обеих сторон лишние.',
+ qs:[['General solution of dy/dx = 3y:','y = Ae^(3x)','y = 3x + c','y = e^(3x) + c','∫dy/y = ∫3 dx.'],
+  ['«The rate of decrease of mass m is proportional to m» means…','dm/dt = −km','dm/dt = km','dm/dt = −k','Decrease gives the minus sign.'],
+  ['N = 200e^(0.5t). N when t = 0:','200','0','100','e⁰ = 1.'],
+  ['tf','dy/dx = x + y is separable.',false,'It cannot be written as f(x) · g(y).'],
+  ['tf','dy/dx = xy² is separable.',true,'f(x) = x, g(y) = y².'],
+  ['in','dy/dx = 2x and y = 3 when x = 0. Find y when x = 4.',['19'],'y = x² + 3.']]},
+{id:'alm-complex',tag:'P3',title:'Complex numbers',
+ sum:'i² = −1; z = x + iy, Re z = x, Im z = y, сопряжённое (conjugate) z* = x − iy. Модуль |z| = √(x² + y²), аргумент arg z — угол на диаграмме Аргана (Argand diagram), −π < arg z ≤ π. Деление: умножьте числитель и знаменатель на сопряжённое знаменателя. Форма z = r(cos θ + i sin θ) = re^(iθ): при умножении модули перемножаются, аргументы складываются. У многочлена с действительными коэффициентами комплексные корни идут сопряжёнными парами. Множества точек (loci): |z − a| = r — окружность, |z − a| = |z − b| — серединный перпендикуляр, arg(z − a) = θ — луч.',
+ ex:['(2 + 3i)(1 − i) = 5 + i','(3 + 4i)/(1 + 2i) = (3 + 4i)(1 − 2i)/5 = (11 − 2i)/5','If 2 + i is a root of a real cubic, so is 2 − i'],
+ tip:'Аргумент считайте по рисунку: во II и III четвертях к arctan(y/x) нужно прибавить или вычесть π.',
+ qs:[['(1 + 2i)(3 − i) =','5 + 5i','3 − 2i','1 + 5i','3 − i + 6i − 2i² = 5 + 5i.'],
+  ['|−5 + 12i| =','13','7','17','√(25 + 144).'],
+  ['arg(i) =','π/2','0','π','i lies on the positive imaginary axis.'],
+  ['tf','If 3 − 2i is a root of a polynomial with real coefficients, so is 3 + 2i.',true,'Roots come in conjugate pairs.'],
+  ['tf','|z − 2| = 3 is a straight line on an Argand diagram.',false,'It is a circle, centre 2, radius 3.'],
+  ['in','i⁴ = ?',['1'],'(i²)² = 1.']]}
+]},
+{title:'Mechanics',topics:[
+{id:'alm-kinematics',tag:'M1',title:'Kinematics: suvat and graphs',
+ sum:'Равноускоренное движение: v = u + at, s = ut + ½at², v² = u² + 2as, s = ½(u + v)t. На графике displacement–time gradient — скорость; на графике velocity–time gradient — ускорение, площадь — перемещение. При переменном ускорении: v = ds/dt, a = dv/dt, s = ∫v dt. В 9709 берут g = 10 m s⁻².',
+ ex:['u = 0, a = 4, t = 5: v = 20 m/s, s = 50 m','Stone dropped from rest: after 3 s v = 30 m/s, s = 45 m','v = 3t² − 2t ⇒ a = 6t − 2'],
+ tip:'Выпишите s, u, v, a, t: три известны, одна нужна — выберите формулу без пятой величины.',
+ qs:[['A car accelerates from 4 m/s at 2 m/s² for 6 s. Final speed:','16 m/s','12 m/s','24 m/s','v = 4 + 2 · 6.'],
+  ['The area under a velocity–time graph gives…','displacement','acceleration','speed','∫v dt.'],
+  ['A ball is thrown up at 20 m/s (g = 10). Greatest height:','20 m','40 m','10 m','0 = 400 − 20s ⇒ s = 20.'],
+  ['tf','The gradient of a displacement–time graph is acceleration.',false,'It is velocity.'],
+  ['tf','In 9709 you take g = 10 m s⁻² unless told otherwise.',true,'Standard instruction.'],
+  ['in','s = 2t³. Find the velocity when t = 2.',['24'],'v = 6t² = 24.']]},
+{id:'alm-forces',tag:'M1',title:'Forces and equilibrium',
+ sum:'Силы раскладывают (resolve) в двух перпендикулярных направлениях; в равновесии (equilibrium) суммы составляющих равны нулю. Вес W = mg, нормальная реакция R. Трение F ≤ μR; предельное трение (limiting friction) F = μR — тело на грани скольжения. На наклонной плоскости с углом α: составляющая веса вдоль склона mg sin α, перпендикулярно склону mg cos α.',
+ ex:['5 kg on a smooth 30° slope: component along the slope 25 N','2 kg on a rough floor, μ = 0.3: limiting friction 6 N','Three forces in equilibrium form a closed triangle of forces'],
+ tip:'R = mg cos α на склоне только тогда, когда нет других сил, направленных поперёк склона.',
+ qs:[['A 4 kg block rests on a rough horizontal floor, μ = 0.5. Limiting friction:','20 N','2 N','40 N','F = μR = 0.5 · 40.'],
+  ['Component of the weight along a slope at angle α:','mg sin α','mg cos α','mg tan α','Resolve parallel to the plane.'],
+  ['A particle is in equilibrium. The resultant force is…','zero','equal to the weight','equal to friction','Definition of equilibrium.'],
+  ['tf','Friction always equals μR.',false,'F ≤ μR; equality only when friction is limiting.'],
+  ['tf','On a horizontal floor with no other vertical forces, R = mg.',true,'R − mg = 0.'],
+  ['in','A 10 kg crate is on a smooth 30° slope. Force along the slope needed to hold it (N)?',['50'],'mg sin 30° = 100 · 0.5.']]},
+{id:'alm-newton',tag:'M1',title:'Newton’s laws and connected particles',
+ sum:'Второй закон: F = ma, где F — равнодействующая (resultant). Связанные тела (лифт, машина с прицепом, блок): пишите F = ma для каждого тела или для системы целиком; натяжение (tension) по обе стороны гладкого блока одинаковое. На шероховатом склоне равнодействующая = составляющая веса − трение.',
+ ex:['2 kg and 3 kg over a smooth pulley: a = (3 − 2) · 10/5 = 2 m/s², T = 24 N','Lift 500 kg accelerating up at 1 m/s²: T = 500 · 11 = 5500 N','Car 1200 kg, driving force 3000 N, resistance 600 N: a = 2 m/s²'],
+ tip:'Для блока: a = (разность весов)/(сумма масс), а натяжение находите из уравнения для одного тела.',
+ qs:[['5 kg and 3 kg hang over a smooth pulley (g = 10). Acceleration:','2.5 m/s²','5 m/s²','2 m/s²','a = (5 − 3) · 10/8.'],
+  ['A 400 kg lift moves up with acceleration 2 m/s². Tension:','4800 N','4000 N','3200 N','T − 4000 = 400 · 2.'],
+  ['A 1000 kg car: driving force 2500 N, resistance 500 N. a =','2 m/s²','2.5 m/s²','3 m/s²','2000/1000.'],
+  ['tf','The tension is the same on both sides of a smooth light pulley.',true,'Smooth pulley assumption.'],
+  ['tf','A body moving at constant velocity has a non-zero resultant force.',false,'Constant velocity means zero resultant force.'],
+  ['in','A resultant force of 30 N acts on a 6 kg mass. Find a (m/s²).',['5'],'a = F/m.']]},
+{id:'alm-energy',tag:'M1',title:'Work, energy and power',
+ sum:'Работа W = Fd cos θ. Кинетическая энергия ½mv², потенциальная mgh. Работа сил = изменение энергии; работа против сопротивления = потеря механической энергии. Мощность P = W/t = Fv (сила тяги × скорость); на максимальной скорости сила тяги равна сопротивлению.',
+ ex:['2 kg falls 5 m from rest: v = 10 m/s','Car 60 kW at maximum speed 30 m/s ⇒ resistance 2000 N','Pulling 10 m with 50 N at 60°: W = 250 J'],
+ tip:'«At maximum speed» — ускорение 0, значит P/v = resistance.',
+ qs:[['A 3 kg mass moves at 4 m/s. Its KE:','24 J','12 J','48 J','½ · 3 · 16.'],
+  ['An engine works at 40 kW when the car moves at 20 m/s. Driving force:','2000 N','800 N','20 000 N','F = P/v.'],
+  ['Work done by a 20 N force over 5 m at 60° to the motion:','50 J','100 J','86.6 J','20 · 5 · cos 60°.'],
+  ['tf','At maximum speed on a level road, the driving force equals the resistance.',true,'a = 0.'],
+  ['tf','Power is measured in joules.',false,'In watts (J/s).'],
+  ['in','A 0.5 kg ball is dropped from 20 m (g = 10). Speed just before impact (m/s)?',['20'],'v² = 2gh = 400.']]},
+{id:'alm-momentum',tag:'M1',title:'Momentum',
+ sum:'Импульс p = mv — вектор, направление важно. При столкновении суммарный импульс до = после (conservation of momentum). Слипшиеся тела (coalesce) движутся с общей скоростью. Кинетическая энергия при столкновении обычно теряется.',
+ ex:['2 kg at 6 m/s hits a stationary 4 kg, they coalesce: v = 12/6 = 2 m/s','3 kg at 5 m/s and 2 kg at −4 m/s; after, 3 kg moves at 1 m/s: 15 − 8 = 3 + 2v ⇒ v = 2 m/s','Loss of KE = KE before − KE after'],
+ tip:'Выберите положительное направление и пишите все скорости со знаком.',
+ qs:[['A 4 kg particle at 3 m/s hits a stationary 2 kg particle and they coalesce. Common speed:','2 m/s','3 m/s','1.5 m/s','12/6.'],
+  ['Momentum is measured in…','N s','J','N/m','p = mv, kg m/s = N s.'],
+  ['Total momentum of 2 kg at 5 m/s and 3 kg at −5 m/s:','−5 N s','25 N s','0','10 − 15.'],
+  ['tf','In a collision, kinetic energy is always conserved.',false,'Momentum is conserved; KE is usually lost.'],
+  ['tf','Momentum is a vector quantity.',true,'Direction matters.'],
+  ['in','A 0.2 kg ball at 10 m/s is brought to rest. Change in momentum, magnitude (N s)?',['2'],'0.2 · 10.']]}
+]},
+{title:'Probability & Statistics 1',topics:[
+{id:'alm-data',tag:'S1',title:'Representation of data',
+ sum:'Среднее x̄ = Σx/n, дисперсия σ² = Σx²/n − x̄², стандартное отклонение σ. Кодированные данные: mean = a + Σ(x − a)/n, а сдвиг на a не меняет σ. Медиана и квартили, IQR = Q3 − Q1. Гистограмма: высота — плотность частоты (frequency density = frequency / class width), площадь столбца = частота. Ещё: box-and-whisker plot, cumulative frequency graph, stem-and-leaf diagram.',
+ ex:['2, 4, 6, 8: mean 5, variance 120/4 − 25 = 5','Class 10–20 with frequency 30: frequency density 3','n = 20, Σ(x − 50) = 40 ⇒ mean 52'],
+ tip:'В гистограмме по вертикали frequency density, а не frequency.',
+ qs:[['Class 20–30 has frequency 15. Frequency density:','1.5','15','0.5','15/10.'],
+  ['Data 1, 3, 5, 7. Variance:','5','4','2.24','84/4 − 16 = 21 − 16.'],
+  ['Adding 10 to every value changes the standard deviation by…','0','10','100','The spread does not change.'],
+  ['tf','The median is affected by extreme values more than the mean.',false,'The mean is affected more.'],
+  ['tf','IQR = Q3 − Q1.',true,'Interquartile range.'],
+  ['in','n = 10, Σ(x − 20) = 30. Find the mean.',['23'],'20 + 30/10.']]},
+{id:'alm-perm',tag:'S1',title:'Permutations and combinations',
+ sum:'n разных предметов расставляют n! способами; с повторами делите на факториалы повторов: n!/(p! q!). ⁿPᵣ = n!/(n − r)! — порядок важен; ⁿCᵣ — не важен. «Вместе» — склейте в один блок и умножьте на перестановки внутри блока; «не вместе» = всего − вместе; ограничения на позиции выполняйте первыми.',
+ ex:['Arrangements of BANANA: 6!/(3! 2!) = 60','5 books, 2 particular ones together: 4! · 2! = 48','Choose 3 from 7 men and 2 from 5 women: 35 · 10 = 350'],
+ tip:'«At least one» обычно проще считать как total − «none».',
+ qs:[['Arrangements of the letters of LEVEL:','30','120','60','5!/(2! 2!) = 30.'],
+  ['Committees of 3 chosen from 8 people:','56','336','24','⁸C₃.'],
+  ['6 people in a row, A and B must be together:','240','720','120','5! · 2!.'],
+  ['tf','ⁿPᵣ ≥ ⁿCᵣ for all valid n and r.',true,'ⁿPᵣ = ⁿCᵣ · r!.'],
+  ['tf','The letters AAB have 3! = 6 arrangements.',false,'3!/2! = 3.'],
+  ['in','Arrangements of the letters of MATHS?',['120'],'5! = 120.']]},
+{id:'alm-prob',tag:'S1',title:'Probability',
+ sum:'P(A ∪ B) = P(A) + P(B) − P(A ∩ B). Несовместные (mutually exclusive): P(A ∩ B) = 0. Независимые (independent): P(A ∩ B) = P(A)P(B). Условная вероятность P(A | B) = P(A ∩ B)/P(B). Дерево вероятностей: вдоль ветки умножаем, разные исходы складываем.',
+ ex:['P(A) = 0.4, P(B) = 0.5, independent: P(A ∩ B) = 0.2, P(A ∪ B) = 0.7','3 red and 2 blue, two taken without replacement: P(both red) = 3/5 · 2/4 = 3/10','P(A | B) = 0.2/0.5 = 0.4'],
+ tip:'Independent и mutually exclusive — разное: несовместные события с ненулевыми вероятностями всегда зависимы.',
+ qs:[['P(A) = 0.3, P(B) = 0.6, A and B independent. P(A ∩ B) =','0.18','0.9','0.3','0.3 · 0.6.'],
+  ['P(A ∩ B) = 0.12, P(B) = 0.4. P(A | B) =','0.3','0.048','0.52','0.12/0.4.'],
+  ['Two fair coins. P(at least one head) =','3/4','1/2','1/4','1 − 1/4.'],
+  ['tf','If A and B are mutually exclusive, P(A ∩ B) = 0.',true,'They cannot happen together.'],
+  ['tf','Mutually exclusive events with non-zero probabilities are independent.',false,'P(A ∩ B) = 0 ≠ P(A)P(B).'],
+  ['in','A fair die is rolled twice. P(two sixes) as a fraction?',['1/36'],'1/6 · 1/6.']]},
+{id:'alm-drv',tag:'S1',title:'Discrete random variables',
+ sum:'Распределение (probability distribution): ΣP(X = x) = 1. Математическое ожидание E(X) = Σxp, дисперсия Var(X) = Σx²p − [E(X)]².',
+ ex:['X = 1, 2, 3 with p = 0.2, 0.5, 0.3: E(X) = 2.1','E(X²) = 0.2 + 2 + 2.7 = 4.9, Var(X) = 4.9 − 4.41 = 0.49','Fair die: E(X) = 3.5'],
+ tip:'Сначала найдите неизвестную вероятность из Σp = 1.',
+ qs:[['P(X = 0) = 0.1, P(X = 1) = 0.6, P(X = 2) = k. k =','0.3','0.7','0.4','Probabilities sum to 1.'],
+  ['E(X) for a fair six-sided die:','3.5','3','6','21/6.'],
+  ['X takes 0 and 2 with probability ½ each. Var(X) =','1','2','0','E(X²) = 2, E(X) = 1, 2 − 1 = 1.'],
+  ['tf','Var(X) can be negative.',false,'Variance is never negative.'],
+  ['tf','ΣP(X = x) = 1 for every probability distribution.',true,'Total probability.'],
+  ['in','X takes 1 and 2 with probability 0.5 each. E(X)?',['1.5'],'0.5 + 1 = 1.5.']]},
+{id:'alm-binom',tag:'S1',title:'Binomial and geometric distributions',
+ sum:'X ~ B(n, p): n независимых испытаний с вероятностью успеха p. P(X = r) = ⁿCᵣ pʳ(1 − p)ⁿ⁻ʳ, E(X) = np, Var(X) = np(1 − p). Геометрическое X ~ Geo(p): число испытаний до первого успеха включительно, P(X = r) = (1 − p)ʳ⁻¹p, E(X) = 1/p.',
+ ex:['B(10, 0.3): E = 3, Var = 2.1','B(4, 0.5): P(X = 2) = 6/16 = 0.375','Geo(0.2): P(X = 3) = 0.8² · 0.2 = 0.128, E = 5'],
+ tip:'«At least one»: P(X ≥ 1) = 1 − (1 − p)ⁿ.',
+ qs:[['X ~ B(20, 0.25). E(X) =','5','20','0.25','np.'],
+  ['X ~ B(3, 0.5). P(X = 3) =','1/8','3/8','1/2','0.5³.'],
+  ['X ~ Geo(0.25). E(X) =','4','0.25','3','1/p.'],
+  ['tf','In a binomial distribution the trials must be independent.',true,'One of the conditions.'],
+  ['tf','For X ~ Geo(p), P(X = 1) = 1 − p.',false,'P(X = 1) = p.'],
+  ['in','X ~ B(10, 0.4). Var(X)?',['2.4'],'10 · 0.4 · 0.6.']]},
+{id:'alm-normal',tag:'S1',title:'The normal distribution',
+ sum:'X ~ N(μ, σ²). Стандартизация: Z = (X − μ)/σ, Z ~ N(0, 1), значения Φ берут из таблицы. Симметрия: P(Z < −a) = 1 − Φ(a). Если дана вероятность, найдите z по обратной таблице и выразите μ или σ. Нормальное приближение биномиального (при np > 5 и nq > 5): N(np, npq) с поправкой на непрерывность (continuity correction).',
+ ex:['X ~ N(50, 16): P(X < 54) = Φ(1) = 0.8413','P(X > 46) = Φ(1) = 0.8413 by symmetry','B(100, 0.4) ≈ N(40, 24): P(X ≤ 45) → P(Y < 45.5)'],
+ tip:'В записи N(μ, σ²) второе число — дисперсия: N(50, 16) значит σ = 4, а не 16.',
+ qs:[['X ~ N(30, 25). z-value for x = 40:','2','0.4','10','(40 − 30)/5.'],
+  ['P(Z < 0) =','0.5','0','1','Symmetry.'],
+  ['X ~ N(100, 9). σ =','3','9','81','σ² = 9.'],
+  ['tf','For a normal distribution mean = median = mode.',true,'The curve is symmetric.'],
+  ['tf','With continuity correction, P(X ≤ 45) becomes P(Y < 44.5).',false,'It becomes P(Y < 45.5).'],
+  ['in','X ~ N(20, 4). Find z for x = 17.',['−1.5','-1.5'],'(17 − 20)/2 = −1.5.']]}
+]}
+]});
+
+/* Генераторы задач A-level Mathematics (на английском) */
+add('alm-quadratics',[function(n){
+  var k=n%3,p=gR(1,6),q=gR(-9,9),b=2*p,c=p*p+q;
+  if(k===0)return T('Express x² + '+b+'x + '+c+' in the form (x + a)² + b. Find b.',q,'',gW(q,[c,c-p*p+2*p,-q],true),'x² + '+b+'x + '+c+' = (x + '+p+')² − '+(p*p)+' + '+c+' = (x + '+p+')²'+sgn(q)+'.');
+  if(k===1){var m=gR(1,6);return T('Find the positive value of k for which x² + kx + '+(m*m)+' = 0 has equal roots.',2*m,'',gW(2*m,[m,m*m]),'k² − 4 · '+(m*m)+' = 0 ⇒ k = '+(2*m)+'.');}
+  var r=gR(1,8);return T('Find the x-coordinate of the minimum point of y = x² − '+(2*r)+'x + '+gR(1,20)+'.',r,'',gW(r,[2*r,-r],true),'dy/dx = 2x − '+(2*r)+' = 0, or complete the square: x = '+r+'.');
+}]);
+add('alm-functions',[function(n){
+  var a=gR(2,5),b=gR(-6,6),x=gR(1,4),k=n%2;
+  if(k===0){var g=x*x;return T('f(x) = '+lin(a,b)+', g(x) = x². Find fg('+x+').',a*g+b,'',gW(a*g+b,[(a*x+b)*(a*x+b),a*x+b],true),'g('+x+') = '+g+', f('+g+') = '+(a*g+b)+'.');}
+  var y=a*x+b;return T('f(x) = '+lin(a,b)+'. Solve f⁻¹(x) = '+x+'.',y,'',gW(y,[(x-b)/a,x],true),'f⁻¹(x) = '+x+' ⇔ x = f('+x+') = '+y+'.');
+}]);
+add('alm-coord',[function(n){
+  var t=gP([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15]]),x=gR(-5,5),y=gR(-5,5),k=n%3;
+  if(k===0)return T('Find the distance between ('+x+', '+y+') and ('+(x+t[0])+', '+(y+t[1])+').',t[2],'',gW(t[2],[t[0]+t[1],t[2]*t[2]]),'√('+t[0]+'² + '+t[1]+'²) = '+t[2]+'.');
+  if(k===1){var g=gR(-5,5)||2,f=gR(-5,5)||3,r=gR(2,9),c=g*g+f*f-r*r;return T('Find the radius of the circle x² + y²'+sgn(-2*g)+'x'+sgn(-2*f)+'y'+sgn(c)+' = 0.',r,'',gW(r,[r*r,Math.abs(c)]),'Centre ('+g+', '+f+'), r² = '+(g*g)+' + '+(f*f)+' − ('+c+') = '+(r*r)+'.');}
+  var m=gP([2,3,4,5,-2,-3,-4]),am=Math.abs(m),ans=(m>0?'−':'')+'1/'+am;
+  return T('Find the gradient of a line perpendicular to y = '+lin(m,gR(1,5))+'.',ans,'',[(m>0?'':'−')+'1/'+am,(m<0?'−':'')+am],'m₁m₂ = −1 ⇒ m₂ = −1/('+gF(m)+') = '+ans+'.',true);
+}]);
+add('alm-radians',[function(n){
+  var r=gR(2,12),th=gP([0.5,0.8,1.2,1.5,2,2.5]),k=n%3;
+  if(k===0)return T('A sector has radius '+r+' cm and angle '+gF(th)+' rad. Find the arc length.',r*th,' cm',gW(r*th,[0.5*r*r*th,r*th*2]),'s = rθ = '+r+' · '+gF(th)+' = '+gF(r*th)+' cm.');
+  if(k===1)return T('A sector has radius '+r+' cm and angle '+gF(th)+' rad. Find its area.',0.5*r*r*th,' cm²',gW(0.5*r*r*th,[r*th,r*r*th]),'A = ½r²θ = ½ · '+(r*r)+' · '+gF(th)+' = '+gF(0.5*r*r*th)+' cm².');
+  return T('A sector has radius '+r+' and arc length '+gF(r*th)+'. Find the angle in radians.',th,'',gW(th,[r*th*r,th*2]),'θ = s/r = '+gF(r*th)+' / '+r+' = '+gF(th)+'.');
+}]);
+add('alm-series',[function(n){
+  var a=gR(2,9),d=gR(2,6),N=gR(8,20),k=n%3;
+  if(k===0)return T('An arithmetic progression has first term '+a+' and common difference '+d+'. Find the '+N+'th term.',a+(N-1)*d,'',gW(a+(N-1)*d,[a+N*d,a*N]),'uₙ = a + (n − 1)d = '+a+' + '+(N-1)+' · '+d+' = '+(a+(N-1)*d)+'.');
+  if(k===1)return T('Find the sum of the first '+N+' terms of the AP with a = '+a+', d = '+d+'.',N/2*(2*a+(N-1)*d),'',gW(N/2*(2*a+(N-1)*d),[N*(a+(N-1)*d),N/2*(a+(N-1)*d)]),'Sₙ = n/2 · (2a + (n − 1)d) = '+N+'/2 · ('+(2*a)+' + '+((N-1)*d)+') = '+gF(N/2*(2*a+(N-1)*d))+'.');
+  var A=gP([4,6,8,9,10,12,16,18,20,24]),r=gP([0.5,0.25,0.75,0.2,0.4]);if(!gNice(A/(1-r)))return null;return T('A geometric progression has first term '+A+' and common ratio '+gF(r)+'. Find the sum to infinity.',A/(1-r),'',gW(A/(1-r),[A/r,A*(1+r)]),'S∞ = a/(1 − r) = '+A+'/'+gF(1-r)+' = '+gF(A/(1-r))+'.');
+}]);
+add('alm-diff1',[function(n){
+  var a=gR(1,5),p=gR(2,4),x=gR(1,3),k=n%3;
+  if(k===0){var g=a*p*Math.pow(x,p-1);return T('Find the gradient of y = '+(a===1?'':a)+'x'+sup(p)+' at x = '+x+'.',g,'',gW(g,[a*Math.pow(x,p),a*p*Math.pow(x,p)]),'dy/dx = '+(a*p)+'x'+sup(p-1)+' = '+g+' at x = '+x+'.');}
+  if(k===1){var r=gR(-6,6)||3;return T('Find the x-coordinate of the stationary point of y = x²'+sgn(-2*r)+'x + '+gR(1,9)+'.',r,'',gW(r,[2*r,-r],true),'dy/dx = 2x'+sgn(-2*r)+' = 0 ⇒ x = '+r+'.');}
+  var b=gR(2,4),m=gR(3,5),x0=gR(0,1),v=m*b*Math.pow(b*x0+1,m-1);return T('y = ('+b+'x + 1)'+sup(m)+'. Find dy/dx at x = '+x0+'.',v,'',gW(v,[m*Math.pow(b*x0+1,m-1),b*Math.pow(b*x0+1,m)]),'dy/dx = '+m+' · '+b+' · ('+b+'x + 1)'+sup(m-1)+' = '+v+' at x = '+x0+'.');
+}]);
+add('alm-int1',[function(n){
+  var a=gR(1,4),p=gR(1,3),b=gR(1,3),k=n%2,c=(p+1)*a;
+  if(k===0){var v=a*Math.pow(b,p+1);return T('Evaluate ∫₀'+sub(b)+' '+(c===1?'':c)+'x'+(p===1?'':sup(p))+' dx.',v,'',gW(v,[c*Math.pow(b,p),c*Math.pow(b,p+1)]),'∫ '+c+'x'+(p===1?'':sup(p))+' dx = '+(a===1?'':a)+'x'+sup(p+1)+'; from 0 to '+b+': '+v+'.');}
+  var y0=gR(1,9),x=gR(1,4);return T('dy/dx = '+(2*a)+'x and the curve passes through (0, '+y0+'). Find y when x = '+x+'.',a*x*x+y0,'',gW(a*x*x+y0,[2*a*x+y0,a*x*x]),'y = '+(a===1?'':a)+'x² + '+y0+' ⇒ y = '+(a*x*x+y0)+'.');
+}]);
+add('alm-algebra3',[function(n){
+  var a=gR(-3,3)||2,b=gR(-5,5),c=gR(-9,9),k=n%2;
+  if(k===0){var r=a*a*a+b*a+c;return T('Find the remainder when x³'+sgn(b)+'x'+sgn(c)+' is divided by (x'+sgn(-a)+').',r,'',gW(r,[c,r+2*a],true),'Remainder theorem: p('+a+') = '+(a*a*a)+sgn(b*a)+sgn(c)+' = '+r+'.');}
+  var root=gR(1,3),q=gR(-6,6),A=-(root*root*root+q)/root;
+  if(!gNice(A))return null;
+  return T('(x − '+root+') is a factor of x³ + ax'+sgn(q)+'. Find a.',A,'',gW(A,[-A,A+1],true),'p('+root+') = '+(root*root*root)+' + '+root+'a'+sgn(q)+' = 0 ⇒ a = '+gF(A)+'.');
+}]);
+add('alm-explog',[function(n){
+  var b=gP([2,3,4,5,10]),e=gR(2,5),k=n%3;
+  if(k===0)return T('Find log'+sub(b)+' '+Math.pow(b,e)+'.',e,'',gW(e,[Math.pow(b,e)/b,e+1]),b+sup(e)+' = '+Math.pow(b,e)+'.');
+  if(k===1){var e2=gR(2,6);return T('Solve 2^(x + 1) = '+Math.pow(2,e2)+'.',e2-1,'',gW(e2-1,[e2,e2+1]),Math.pow(2,e2)+' = 2'+sup(e2)+' ⇒ x + 1 = '+e2+' ⇒ x = '+(e2-1)+'.');}
+  var a=gR(2,5),c=gR(2,7);return T('Simplify ln(e^'+a+') + ln(e^'+c+').',a+c,'',gW(a+c,[a*c,Math.abs(a-c)||1]),'ln eᵏ = k: '+a+' + '+c+' = '+(a+c)+'.');
+}]);
+add('alm-trig3',[function(n){
+  var t=gP([[3,4,5],[5,12,13],[6,8,10],[8,15,17],[7,24,25],[12,16,20]]),k=n%2;
+  if(k===0)return T(t[0]+' sin θ + '+t[1]+' cos θ = R sin(θ + α). Find R.',t[2],'',gW(t[2],[t[0]+t[1],t[2]*t[2]]),'R = √('+t[0]+'² + '+t[1]+'²) = '+t[2]+'.');
+  return T('State the greatest value of '+t[0]+' cos θ − '+t[1]+' sin θ.',t[2],'',gW(t[2],[t[0]+t[1],t[0]]),'It equals R cos(θ + α), R = √('+(t[0]*t[0])+' + '+(t[1]*t[1])+') = '+t[2]+'.');
+}]);
+add('alm-diff3',[function(n){
+  var k=n%3,a=gR(2,6),x=gR(1,5);
+  if(k===0)return T('y = e^('+a+'x). Find dy/dx at x = 0.',a,'',gW(a,[1,a*a]),'dy/dx = '+a+'e^('+a+'x), at x = 0 it is '+a+'.');
+  if(k===1)return T('y = ln('+a+'x). Find dy/dx at x = '+x+'.',frac(1,x),'',gSW(frac(1,x),[frac(a,x),frac(1,a*x)]),'ln '+a+'x = ln '+a+' + ln x, so dy/dx = 1/x = '+frac(1,x)+'.',true);
+  var t=gR(1,4);return T('x = t², y = '+a+'t³. Find dy/dx when t = '+t+'.',3*a*t/2,'',gW(3*a*t/2,[3*a*t*t,a*t]),'dy/dx = ('+(3*a)+'t²)/(2t) = '+(3*a)+'t/2 = '+gF(3*a*t/2)+'.');
+}]);
+add('alm-int3',[function(n){
+  var k=n%2,a=gR(2,6);
+  if(k===0)return T('Evaluate ∫₁^(e^'+a+') (1/x) dx.',a,'',gW(a,[Math.exp(a)>100?a+1:a*2,1]),'[ln x] from 1 to e^'+a+' = '+a+' − 0.');
+  var b=gR(1,4),c=gR(2,5);return T('Evaluate ∫₀'+sub(b)+' '+(2*c)+'x dx.',c*b*b,'',gW(c*b*b,[2*c*b,2*c*b*b]),'['+c+'x²] from 0 to '+b+' = '+(c*b*b)+'.');
+}]);
+add('alm-numerical',[function(n){
+  var a=gP([4,9,16,25,36,49,64,81,100]),r=Math.sqrt(a);
+  return T('The iteration xₙ₊₁ = ½(xₙ + '+a+'/xₙ) converges to a positive limit. Find it.',r,'',gW(r,[a,a/2]),'At the limit x = ½(x + '+a+'/x) ⇒ x² = '+a+' ⇒ x = '+r+'.');
+}]);
+add('alm-vectors',[function(n){
+  var v=gP([[1,2,2,3],[2,3,6,7],[1,4,8,9],[2,6,9,11],[4,4,7,9],[2,10,11,15]]),k=n%2;
+  if(k===0)return T('Find the magnitude of '+v[0]+'i − '+v[1]+'j + '+v[2]+'k.',v[3],'',gW(v[3],[v[0]+v[1]+v[2],v[3]*v[3]]),'√('+(v[0]*v[0])+' + '+(v[1]*v[1])+' + '+(v[2]*v[2])+') = '+v[3]+'.');
+  var a=[gR(1,5),gR(-4,4),gR(1,4)],b=[gR(-3,3),gR(1,5),gR(-4,4)],d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  return T('Find the scalar product of ('+a.join(', ')+') and ('+b.join(', ')+').',d,'',gW(d,[d+2*a[0],-d||d+1],true),a[0]+'·'+b[0]+' + '+a[1]+'·'+b[1]+' + '+a[2]+'·'+b[2]+' = '+d+'.');
+}]);
+add('alm-de',[function(n){
+  var a=gR(1,4),c=gR(1,9),x=gR(1,4),k=n%2;
+  if(k===0)return T('dy/dx = '+(2*a)+'x and y = '+c+' when x = 0. Find y when x = '+x+'.',a*x*x+c,'',gW(a*x*x+c,[2*a*x+c,a*x*x]),'y = '+(a===1?'':a)+'x² + '+c+'.');
+  var N=gP([100,200,250,400,500]);return T('dN/dt = kN and N = '+N+' when t = 0. Find N when e^(kt) = '+a+'.',N*a,'',gW(N*a,[N+a,N/a]),'N = '+N+'e^(kt) = '+N+' · '+a+' = '+(N*a)+'.');
+}]);
+add('alm-complex',[function(n){
+  var t=gP([[3,4,5],[5,12,13],[6,8,10],[8,15,17],[9,12,15]]),k=n%2;
+  if(k===0)return T('Find |'+t[0]+' − '+t[1]+'i|.',t[2],'',gW(t[2],[t[0]+t[1],t[2]*t[2]]),'√('+(t[0]*t[0])+' + '+(t[1]*t[1])+') = '+t[2]+'.');
+  var a=gR(1,5),b=gR(1,5),c=gR(1,5),d=gR(1,5);return T('Find the real part of ('+a+' + '+b+'i)('+c+' − '+d+'i).',a*c+b*d,'',gW(a*c+b*d,[a*c-b*d,a*c],true),'('+a+' + '+b+'i)('+c+' − '+d+'i) = '+(a*c)+' − '+(a*d)+'i + '+(b*c)+'i − '+(b*d)+'i²; real part '+(a*c)+' + '+(b*d)+' = '+(a*c+b*d)+'.');
+}]);
+add('alm-kinematics',[function(n){
+  var u=gR(0,10),a=gR(1,5),t=gR(2,8),k=n%3;
+  if(k===0)return T('A particle starts at '+u+' m/s and accelerates at '+a+' m/s² for '+t+' s. Find its final speed.',u+a*t,' m/s',gW(u+a*t,[a*t,u*t]),'v = u + at = '+u+' + '+a+' · '+t+' = '+(u+a*t)+' m/s.');
+  if(k===1)return T('A particle starts at '+u+' m/s and accelerates at '+a+' m/s² for '+t+' s. Find the distance travelled.',u*t+0.5*a*t*t,' m',gW(u*t+0.5*a*t*t,[u*t+a*t*t,(u+a*t)*t]),'s = ut + ½at² = '+(u*t)+' + '+gF(0.5*a*t*t)+' = '+gF(u*t+0.5*a*t*t)+' m.');
+  var v=gP([10,20,30,40]);return T('A ball is projected vertically upwards at '+v+' m/s (g = 10). Find its greatest height.',v*v/20,' m',gW(v*v/20,[v*v/10,v/10]),'0 = '+v+'² − 2 · 10 · s ⇒ s = '+(v*v)+'/20 = '+gF(v*v/20)+' m.');
+}]);
+add('alm-forces',[function(n){
+  var m=gR(2,20),mu=gP([0.2,0.25,0.3,0.4,0.5]),k=n%2;
+  if(k===0)return T('A '+m+' kg block rests on a rough horizontal floor, μ = '+gF(mu)+'. Find the limiting friction (g = 10).',mu*m*10,' N',gW(mu*m*10,[mu*m,m*10]),'F = μR = '+gF(mu)+' · '+(m*10)+' = '+gF(mu*m*10)+' N.');
+  return T('A '+m+' kg particle is on a smooth plane inclined at 30°. Find the component of its weight along the plane (g = 10).',m*5,' N',gW(m*5,[m*10,m*8.66]),'mg sin 30° = '+(m*10)+' · 0.5 = '+(m*5)+' N.');
+}]);
+add('alm-newton',[function(n){
+  var a=gR(2,8),b=gR(1,a-1),k=n%2;
+  if(k===0){var acc=(a-b)*10/(a+b);if(!gNice(acc))return null;return T('Particles of '+a+' kg and '+b+' kg hang over a smooth pulley (g = 10). Find the acceleration.',acc,' m/s²',gW(acc,[(a-b)*10/a,(a+b)*10/(a-b)]),'a = (m₁ − m₂)g/(m₁ + m₂) = '+((a-b)*10)+'/'+(a+b)+' = '+gF(acc)+' m/s².');}
+  var M=gP([200,300,400,500,800]),ac=gR(1,3);return T('A lift of mass '+M+' kg accelerates upwards at '+ac+' m/s² (g = 10). Find the tension in the cable.',M*(10+ac),' N',gW(M*(10+ac),[M*10,M*(10-ac)]),'T − '+(M*10)+' = '+M+' · '+ac+' ⇒ T = '+(M*(10+ac))+' N.');
+}]);
+add('alm-energy',[function(n){
+  var k=n%3;
+  if(k===0){var m=gR(1,10),v=gR(2,10);return T('Find the kinetic energy of a '+m+' kg mass moving at '+v+' m/s.',0.5*m*v*v,' J',gW(0.5*m*v*v,[m*v*v,m*v]),'½mv² = ½ · '+m+' · '+(v*v)+' = '+gF(0.5*m*v*v)+' J.');}
+  if(k===1){var P=gP([20,30,40,50,60]),v2=gP([10,15,20,25,30]),F=P*1000/v2;if(!gNice(F))return null;return T('A car moves at its maximum speed of '+v2+' m/s on a level road. The engine works at '+P+' kW. Find the resistance.',F,' N',gW(F,[P*v2,P*1000*v2/1000]),'At maximum speed F = P/v = '+(P*1000)+'/'+v2+' = '+gF(F)+' N.');}
+  var h=gP([5,20,45,80]),vv=Math.sqrt(20*h);return T('A ball is dropped from rest from a height of '+h+' m (g = 10). Find its speed just before impact.',vv,' m/s',gW(vv,[2*h,10*h]),'v² = 2gh = '+(20*h)+' ⇒ v = '+vv+' m/s.');
+}]);
+add('alm-momentum',[function(n){
+  var m1=gR(1,6),v1=gR(2,10),m2=gR(1,6),v=m1*v1/(m1+m2);
+  if(!gNice(v))return null;
+  return T('A '+m1+' kg particle moving at '+v1+' m/s hits a stationary '+m2+' kg particle and they coalesce. Find their common speed.',v,' m/s',gW(v,[v1,m1*v1/m2]),'m₁v₁ = (m₁ + m₂)v ⇒ v = '+(m1*v1)+'/'+(m1+m2)+' = '+gF(v)+' m/s.');
+}]);
+add('alm-data',[function(n){
+  var k=n%2;
+  if(k===0){var w=gP([5,10,20]),f=gR(6,60);return T('A class of width '+w+' has frequency '+gF(f)+'. Find the frequency density.',f/w,'',gW(f/w,[f*w,f]),'Frequency density = '+gF(f)+'/'+w+' = '+gF(f/w)+'.');}
+  var N=gP([10,20,25,40,50]),a=gP([20,30,50,100]),s=N*gR(-3,5);return T('n = '+N+', Σ(x − '+a+') = '+s+'. Find the mean of x.',a+s/N,'',gW(a+s/N,[s/N,a+s]),'x̄ = '+a+' + '+s+'/'+N+' = '+gF(a+s/N)+'.');
+}]);
+add('alm-perm',[function(n){
+  var k=n%3;
+  if(k===0){var N=gR(6,12),r=gR(2,4);return T('How many ways can a committee of '+r+' be chosen from '+N+' people?',cC(N,r),'',gW(cC(N,r),[cA(N,r),N*r]),'ⁿCᵣ = '+cC(N,r)+'.');}
+  if(k===1){var p=gR(5,8);return T(p+' people sit in a row. Two particular people must sit together. How many arrangements?',fact(p-1)*2,'',gW(fact(p-1)*2,[fact(p),fact(p-1)]),'Treat the pair as one block: '+(p-1)+'! · 2! = '+(fact(p-1)*2)+'.');}
+  var w=gP([['LEVEL',30],['APPLE',60],['BANANA',60],['PEPPER',60],['MAMMAL',60],['TOMATO',180],['LETTER',180]]);return T('How many different arrangements of the letters of '+w[0]+' are there?',w[1],'',gW(w[1],[fact(w[0].length),w[1]*2]),'Divide '+w[0].length+'! by the factorials of the repeated letters: '+w[1]+'.');
+}]);
+add('alm-prob',[function(n){
+  var a=gP([0.2,0.3,0.4,0.5,0.6]),b=gP([0.2,0.4,0.5,0.6,0.8]),k=n%2;
+  if(k===0)return T('P(A) = '+gF(a)+', P(B) = '+gF(b)+', A and B are independent. Find P(A ∩ B).',a*b,'',gW(a*b,[a+b>1?a+b-0.5:a+b,Math.abs(a-b)||0.1]),'P(A ∩ B) = P(A) · P(B) = '+gF(a*b)+'.');
+  var ab=Math.round(a*b*100)/100;return T('P(A ∩ B) = '+gF(ab)+', P(B) = '+gF(b)+'. Find P(A | B).',ab/b,'',gW(ab/b,[ab*b,b-ab]),'P(A | B) = '+gF(ab)+'/'+gF(b)+' = '+gF(ab/b)+'.');
+}]);
+add('alm-drv',[function(n){
+  var a=gR(1,4),b=a+gR(1,4),p=gP([0.2,0.3,0.4,0.5,0.6,0.7]),e=a*p+b*(1-p);
+  return T('X takes the value '+a+' with probability '+gF(p)+' and '+b+' with probability '+gF(1-p)+'. Find E(X).',e,'',gW(e,[(a+b)/2,a*p+b*p]),'E(X) = '+a+' · '+gF(p)+' + '+b+' · '+gF(1-p)+' = '+gF(e)+'.');
+}]);
+add('alm-binom',[function(n){
+  var N=gP([10,12,20,25,40,50]),p=gP([0.1,0.2,0.25,0.4,0.5]),k=n%3;
+  if(k===0)return T('X ~ B('+N+', '+gF(p)+'). Find E(X).',N*p,'',gW(N*p,[N*p*(1-p),N*(1-p)]),'E(X) = np = '+gF(N*p)+'.');
+  if(k===1){if(!gNice(N*p*(1-p)))return null;return T('X ~ B('+N+', '+gF(p)+'). Find Var(X).',N*p*(1-p),'',gW(N*p*(1-p),[N*p,N*(1-p)]),'Var(X) = np(1 − p) = '+gF(N*p*(1-p))+'.');}
+  return T('X ~ Geo('+gF(p)+'). Find E(X).',1/p,'',gW(1/p,[p,1-p]),'E(X) = 1/p = '+gF(1/p)+'.');
+}]);
+add('alm-normal',[function(n){
+  var mu=gR(2,10)*10,s=gP([2,4,5,10]),z=gP([-2,-1.5,-1,-0.5,0.5,1,1.5,2]),x=mu+z*s;
+  return T('X ~ N('+mu+', '+(s*s)+'). Find the z-value for x = '+gF(x)+'.',z,'',gW(z,[z*s,(x-mu)/(s*s)],true),'z = (x − μ)/σ = ('+gF(x)+' − '+mu+')/'+s+' = '+gF(z)+'.');
+}]);
+add('alm-trig',[function(n){
+  var L=[['sin x = 0.5','30° and 150°',['30° and 330°','60° and 120°']],['sin x = −0.5','210° and 330°',['150° and 210°','30° and 330°']],['cos x = 0.5','60° and 300°',['60° and 120°','30° and 330°']],['cos x = −0.5','120° and 240°',['60° and 240°','120° and 300°']],
+    ['tan x = 1','45° and 225°',['45° and 135°','45° and 315°']],['tan x = −1','135° and 315°',['135° and 225°','45° and 225°']],['tan x = √3','60° and 240°',['60° and 120°','30° and 210°']],['cos x = √3/2','30° and 330°',['30° and 150°','60° and 300°']],['sin x = √2/2','45° and 135°',['45° and 315°','45° and 225°']]];
+  var e=L[n%L.length];
+  return T('Solve '+e[0]+' for 0° ≤ x < 360°.',e[1],'',e[2],'Principal value from the calculator, then use the symmetry of the graph: sin → x and 180° − x, cos → x and 360° − x, tan → x and x + 180°.',true);
+}]);
+/* ---------- A-level Physics (Cambridge International 9702) ---------- */
+progAdd('alevel:phys',{en:true,
+desc:'Cambridge International AS & A Level Physics (9702): AS Level и A Level. Объяснения на русском с английскими терминами, задачи на английском, g = 9.81 m s⁻².',
+note:'Темы подобраны по программе 9702. Перед экзаменом сверяйтесь с официальным syllabus, data booklet и прошлыми экзаменационными работами (past papers) на сайте Cambridge.',
+sections:[
+{title:'AS Level',topics:[
+{id:'alp-units',tag:'AS',title:'Physical quantities, units and uncertainties',
+ sum:'Семь основных единиц СИ (SI base units): kg, m, s, A, K, mol, cd; остальные выражаются через них (N = kg m s⁻²). Уравнение должно быть однородным (homogeneous): единицы слева и справа совпадают. Скаляры (scalars) имеют только величину, векторы (vectors) — ещё и направление. Погрешности (uncertainties): при сложении и вычитании складываются абсолютные погрешности; при умножении и делении — относительные (percentage); при возведении в степень n относительная погрешность умножается на n. Систематическая ошибка (systematic error) сдвигает все результаты, случайная (random) даёт разброс; точность (accuracy) — близость к истинному значению, прецизионность (precision) — близость результатов друг к другу.',
+ ex:['J = N m = kg m² s⁻²','l = 2.0 ± 0.1 m (5%), t = 4.0 ± 0.2 s (5%): v = l/t has 10% uncertainty','A = πr², r has 2% uncertainty ⇒ A has 4%'],
+ tip:'Для произведения складывайте проценты, а не абсолютные погрешности.',
+ qs:[['Which is an SI base unit?','ampere','newton','volt','Base units: kg, m, s, A, K, mol, cd.'],
+  ['The SI base units of force:','kg m s⁻²','kg m s⁻¹','kg m² s⁻²','F = ma.'],
+  ['r is measured with 3% uncertainty. Percentage uncertainty in r³:','9%','3%','27%','Multiply by the power.'],
+  ['tf','Speed is a vector quantity.',false,'Speed is scalar; velocity is a vector.'],
+  ['tf','A zero error on a meter is a systematic error.',true,'It shifts every reading by the same amount.'],
+  ['in','x = 20.0 ± 0.4 cm. Percentage uncertainty (%)?',['2'],'0.4/20 · 100 = 2%.']]},
+{id:'alp-kinematics',tag:'AS',title:'Kinematics and projectiles',
+ sum:'Уравнения равноускоренного движения: v = u + at, s = ut + ½at², v² = u² + 2as, s = ½(u + v)t. Displacement–time: gradient — скорость; velocity–time: gradient — ускорение, площадь — перемещение. Снаряд (projectile) без сопротивления воздуха: горизонтальная скорость постоянна, по вертикали ускорение g = 9.81 m s⁻² вниз; горизонтальное и вертикальное движения рассчитывают отдельно, общий у них только время.',
+ ex:['Ball thrown horizontally at 6 m/s from 1.25 m: t = √(2 · 1.25/9.81) ≈ 0.50 s, range ≈ 3.0 m','u = 20 m/s at 30°: uₓ = 17.3 m/s, u_y = 10 m/s','Time to the top: t = u_y/g'],
+ tip:'Сначала разложите начальную скорость: uₓ = u cos θ, u_y = u sin θ — и не смешивайте направления.',
+ qs:[['A ball is thrown horizontally. Ignoring air resistance, its horizontal velocity…','stays constant','increases','decreases to zero','No horizontal force acts.'],
+  ['Gradient of a velocity–time graph:','acceleration','displacement','speed','a = Δv/Δt.'],
+  ['A stone is dropped from rest. Distance fallen in 2.0 s (g = 9.81):','19.6 m','9.81 m','39.2 m','s = ½gt² = 19.62 m.'],
+  ['tf','For a projectile, the horizontal and vertical motions are independent.',true,'They share only the time.'],
+  ['tf','At the top of its path, a projectile has zero velocity.',false,'Only the vertical component is zero.'],
+  ['in','u = 10 m/s at 30° above the horizontal. Vertical component (m/s)?',['5'],'10 sin 30° = 5.']]},
+{id:'alp-dynamics',tag:'AS',title:'Dynamics and momentum',
+ sum:'Импульс p = mv. Второй закон Ньютона в общем виде: F = Δp/Δt (сила — скорость изменения импульса). Закон сохранения импульса в замкнутой системе. Упругий удар (perfectly elastic collision): сохраняется и кинетическая энергия, а относительная скорость сближения равна относительной скорости разлёта. Сопротивление воздуха (drag) растёт со скоростью; при равенстве веса и сопротивления тело падает с предельной скоростью (terminal velocity).',
+ ex:['A 0.15 kg ball at 20 m/s rebounds at 15 m/s: Δp = 0.15 · 35 = 5.25 N s','Force on a wall during 0.01 s contact: 525 N','Elastic collision: speed of approach = speed of separation'],
+ tip:'При отскоке скорость меняет знак: Δp = m(v − u) = m(15 − (−20)).',
+ qs:[['Newton’s second law in terms of momentum:','F = Δp/Δt','F = pΔt','F = p/m','Force equals the rate of change of momentum.'],
+  ['A 2 kg trolley at 3 m/s hits and sticks to a stationary 1 kg trolley. Common velocity:','2 m/s','3 m/s','1.5 m/s','6/3.'],
+  ['At terminal velocity the resultant force is…','zero','equal to the weight','equal to the drag only','Weight = drag.'],
+  ['tf','In a perfectly elastic collision, kinetic energy is conserved.',true,'Definition.'],
+  ['tf','Momentum is conserved only in elastic collisions.',false,'In every collision of an isolated system.'],
+  ['in','Momentum changes by 12 N s in 0.4 s. Average force (N)?',['30'],'F = Δp/Δt = 12/0.4.']]},
+{id:'alp-forces',tag:'AS',title:'Forces, density and pressure',
+ sum:'Момент силы (moment) = F · d, где d — перпендикулярное расстояние до оси. Пара сил (couple): две равные противоположные силы, её момент (torque) = F · расстояние между ними. Равновесие: равнодействующая = 0 и сумма моментов = 0 (principle of moments). Центр тяжести (centre of gravity) — точка, где можно считать приложенным вес. Плотность ρ = m/V; давление p = F/A; в жидкости Δp = ρgΔh. Выталкивающая сила (upthrust) равна весу вытесненной жидкости.',
+ ex:['Moment of 20 N at 0.3 m: 6 N m','Pressure 10 m below water surface (ρ = 1000): ρgh = 98 100 Pa extra','A 0.002 m³ object fully in water: upthrust = 1000 · 9.81 · 0.002 ≈ 19.6 N'],
+ tip:'Расстояние в моменте — перпендикуляр от оси до линии действия силы, а не длина стержня.',
+ qs:[['Moment of a 50 N force acting 0.4 m from the pivot (perpendicular):','20 N m','125 N m','12.5 N m','50 · 0.4.'],
+  ['Unit of pressure:','Pa (N m⁻²)','N m','J m⁻¹','p = F/A.'],
+  ['Upthrust on a submerged object equals…','the weight of fluid displaced','the weight of the object','the pressure at the bottom','Archimedes’ principle.'],
+  ['tf','A couple produces turning but no resultant force.',true,'The two forces are equal and opposite.'],
+  ['tf','Pressure in a liquid depends on the shape of the container.',false,'Only on depth, density and g.'],
+  ['in','Mass 600 kg, volume 0.25 m³. Density (kg m⁻³)?',['2400'],'ρ = m/V.']]},
+{id:'alp-energy',tag:'AS',title:'Work, energy and power',
+ sum:'Работа W = Fs cos θ. Кинетическая энергия Eₖ = ½mv², изменение потенциальной ΔEₚ = mgΔh. Работа газа при постоянном давлении W = pΔV. Мощность P = W/t = Fv. КПД (efficiency) = полезная выходная энергия / вся входная энергия · 100%. Закон сохранения энергии.',
+ ex:['Motor lifts 50 kg by 4 m in 8 s: P = 50 · 9.81 · 4/8 ≈ 245 W','Car at 25 m/s, driving force 800 N: P = 20 kW','Efficiency: 300 J useful from 1200 J input = 25%'],
+ tip:'P = Fv — короткий путь к ответу, когда даны сила тяги и скорость.',
+ qs:[['A 2 kg mass moves at 3 m/s. Kinetic energy:','9 J','6 J','18 J','½ · 2 · 9.'],
+  ['Unit equivalent to the watt:','J s⁻¹','J s','N s','P = W/t.'],
+  ['A force of 500 N moves a car at 20 m/s. Power:','10 kW','25 W','520 W','P = Fv.'],
+  ['tf','Efficiency can be greater than 100%.',false,'Output can never exceed input.'],
+  ['tf','Work done by a gas at constant pressure is pΔV.',true,'W = pΔV.'],
+  ['in','A machine uses 800 J and gives 200 J of useful work. Efficiency (%)?',['25'],'200/800.']]},
+{id:'alp-solids',tag:'AS',title:'Deformation of solids',
+ sum:'Закон Гука (Hooke’s law): F = kx до предела пропорциональности (limit of proportionality). Напряжение (stress) σ = F/A, деформация (strain) ε = x/L, модуль Юнга (Young modulus) E = σ/ε. Энергия упругой деформации (elastic potential energy) = площадь под графиком F–x = ½Fx = ½kx². Упругая деформация (elastic) исчезает после снятия нагрузки, пластическая (plastic) — остаётся.',
+ ex:['Spring k = 200 N/m stretched 0.05 m: F = 10 N, energy 0.25 J','Wire: F = 50 N, A = 1.0 × 10⁻⁶ m²: stress 5.0 × 10⁷ Pa','Stress 2 × 10⁸ Pa, strain 1 × 10⁻³: E = 2 × 10¹¹ Pa'],
+ tip:'Strain не имеет единиц, а у Young modulus те же единицы, что у stress — Pa.',
+ qs:[['Young modulus =','stress / strain','strain / stress','force / extension','Definition.'],
+  ['Unit of strain:','no unit','Pa','m','Ratio of two lengths.'],
+  ['Elastic potential energy stored for force F and extension x (Hooke’s law obeyed):','½Fx','Fx','2Fx','Area of the triangle under the F–x graph.'],
+  ['tf','Plastic deformation is permanent.',true,'The material does not return to its original length.'],
+  ['tf','Hooke’s law holds beyond the limit of proportionality.',false,'Only up to it.'],
+  ['in','A spring with k = 400 N/m is stretched by 0.1 m. Energy stored (J)?',['2'],'½ · 400 · 0.01.']]},
+{id:'alp-waves',tag:'AS',title:'Waves',
+ sum:'v = fλ, период T = 1/f. Поперечные волны (transverse): колебания перпендикулярно распространению, продольные (longitudinal) — вдоль. Интенсивность I = P/A и I ∝ A² (квадрат амплитуды). Эффект Доплера для движущегося источника: f_o = f_s · v/(v ± v_s) — минус при приближении. Электромагнитный спектр: radio, microwave, infrared, visible (400–700 nm), ultraviolet, X-ray, γ; в вакууме все идут со скоростью c = 3.00 × 10⁸ m/s. Поляризация — только у поперечных волн; закон Малюса I = I₀ cos²θ.',
+ ex:['f = 50 Hz, λ = 4 m: v = 200 m/s','Amplitude doubled ⇒ intensity × 4','Source 500 Hz approaches at 30 m/s (v = 330): f = 500 · 330/300 = 550 Hz'],
+ tip:'Поляризовать можно только поперечную волну — звук в воздухе не поляризуется.',
+ qs:[['A wave has f = 200 Hz and λ = 1.5 m. Speed:','300 m/s','133 m/s','201.5 m/s','v = fλ.'],
+  ['Amplitude is halved. Intensity becomes…','¼ of the original','½ of the original','unchanged','I ∝ A².'],
+  ['Which waves can be polarised?','transverse only','longitudinal only','both','Polarisation restricts oscillations to one plane.'],
+  ['tf','All electromagnetic waves travel at the same speed in a vacuum.',true,'c = 3.00 × 10⁸ m/s.'],
+  ['tf','When a source moves towards you, the observed frequency decreases.',false,'It increases.'],
+  ['in','Polarised light of intensity 80 passes a polariser at 60°. Transmitted intensity?',['20'],'80 cos²60° = 80 · 0.25.']]},
+{id:'alp-superposition',tag:'AS',title:'Superposition: interference, diffraction, stationary waves',
+ sum:'Принцип суперпозиции: смещения волн в точке складываются. Стоячая волна (stationary wave) — наложение двух одинаковых встречных волн; расстояние между соседними узлами (nodes) λ/2. Дифракция заметна, когда щель сравнима с длиной волны. Интерференция двух когерентных (coherent — постоянная разность фаз) источников, опыт Юнга: λ = ax/D. Дифракционная решётка (diffraction grating): d sin θ = nλ, d = 1/(число штрихов на метр).',
+ ex:['Nodes 0.25 m apart ⇒ λ = 0.50 m','Young: a = 0.5 mm, D = 2.0 m, x = 2.4 mm ⇒ λ = 600 nm','Grating 500 lines/mm: d = 2.0 × 10⁻⁶ m; λ = 600 nm: sin θ₁ = 0.3'],
+ tip:'В решётке «lines per mm» сначала переведите в d в метрах: d = 1/(N · 1000).',
+ qs:[['Distance between adjacent nodes in a stationary wave:','λ/2','λ','λ/4','Node to node is half a wavelength.'],
+  ['Two-source interference needs the sources to be…','coherent','of different frequency','very bright','Constant phase difference.'],
+  ['Grating equation:','d sin θ = nλ','λ = ax/D','v = fλ','Grating formula.'],
+  ['tf','Stationary waves transfer energy along the medium.',false,'Progressive waves transfer energy; stationary waves store it.'],
+  ['tf','Diffraction is greatest when the gap is about the same size as the wavelength.',true,'Typical condition.'],
+  ['in','A grating has 300 lines per mm. Spacing d in μm (2 d.p.)?',['3.33'],'1/300 mm = 3.33 μm.']]},
+{id:'alp-electricity',tag:'AS',title:'Electricity',
+ sum:'Ток I = ΔQ/Δt, I = nAvq (n — концентрация носителей). Разность потенциалов V = W/Q. Сопротивление R = V/I, мощность P = VI = I²R = V²/R. Удельное сопротивление (resistivity): R = ρL/A. Вольт-амперные характеристики (I–V characteristics): у металла при постоянной температуре — прямая (закон Ома), у лампы накаливания (filament lamp) R растёт с нагревом, у диода ток идёт в одну сторону, у термистора (NTC thermistor) R падает с ростом температуры, у фоторезистора (LDR) — с ростом освещённости.',
+ ex:['2 A for 30 s: Q = 60 C','Wire ρ = 1.7 × 10⁻⁸ Ω m, L = 10 m, A = 1.0 × 10⁻⁶ m²: R = 0.17 Ω','12 V, 2 A: P = 24 W'],
+ tip:'Если просят «resistivity», ответ в Ω m, а не в Ω.',
+ qs:[['Charge passing when 3 A flows for 20 s:','60 C','6.7 C','23 C','Q = It.'],
+  ['Resistance of a wire is proportional to…','length / area','area / length','length × area','R = ρL/A.'],
+  ['As the temperature of an NTC thermistor rises, its resistance…','decreases','increases','stays the same','More charge carriers.'],
+  ['tf','The resistance of a filament lamp increases as it gets hotter.',true,'Ions vibrate more.'],
+  ['tf','Doubling the diameter of a wire halves its resistance.',false,'Area × 4, so R ÷ 4.'],
+  ['in','A 6 Ω resistor carries 2 A. Power (W)?',['24'],'I²R = 4 · 6.']]},
+{id:'alp-dc',tag:'AS',title:'D.C. circuits',
+ sum:'Законы Кирхгофа: первый (сумма токов в узле = 0) — сохранение заряда; второй (в замкнутом контуре сумма ЭДС = сумма падений напряжения) — сохранение энергии. Последовательно R = R₁ + R₂, параллельно 1/R = 1/R₁ + 1/R₂. ЭДС и внутреннее сопротивление (e.m.f., internal resistance): E = I(R + r), напряжение на клеммах V = E − Ir. Делитель напряжения (potential divider): V_out = V_in · R₂/(R₁ + R₂). Потенциометр сравнивает напряжения по нулевому показанию гальванометра.',
+ ex:['6 Ω and 3 Ω in parallel: 2 Ω','E = 12 V, r = 1 Ω, R = 5 Ω: I = 2 A, terminal p.d. 10 V','Potential divider 2 kΩ and 3 kΩ across 10 V: 6 V across 3 kΩ'],
+ tip:'Если с ростом тока напряжение на клеммах падает — это внутреннее сопротивление: V = E − Ir.',
+ qs:[['Two 4 Ω resistors in parallel:','2 Ω','8 Ω','4 Ω','1/R = ¼ + ¼.'],
+  ['E = 9 V, r = 2 Ω, external R = 7 Ω. Current:','1 A','1.29 A','4.5 A','I = 9/(7 + 2).'],
+  ['Kirchhoff’s first law is a consequence of conservation of…','charge','energy','momentum','Charge cannot pile up at a junction.'],
+  ['tf','Terminal p.d. equals the e.m.f. when no current flows.',true,'V = E − Ir with I = 0.'],
+  ['tf','Kirchhoff’s second law is based on conservation of charge.',false,'Conservation of energy.'],
+  ['in','10 V across 1 kΩ and 4 kΩ in series. Voltage across 4 kΩ (V)?',['8'],'10 · 4/5.']]},
+{id:'alp-particles',tag:'AS',title:'Particle physics',
+ sum:'Опыт Резерфорда (α-particle scattering): большинство частиц проходит насквозь — атом в основном пуст; редкие отражения назад — маленькое массивное положительное ядро. Нуклид ᴬ_Z X: A — нуклонное число, Z — протонное; изотопы — одинаковое Z, разное A. Распады: α (₂⁴He, A − 4, Z − 2), β⁻ (нейтрон → протон + электрон + антинейтрино), β⁺ (протон → нейтрон + позитрон + нейтрино), γ (не меняет A и Z). Кварки: u (+⅔e), d (−⅓e), s (−⅓e); протон uud, нейтрон udd. Адроны (hadrons) — из кварков: барионы (3 кварка) и мезоны (кварк + антикварк); лептоны (электрон, нейтрино) — фундаментальные.',
+ ex:['²³⁸U → ²³⁴Th + α','β⁻: d → u + e⁻ + ν̄','Proton charge: ⅔ + ⅔ − ⅓ = +1'],
+ tip:'β-спектр непрерывный — поэтому нужна третья частица, (анти)нейтрино.',
+ qs:[['Quark composition of a proton:','uud','udd','uuu','Charge +1.'],
+  ['In α decay the nucleon number…','decreases by 4','decreases by 2','stays the same','α = ⁴He.'],
+  ['Particle emitted with a β⁺ particle:','electron neutrino','electron antineutrino','photon only','p → n + e⁺ + ν.'],
+  ['tf','Most α-particles passed straight through the gold foil.',true,'The atom is mostly empty space.'],
+  ['tf','An electron is a hadron.',false,'It is a lepton.'],
+  ['in','Charge of the d quark in units of e (as a fraction)?',['−1/3','-1/3'],'d = −⅓e.']]}
+]},
+{title:'A Level',topics:[
+{id:'alp-circular',tag:'A2',title:'Motion in a circle',
+ sum:'Угловая скорость ω = Δθ/Δt = 2π/T, линейная v = ωr. Центростремительное ускорение a = v²/r = ω²r направлено к центру. Нужная для этого сила F = mv²/r = mω²r — это не новая сила, её создают натяжение, трение, гравитация и т. п. Радианы: 2π рад = 360°.',
+ ex:['T = 2 s: ω = π rad/s','m = 0.5 kg, v = 4 m/s, r = 2 m: F = 4 N','Car on a bend: friction provides the centripetal force'],
+ tip:'Центростремительная сила — это результирующая сил, а не отдельная сила на рисунке.',
+ qs:[['ω for T = 4 s:','π/2 rad/s','4π rad/s','π/4 rad/s','2π/4.'],
+  ['Centripetal acceleration is directed…','towards the centre','along the tangent','away from the centre','a = v²/r towards the centre.'],
+  ['Mass 2 kg, v = 3 m/s, r = 1.5 m. Centripetal force:','12 N','4 N','9 N','2 · 9/1.5.'],
+  ['tf','An object moving in a circle at constant speed is accelerating.',true,'The direction of velocity changes.'],
+  ['tf','Centripetal force does work on the object.',false,'It is perpendicular to the motion.'],
+  ['in','v = 6 m/s, r = 3 m. Centripetal acceleration (m s⁻²)?',['12'],'36/3.']]},
+{id:'alp-gravfields',tag:'A2',title:'Gravitational fields',
+ sum:'Закон тяготения: F = GMm/r². Напряжённость поля g = F/m = GM/r². Гравитационный потенциал φ = −GM/r (работа по переносу 1 кг из бесконечности; всегда отрицателен); потенциальная энергия Eₚ = −GMm/r. Орбита: GMm/r² = mv²/r ⇒ v² = GM/r, T² ∝ r³. Геостационарная орбита (geostationary): период 24 ч, над экватором, вращение с запада на восток.',
+ ex:['Double the distance ⇒ force ÷ 4','g at the Earth’s surface ≈ 9.81 N/kg','Satellite: higher orbit ⇒ slower speed, longer period'],
+ tip:'Потенциал φ отрицателен и растёт (к нулю) при удалении от планеты.',
+ qs:[['The distance between two masses is tripled. The force becomes…','1/9 of the original','1/3 of the original','3 times larger','Inverse square law.'],
+  ['Gravitational potential at the surface of a planet is…','negative','positive','zero','φ = −GM/r.'],
+  ['Period of a geostationary satellite:','24 hours','12 hours','1 hour','It stays above one point on the equator.'],
+  ['tf','A satellite in a higher orbit moves more slowly.',true,'v = √(GM/r).'],
+  ['tf','Gravitational field strength has the unit J/kg.',false,'N/kg (or m s⁻²); J/kg is the unit of potential.'],
+  ['in','g at the surface is 9.8 N/kg. g at twice the radius from the centre (N/kg)?',['2.45'],'9.8/4.']]},
+{id:'alp-thermal',tag:'A2',title:'Temperature, ideal gases and thermodynamics',
+ sum:'Термодинамическая шкала: T (K) = θ (°C) + 273.15; абсолютный ноль 0 K. Уравнение идеального газа: pV = nRT = NkT (R = 8.31 J mol⁻¹ K⁻¹, k = 1.38 × 10⁻²³ J/K). Средняя кинетическая энергия молекулы ⟨Eₖ⟩ = 3/2 kT. Первое начало: ΔU = q + W (q — тепло, переданное газу, W — работа, совершённая над газом). Удельная теплоёмкость Q = mcΔθ, удельная теплота фазового перехода Q = mL.',
+ ex:['27 °C = 300 K','1 mol at 300 K in 0.025 m³: p = 8.31 · 300/0.025 ≈ 1.0 × 10⁵ Pa','Heat 2 kg of water by 10 K (c = 4200): Q = 84 kJ'],
+ tip:'Температуру в формулах газа — только в кельвинах.',
+ qs:[['100 °C in kelvin:','373 K','100 K','173 K','100 + 273.'],
+  ['At constant volume the pressure of an ideal gas is proportional to…','thermodynamic temperature','Celsius temperature','volume','p ∝ T at constant V and n.'],
+  ['Mean kinetic energy of a gas molecule is proportional to…','T','√T','T²','⟨Eₖ⟩ = 3/2 kT.'],
+  ['tf','In ΔU = q + W, W is the work done on the gas.',true,'Cambridge sign convention.'],
+  ['tf','Doubling the Celsius temperature doubles the mean kinetic energy.',false,'Only thermodynamic (kelvin) temperature works.'],
+  ['in','Energy to heat 0.5 kg of water by 20 K (c = 4200 J kg⁻¹ K⁻¹), in kJ?',['42'],'0.5 · 4200 · 20 = 42 000 J.']]},
+{id:'alp-shm',tag:'A2',title:'Oscillations: simple harmonic motion',
+ sum:'Гармоническое колебание (SHM): a = −ω²x — ускорение пропорционально смещению и направлено к положению равновесия. x = x₀ sin ωt, v = ±ω√(x₀² − x²), v_max = ωx₀, a_max = ω²x₀; ω = 2πf = 2π/T. Полная энергия ½mω²x₀² постоянна. Затухание (damping): лёгкое, критическое, сильное. Резонанс (resonance) — максимум амплитуды при частоте вынуждающей силы, равной собственной частоте.',
+ ex:['f = 2 Hz, x₀ = 0.05 m: ω = 4π, v_max ≈ 0.63 m/s','At x = 0 the speed is maximum; at x = ±x₀ the acceleration is maximum','Car suspension uses critical damping'],
+ tip:'Скорость максимальна в равновесии, ускорение — в крайних точках.',
+ qs:[['The defining equation of SHM:','a = −ω²x','a = ω²x','v = ωx','Acceleration ∝ displacement, towards equilibrium.'],
+  ['Maximum speed in SHM:','ωx₀','ω²x₀','x₀/ω','v = ω√(x₀² − x²) at x = 0.'],
+  ['Resonance happens when…','driving frequency = natural frequency','damping is critical','amplitude is zero','Maximum energy transfer.'],
+  ['tf','In SHM the period does not depend on amplitude.',true,'Isochronous.'],
+  ['tf','Acceleration is greatest at the equilibrium position.',false,'It is zero there.'],
+  ['in','ω = 10 rad/s, amplitude 0.03 m. Maximum speed (m/s)?',['0.3'],'ωx₀.']]},
+{id:'alp-efields',tag:'A2',title:'Electric fields and capacitance',
+ sum:'Однородное поле между пластинами: E = V/d, сила на заряд F = qE. Закон Кулона: F = Qq/(4πε₀r²); поле точечного заряда E = Q/(4πε₀r²), потенциал V = Q/(4πε₀r). Ёмкость C = Q/V (фарад). Энергия конденсатора W = ½QV = ½CV². Параллельно C = C₁ + C₂, последовательно 1/C = 1/C₁ + 1/C₂. Разряд через резистор: Q = Q₀e^(−t/RC), постоянная времени (time constant) τ = RC.',
+ ex:['200 V across plates 4 mm apart: E = 5 × 10⁴ V/m','C = 100 μF at 12 V: Q = 1.2 mC, W = 7.2 mJ','R = 10 kΩ, C = 100 μF: τ = 1 s'],
+ tip:'За время τ = RC заряд падает до 37% (1/e) от начального.',
+ qs:[['Field between plates 0.02 m apart with 100 V:','5000 V/m','2 V/m','200 V/m','E = V/d.'],
+  ['Energy stored in a capacitor:','½CV²','CV²','CV','Area under the Q–V graph.'],
+  ['Two 10 μF capacitors in parallel:','20 μF','5 μF','10 μF','Add in parallel.'],
+  ['tf','Capacitors in series have a smaller total capacitance than each one.',true,'1/C = 1/C₁ + 1/C₂.'],
+  ['tf','The force between point charges is proportional to 1/r.',false,'It is proportional to 1/r².'],
+  ['in','R = 20 kΩ, C = 50 μF. Time constant (s)?',['1'],'RC = 20 000 · 0.00005.']]},
+{id:'alp-magnetic',tag:'A2',title:'Magnetic fields',
+ sum:'Сила на проводник с током: F = BIL sin θ (правило левой руки — Fleming’s left-hand rule). Сила на движущийся заряд: F = Bqv sin θ; в однородном поле частица движется по окружности радиуса r = mv/(Bq). Селектор скоростей (скрещенные поля): частица проходит без отклонения при v = E/B. Эффект Холла: V_H = BI/(ntq). Магнитная индукция B измеряется в тесла (T).',
+ ex:['L = 0.2 m, I = 3 A, B = 0.5 T: F = 0.3 N','Electron: faster ⇒ larger circle','E = 2 × 10⁴ V/m, B = 0.1 T: v = 2 × 10⁵ m/s'],
+ tip:'Сила Bqv перпендикулярна скорости, поэтому не меняет модуль скорости и не совершает работы.',
+ qs:[['Force on a 0.5 m wire carrying 4 A at 90° to a 0.2 T field:','0.4 N','10 N','1.6 N','BIL.'],
+  ['A charged particle moves at 90° to a uniform magnetic field. Its path is…','a circle','a parabola','a straight line','The force is always perpendicular to v.'],
+  ['Velocity selector: undeflected particles have speed…','E/B','B/E','EB','qE = Bqv.'],
+  ['tf','The magnetic force on a moving charge does no work.',true,'It is perpendicular to the velocity.'],
+  ['tf','The radius r = mv/(Bq) increases when B increases.',false,'It decreases.'],
+  ['in','B = 0.25 T, I = 2 A, L = 0.4 m, at 90°. Force (N)?',['0.2'],'0.25 · 2 · 0.4.']]},
+{id:'alp-induction',tag:'A2',title:'Electromagnetic induction and alternating current',
+ sum:'Магнитный поток Φ = BA cos θ (Wb), потокосцепление NΦ. Закон Фарадея: ЭДС индукции равна скорости изменения потокосцепления, ε = −N ΔΦ/Δt. Правило Ленца: индукционный ток противодействует причине, вызвавшей его (сохранение энергии). Переменный ток: I_rms = I₀/√2, V_rms = V₀/√2, средняя мощность на резисторе ½I₀²R. Выпрямление (rectification) диодами: однополупериодное и двухполупериодное (мост), сглаживание конденсатором.',
+ ex:['Coil 100 turns, flux changes by 0.02 Wb in 0.1 s: ε = 20 V','Peak 325 V ⇒ r.m.s. ≈ 230 V','I₀ = 2 A through 10 Ω: mean power 20 W'],
+ tip:'Знак минус в законе Фарадея — это и есть правило Ленца.',
+ qs:[['Unit of magnetic flux:','weber','tesla','henry','Φ = BA.'],
+  ['Peak voltage 10√2 V. r.m.s. voltage:','10 V','14.1 V','20 V','V₀/√2.'],
+  ['Lenz’s law is a consequence of conservation of…','energy','charge','momentum','Opposing the change.'],
+  ['tf','Moving a magnet faster into a coil induces a larger e.m.f.',true,'Faster change of flux linkage.'],
+  ['tf','A steady magnetic field through a stationary coil induces a current.',false,'Flux must change.'],
+  ['in','N = 200, ΔΦ = 0.01 Wb in 0.5 s. Induced e.m.f. magnitude (V)?',['4'],'200 · 0.01/0.5.']]},
+{id:'alp-quantum',tag:'A2',title:'Quantum physics',
+ sum:'Фотон: E = hf = hc/λ, импульс p = E/c (h = 6.63 × 10⁻³⁴ J s). 1 eV = 1.60 × 10⁻¹⁹ J. Фотоэффект: hf = Φ + ½mv²_max, Φ — работа выхода (work function), пороговая частота f₀ = Φ/h; интенсивность света влияет на число электронов, а частота — на их энергию. Волны де Бройля: λ = h/p = h/(mv); доказательство — дифракция электронов. Уровни энергии атома: hf = E₁ − E₂, линейчатые спектры испускания и поглощения.',
+ ex:['λ = 500 nm: E = hc/λ ≈ 3.98 × 10⁻¹⁹ J ≈ 2.5 eV','Photon 5 eV, Φ = 3 eV: max KE = 2 eV','Transition from −3.4 eV to −13.6 eV emits a 10.2 eV photon'],
+ tip:'Свет ярче — электронов больше, но их максимальная энергия та же.',
+ qs:[['Photon energy is proportional to…','frequency','wavelength','intensity','E = hf.'],
+  ['Increasing light intensity above the threshold frequency increases…','the number of photoelectrons','the maximum KE','the work function','More photons per second.'],
+  ['Evidence for the wave nature of electrons:','electron diffraction','the photoelectric effect','line spectra only','Diffraction is a wave property.'],
+  ['tf','Below the threshold frequency no photoelectrons are emitted, however bright the light.',true,'Each photon has too little energy.'],
+  ['tf','The de Broglie wavelength increases when the momentum increases.',false,'λ = h/p decreases.'],
+  ['in','A 6 eV photon hits a metal with work function 4 eV. Maximum KE of electrons (eV)?',['2'],'6 − 4.']]},
+{id:'alp-nuclear',tag:'A2',title:'Nuclear physics',
+ sum:'Эквивалентность массы и энергии: E = mc², ΔE = Δmc². Дефект масс (mass defect) — разница между массой нуклонов и ядра; энергия связи (binding energy) — энергия, нужная, чтобы разделить ядро на нуклоны. Энергия связи на нуклон максимальна у железа-56: деление тяжёлых ядер (fission) и синтез лёгких (fusion) выделяют энергию. Радиоактивный распад случаен и спонтанен: активность A = λN, N = N₀e^(−λt), период полураспада t½ = ln 2/λ.',
+ ex:['Δm = 0.001 u ≈ 1.66 × 10⁻³⁰ kg: ΔE ≈ 1.5 × 10⁻¹³ J','After 3 half-lives: 1/8 of the nuclei remain','t½ = 10 s ⇒ λ = 0.0693 s⁻¹'],
+ tip:'Распад случаен для одного ядра, но для огромного числа ядер подчиняется закону N = N₀e^(−λt).',
+ qs:[['Fraction of nuclei remaining after 4 half-lives:','1/16','1/8','1/4','(½)⁴.'],
+  ['Binding energy per nucleon is greatest for…','iron-56','uranium-235','hydrogen-1','Peak of the curve.'],
+  ['Decay constant λ and half-life are related by…','t½ = ln 2/λ','t½ = λ/ln 2','t½ = 2λ','From N = N₀e^(−λt).'],
+  ['tf','Radioactive decay is random and spontaneous.',true,'It cannot be predicted for a single nucleus or affected by conditions.'],
+  ['tf','Fusion of light nuclei absorbs energy.',false,'It releases energy (binding energy per nucleon increases).'],
+  ['in','Activity is 800 Bq and t½ = 2 h. Activity after 6 h (Bq)?',['100'],'800 → 400 → 200 → 100.']]},
+{id:'alp-astro',tag:'A2',title:'Astronomy and cosmology',
+ sum:'Светимость (luminosity) L — полная мощность излучения звезды. Поток на Земле F = L/(4πd²). Стандартные свечи (standard candles) — объекты с известной L (цефеиды, сверхновые типа Ia), по ним находят расстояние. Закон Вина: λ_max T = 2.9 × 10⁻³ m K. Закон Стефана–Больцмана: L = 4πσr²T⁴. Красное смещение Δλ/λ ≈ Δf/f ≈ v/c; закон Хаббла v = H₀d — галактики удаляются, Вселенная расширяется (довод за Big Bang).',
+ ex:['Star twice as far ⇒ flux ÷ 4','λ_max = 500 nm ⇒ T ≈ 5800 K','Δλ/λ = 0.01 ⇒ v ≈ 3 × 10⁶ m/s'],
+ tip:'Чем горячее звезда, тем короче λ_max — она голубее.',
+ qs:[['Flux received from a star at distance d is proportional to…','1/d²','1/d','d²','F = L/(4πd²).'],
+  ['A hotter star has a peak wavelength that is…','shorter','longer','the same','Wien’s law.'],
+  ['Hubble’s law:','v = H₀d','d = H₀v','v = H₀/d','Recession speed ∝ distance.'],
+  ['tf','Redshift of distant galaxies is evidence that the universe is expanding.',true,'Galaxies move away from us.'],
+  ['tf','Luminosity depends on the distance from the observer.',false,'Luminosity is the star’s total power; flux depends on distance.'],
+  ['in','Star A has the same radius as star B but twice the temperature. L_A/L_B?',['16'],'L ∝ T⁴.']]},
+{id:'alp-medical',tag:'A2',title:'Medical physics',
+ sum:'Ультразвук: акустический импеданс Z = ρc; доля отражённой интенсивности на границе I_R/I₀ = (Z₂ − Z₁)²/(Z₂ + Z₁)²; гель нужен, чтобы убрать воздушную прослойку. Рентген: ослабление в веществе I = I₀e^(−μx), μ — коэффициент ослабления; кости ослабляют сильнее мягких тканей — отсюда контраст; КТ (CT scan) строит 3D-изображение из множества снимков. ПЭТ (PET): радиоактивный индикатор испускает позитрон, аннигиляция e⁺ + e⁻ даёт два γ-фотона, летящих в противоположные стороны.',
+ ex:['Z₁ = Z₂ ⇒ no reflection','μ = 0.5 cm⁻¹, x = 2 cm: I = I₀e⁻¹ ≈ 0.37I₀','Annihilation: each photon ≈ 0.511 MeV'],
+ tip:'Большая разница импедансов — почти полное отражение; поэтому без геля ультразвук почти не входит в тело.',
+ qs:[['Acoustic impedance Z =','ρc','ρ/c','c/ρ','Density × speed of sound.'],
+  ['Gel is used in ultrasound scanning to…','remove the air gap','cool the probe','absorb ultrasound','Air–skin boundary reflects almost everything.'],
+  ['In PET, annihilation of a positron and an electron produces…','two γ-photons in opposite directions','one β-particle','an α-particle','Momentum is conserved.'],
+  ['tf','Bone attenuates X-rays more than soft tissue.',true,'Higher attenuation coefficient.'],
+  ['tf','If Z₁ = Z₂, all the ultrasound is reflected.',false,'Nothing is reflected.'],
+  ['in','I = I₀e^(−μx). How many times smaller is I when μx = ln 4?',['4'],'e^(−ln 4) = ¼.']]}
+]}
+]});
+
+/* Генераторы A-level Physics */
+add('alp-units',[function(n){
+  var k=n%3;
+  if(k===0){var p=gR(1,5),pw=gR(2,3);return T('A quantity r has a '+p+'% uncertainty. Find the percentage uncertainty in r'+sup(pw)+'.',p*pw,'%',gW(p*pw,[p,Math.pow(p,pw)]),'Multiply by the power: '+pw+' · '+p+'% = '+(p*pw)+'%.');}
+  if(k===1){var a=gR(1,5),b=gR(1,5);return T('l has a '+a+'% uncertainty and t has a '+b+'% uncertainty. Find the percentage uncertainty in l/t.',a+b,'%',gW(a+b,[Math.abs(a-b)||1,a*b]),'For a quotient add percentages: '+a+' + '+b+' = '+(a+b)+'%.');}
+  var x=gP([10,20,25,40,50]),dx=gP([0.1,0.2,0.5,1]);return T('A length is '+x+' ± '+gF(dx)+' cm. Find the percentage uncertainty.',dx/x*100,'%',gW(dx/x*100,[dx*100,x*dx]),gF(dx)+'/'+x+' · 100 = '+gF(dx/x*100)+'%.');
+}]);
+add('alp-kinematics',[function(n){
+  var k=n%3;
+  if(k===0){var u=gP([10,20,30,40]),th=gP([[30,0.5],[90,1]]),uy=u*th[1];return T('A ball is projected at '+u+' m/s at '+th[0]+'° above the horizontal. Find the vertical component of its initial velocity.',uy,' m/s',gW(uy,[u,u*0.866]),'u_y = u sin '+th[0]+'° = '+gF(uy)+' m/s.');}
+  if(k===1){var t=gR(1,4),s=4.905*t*t;return T('A stone falls from rest for '+t+' s (g = 9.81 m s⁻², no air resistance). Find the distance fallen.',s,' m',gW(s,[9.81*t,9.81*t*t]),'s = ½gt² = 4.905 · '+(t*t)+' = '+gF(s)+' m.');}
+  var v=gR(2,8),tt=gP([0.5,1,1.5,2]);return T('A ball rolls off a table at '+v+' m/s and lands '+gF(tt)+' s later. Find the horizontal distance travelled.',v*tt,' m',gW(v*tt,[v+tt,v*tt*tt]),'Horizontal velocity is constant: '+v+' · '+gF(tt)+' = '+gF(v*tt)+' m.');
+}]);
+add('alp-dynamics',[function(n){
+  var k=n%2;
+  if(k===0){var dp=gR(2,30),t=gP([0.1,0.2,0.4,0.5]);return T('The momentum of a body changes by '+dp+' N s in '+gF(t)+' s. Find the average force.',dp/t,' N',gW(dp/t,[dp*t,dp]),'F = Δp/Δt = '+dp+'/'+gF(t)+' = '+gF(dp/t)+' N.');}
+  var m=gP([0.1,0.2,0.5]),u=gR(5,20),v=gR(2,15),d=m*(u+v);return T('A '+gF(m)+' kg ball hits a wall at '+u+' m/s and rebounds at '+v+' m/s. Find the magnitude of the change in momentum.',d,' N s',gW(d,[m*(u-v)||m,m*u]),'Δp = m(v − u) = '+gF(m)+' · ('+v+' − (−'+u+')) = '+gF(d)+' N s.');
+}]);
+add('alp-forces',[function(n){
+  var k=n%3;
+  if(k===0){var F=gR(5,60),d=gP([0.1,0.2,0.25,0.3,0.4,0.5]);return T('A force of '+F+' N acts at a perpendicular distance of '+gF(d)+' m from a pivot. Find its moment.',F*d,' N m',gW(F*d,[F/d,F+d]),'Moment = Fd = '+gF(F*d)+' N m.');}
+  if(k===1){var h=gR(2,20);return T('Find the pressure due to water at a depth of '+h+' m (ρ = 1000 kg m⁻³, g = 9.81 m s⁻²).',1000*9.81*h,' Pa',gW(1000*9.81*h,[1000*h,9.81*h]),'Δp = ρgh = 1000 · 9.81 · '+h+' = '+gF(9810*h)+' Pa.');}
+  var W1=gR(2,10)*10,d1=gP([0.2,0.3,0.4,0.6]),d2=gP([0.1,0.2,0.3,0.5]),W2=W1*d1/d2;if(!gNice(W2))return null;
+  return T('A uniform beam is balanced on a pivot. A '+W1+' N weight hangs '+gF(d1)+' m to the left. What weight hung '+gF(d2)+' m to the right balances it?',W2,' N',gW(W2,[W1*d2/d1,W1]),'Principle of moments: '+W1+' · '+gF(d1)+' = W · '+gF(d2)+' ⇒ W = '+gF(W2)+' N.');
+}]);
+add('alp-energy',[function(n){
+  var k=n%3;
+  if(k===0){var F=gR(2,20)*100,v=gR(5,30);return T('A driving force of '+F+' N keeps a car moving at '+v+' m/s. Find the power in kW.',F*v/1000,' kW',gW(F*v/1000,[F*v/100,F/v]),'P = Fv = '+F+' · '+v+' = '+gF(F*v)+' W = '+gF(F*v/1000)+' kW.');}
+  if(k===1){var inp=gP([200,400,500,800,1000,1200]),e=gP([20,25,40,50,60,75]);return T('A machine is supplied with '+inp+' J and does '+(inp*e/100)+' J of useful work. Find its efficiency.',e,'%',gW(e,[100-e,inp/e]),gF(inp*e/100)+'/'+inp+' · 100 = '+e+'%.');}
+  var m=gR(1,10),v=gR(2,12);return T('Find the kinetic energy of a '+m+' kg mass moving at '+v+' m/s.',0.5*m*v*v,' J',gW(0.5*m*v*v,[m*v*v,m*v]),'½mv² = '+gF(0.5*m*v*v)+' J.');
+}]);
+add('alp-solids',[function(n){
+  var k=n%3;
+  if(k===0){var kk=gR(1,8)*100,x=gP([0.02,0.05,0.1,0.2]);return T('A spring of stiffness '+kk+' N/m is stretched by '+gF(x)+' m. Find the elastic potential energy stored.',0.5*kk*x*x,' J',gW(0.5*kk*x*x,[kk*x,kk*x*x]),'E = ½kx² = '+gF(0.5*kk*x*x)+' J.');}
+  if(k===1){var s=gR(1,9),e=gR(1,9);return T('Stress = '+s+' × 10⁸ Pa and strain = '+e+' × 10⁻³. Find the Young modulus in units of 10¹¹ Pa.',s/e/10,'',gW(s/e/10,[s*e/10,s/e]),'E = σ/ε = '+s+' × 10⁸/('+e+' × 10⁻³) = '+gF(s/e)+' × 10¹⁰ = '+gF(s/e/10)+' × 10¹¹ Pa.');}
+  var F=gR(1,10)*10,A=gP([1,2,4,5]);return T('A force of '+F+' N stretches a wire of cross-sectional area '+A+' mm². Find the stress in units of 10⁶ Pa.',F/A,'',gW(F/A,[F*A,F/(A*1000)]),'σ = F/A = '+F+'/('+A+' × 10⁻⁶) = '+gF(F/A)+' × 10⁶ Pa.');
+}]);
+add('alp-waves',[function(n){
+  var k=n%3;
+  if(k===0){var f=gR(1,20)*10,l=gP([0.5,1.5,2,2.5,3,4]);return T('A wave has frequency '+f+' Hz and wavelength '+gF(l)+' m. Find its speed.',f*l,' m/s',gW(f*l,[f/l,f+l]),'v = fλ = '+gF(f*l)+' m/s.');}
+  if(k===1){var I=gP([16,40,80,100,200]),th=gP([[60,0.25],[45,0.5],[0,1],[90,0]]);return T('Polarised light of intensity '+I+' W m⁻² passes through a polariser whose axis is at '+th[0]+'° to the plane of polarisation. Find the transmitted intensity.',I*th[1],' W m⁻²',gW(I*th[1],[I*Math.sqrt(th[1]),I-I*th[1]||I/3],true),'I = I₀ cos²θ = '+I+' · '+gF(th[1])+' = '+gF(I*th[1])+' W m⁻².');}
+  var a=gR(2,4);return T('The amplitude of a wave is multiplied by '+a+'. By what factor does the intensity change?',a*a,'',gW(a*a,[a,2*a]),'I ∝ A²: factor '+a+'² = '+(a*a)+'.');
+}]);
+add('alp-superposition',[function(n){
+  var k=n%3;
+  if(k===0){var d=gP([0.1,0.15,0.2,0.25,0.3,0.4]);return T('Adjacent nodes of a stationary wave are '+gF(d)+' m apart. Find the wavelength.',2*d,' m',gW(2*d,[d,4*d]),'Node to node = λ/2 ⇒ λ = '+gF(2*d)+' m.');}
+  if(k===1){var a=gP([0.4,0.5,0.8,1]),D=gP([1,1.5,2,2.5]),l=gP([450,500,600,650]),x=l*D/a/1000;return T('Young’s double slits: a = '+gF(a)+' mm, D = '+gF(D)+' m, λ = '+l+' nm. Find the fringe separation in mm.',x,' mm',gW(x,[x*2,l*a/D/1000]),'x = λD/a = '+l+' × 10⁻⁹ · '+gF(D)+'/('+gF(a)+' × 10⁻³) = '+gF(x)+' mm.');}
+  var N=gP([200,250,400,500]),d=1000/N,l=gP([400,500,600]),s=l/1000/d;if(!gNice(s))return null;return T('A grating has '+N+' lines per mm. Light of wavelength '+l+' nm falls on it normally. Find sin θ for the first order.',s,'',gW(s,[s*2,s/2]),'d = 1/'+N+' mm = '+gF(d)+' μm; sin θ = λ/d = '+gF(l/1000)+'/'+gF(d)+' = '+gF(s)+'.');
+}]);
+add('alp-electricity',[function(n){
+  var k=n%3;
+  if(k===0){var I=gR(1,5),t=gR(1,12)*10;return T('A current of '+I+' A flows for '+t+' s. Find the charge that passes.',I*t,' C',gW(I*t,[t/I,I+t]),'Q = It = '+(I*t)+' C.');}
+  if(k===1){var I2=gR(1,5),R=gR(2,12);return T('A '+R+' Ω resistor carries a current of '+I2+' A. Find the power dissipated.',I2*I2*R,' W',gW(I2*I2*R,[I2*R,I2*R*R]),'P = I²R = '+(I2*I2)+' · '+R+' = '+(I2*I2*R)+' W.');}
+  var L=gP([2,5,10,20]),A=gP([0.5,1,2]),rho=1.7;return T('A copper wire (ρ = 1.7 × 10⁻⁸ Ω m) has length '+L+' m and cross-sectional area '+gF(A)+' mm². Find its resistance in Ω.',rho*L/A/100,' Ω',gW(rho*L/A/100,[rho*L*A/100,rho*L/A]),'R = ρL/A = 1.7 × 10⁻⁸ · '+L+'/('+gF(A)+' × 10⁻⁶) = '+gF(rho*L/A/100)+' Ω.');
+}]);
+add('alp-dc',[function(n){
+  var k=n%3;
+  if(k===0){var p=gP([[6,3,2],[4,4,2],[12,6,4],[10,15,6],[20,30,12],[3,6,2]]);return T('Find the combined resistance of '+p[0]+' Ω and '+p[1]+' Ω in parallel.',p[2],' Ω',gW(p[2],[p[0]+p[1],(p[0]+p[1])/2]),'1/R = 1/'+p[0]+' + 1/'+p[1]+' ⇒ R = '+p[2]+' Ω.');}
+  if(k===1){var R=gR(2,10),r=gR(1,3),I=gR(1,3),E=I*(R+r);return T('A cell of e.m.f. '+E+' V and internal resistance '+r+' Ω is connected to a '+R+' Ω resistor. Find the terminal p.d.',I*R,' V',gW(I*R,[E,I*r]),'I = '+E+'/('+R+' + '+r+') = '+I+' A; V = E − Ir = '+E+' − '+(I*r)+' = '+(I*R)+' V.');}
+  var Vin=gP([6,9,10,12,20]),R1=gR(1,5),R2=gR(1,5),out=Vin*R2/(R1+R2);if(!gNice(out))return null;return T('A potential divider has '+R1+' kΩ and '+R2+' kΩ across '+Vin+' V. Find the p.d. across the '+R2+' kΩ resistor.',out,' V',gW(out,[Vin*R1/(R1+R2),Vin/2]),'V = '+Vin+' · '+R2+'/('+R1+' + '+R2+') = '+gF(out)+' V.');
+}]);
+add('alp-particles',[function(n){
+  var k=n%2,Z=gR(84,94),A=gR(210,240);
+  if(k===0)return T('A nucleus with nucleon number '+A+' and proton number '+Z+' emits an α-particle. Find the new nucleon number.',A-4,'',gW(A-4,[A-2,A]),'α = ⁴₂He: '+A+' − 4 = '+(A-4)+'.');
+  return T('A nucleus with proton number '+Z+' undergoes β⁻ decay. Find the new proton number.',Z+1,'',gW(Z+1,[Z-1,Z]),'A neutron becomes a proton: Z + 1 = '+(Z+1)+'.');
+}]);
+add('alp-circular',[function(n){
+  var k=n%2,m=gP([0.2,0.5,1,2,5]),v=gR(2,10),r=gP([0.5,1,2,4,5]);
+  if(k===0)return T('A '+gF(m)+' kg mass moves at '+v+' m/s in a circle of radius '+gF(r)+' m. Find the centripetal force.',m*v*v/r,' N',gW(m*v*v/r,[m*v/r,m*v*v]),'F = mv²/r = '+gF(m)+' · '+(v*v)+'/'+gF(r)+' = '+gF(m*v*v/r)+' N.');
+  return T('An object moves at '+v+' m/s in a circle of radius '+gF(r)+' m. Find its centripetal acceleration.',v*v/r,' m s⁻²',gW(v*v/r,[v/r,v*v*r]),'a = v²/r = '+gF(v*v/r)+' m s⁻².');
+}]);
+add('alp-gravfields',[function(n){
+  var g=gP([9.8,24,3.7,8.8]),k=gR(2,4);
+  return T('The gravitational field strength at the surface of a planet is '+gF(g)+' N/kg. Find it at a distance of '+k+' planet radii from the centre.',g/(k*k),' N/kg',gW(g/(k*k),[g/k,g*k]),'g ∝ 1/r²: '+gF(g)+'/'+(k*k)+' = '+gF(g/(k*k))+' N/kg.');
+}]);
+add('alp-thermal',[function(n){
+  var k=n%3;
+  if(k===0){var c=gR(-50,150);return T('Convert '+c+' °C to kelvin (use 273).',c+273,' K',gW(c+273,[c-273,c]),c+' + 273 = '+(c+273)+' K.');}
+  if(k===1){var m=gP([0.2,0.5,1,2]),dT=gR(5,40),Q=m*4200*dT/1000;return T('Find the energy needed to heat '+gF(m)+' kg of water by '+dT+' K (c = 4200 J kg⁻¹ K⁻¹). Give it in kJ.',Q,' kJ',gW(Q,[Q*10,m*dT]),'Q = mcΔθ = '+gF(m)+' · 4200 · '+dT+' = '+gF(Q*1000)+' J = '+gF(Q)+' kJ.');}
+  var T1=gP([200,250,300,400]),p1=gP([100,120,150,200]),f=gP([1.5,2,3]);return T('A fixed mass of ideal gas at constant volume has pressure '+p1+' kPa at '+T1+' K. Find the pressure at '+(T1*f)+' K.',p1*f,' kPa',gW(p1*f,[p1/f,p1+f]),'p/T = const: '+p1+' · '+gF(f)+' = '+gF(p1*f)+' kPa.');
+}]);
+add('alp-shm',[function(n){
+  var k=n%2,w=gR(2,20),x0=gP([0.01,0.02,0.03,0.05,0.1]);
+  if(k===0)return T('A body moves with SHM: ω = '+w+' rad/s, amplitude '+gF(x0)+' m. Find the maximum speed.',w*x0,' m/s',gW(w*x0,[w*w*x0,x0/w]),'v_max = ωx₀ = '+gF(w*x0)+' m/s.');
+  return T('A body moves with SHM: ω = '+w+' rad/s, amplitude '+gF(x0)+' m. Find the maximum acceleration.',w*w*x0,' m s⁻²',gW(w*w*x0,[w*x0,w*w]),'a_max = ω²x₀ = '+gF(w*w*x0)+' m s⁻².');
+}]);
+add('alp-efields',[function(n){
+  var k=n%3;
+  if(k===0){var V=gR(1,10)*100,d=gP([0.01,0.02,0.04,0.05]);return T('A p.d. of '+V+' V is applied across plates '+gF(d)+' m apart. Find the field strength.',V/d,' V/m',gW(V/d,[V*d,V]),'E = V/d = '+gF(V/d)+' V/m.');}
+  if(k===1){var C=gP([10,20,50,100,200]),V2=gR(2,12);return T('A '+C+' μF capacitor is charged to '+V2+' V. Find the energy stored in mJ.',0.5*C*V2*V2/1000,' mJ',gW(0.5*C*V2*V2/1000,[C*V2*V2/1000,C*V2/1000]),'W = ½CV² = ½ · '+C+' × 10⁻⁶ · '+(V2*V2)+' = '+gF(0.5*C*V2*V2/1000)+' mJ.');}
+  var R=gP([1,2,5,10,20,50]),Cc=gP([10,20,50,100,200]);return T('Find the time constant for R = '+R+' kΩ and C = '+Cc+' μF.',R*Cc/1000,' s',gW(R*Cc/1000,[R*Cc,R/Cc]),'τ = RC = '+R+' × 10³ · '+Cc+' × 10⁻⁶ = '+gF(R*Cc/1000)+' s.');
+}]);
+add('alp-magnetic',[function(n){
+  var B=gP([0.1,0.2,0.25,0.4,0.5]),I=gR(1,6),L=gP([0.1,0.2,0.4,0.5]);
+  return T('A wire of length '+gF(L)+' m carries '+I+' A at 90° to a '+gF(B)+' T field. Find the force on it.',B*I*L,' N',gW(B*I*L,[B*I,I*L]),'F = BIL = '+gF(B*I*L)+' N.');
+}]);
+add('alp-induction',[function(n){
+  var k=n%2;
+  if(k===0){var N=gP([50,100,200,500]),dP=gP([0.001,0.002,0.005,0.01]),t=gP([0.1,0.2,0.5]);return T('A coil of '+N+' turns has its flux changed by '+gF(dP)+' Wb in '+gF(t)+' s. Find the magnitude of the induced e.m.f.',N*dP/t,' V',gW(N*dP/t,[dP/t,N*dP]),'ε = NΔΦ/Δt = '+N+' · '+gF(dP)+'/'+gF(t)+' = '+gF(N*dP/t)+' V.');}
+  var I0=gR(1,6),R=gR(2,20);return T('An alternating current of peak value '+I0+' A flows through a '+R+' Ω resistor. Find the mean power.',0.5*I0*I0*R,' W',gW(0.5*I0*I0*R,[I0*I0*R,I0*R]),'P = ½I₀²R = '+gF(0.5*I0*I0*R)+' W.');
+}]);
+add('alp-quantum',[function(n){
+  var k=n%2;
+  if(k===0){var E=gR(3,9),W=gR(2,E-1);return T('Photons of energy '+E+' eV fall on a metal with work function '+W+' eV. Find the maximum kinetic energy of the photoelectrons.',E-W,' eV',gW(E-W,[E+W,E]),'hf = Φ + KE_max ⇒ KE_max = '+E+' − '+W+' = '+(E-W)+' eV.');}
+  var L=gP([[-3.4,-13.6,10.2],[-1.51,-3.4,1.89],[-0.85,-3.4,2.55],[-1.51,-13.6,12.09]]);return T('An electron moves from the level '+gF(L[0])+' eV to '+gF(L[1])+' eV. Find the energy of the emitted photon.',L[2],' eV',gW(L[2],[-L[0]-L[1]>0?-L[0]-L[1]:20,-L[0]]),'ΔE = '+gF(L[0])+' − ('+gF(L[1])+') = '+gF(L[2])+' eV.');
+}]);
+add('alp-nuclear',[function(n){
+  var A0=gP([800,1600,640,960,1200]),h=gR(1,4),th=gP([2,3,5,8]);
+  return T('A source has activity '+A0+' Bq and half-life '+th+' h. Find its activity after '+(h*th)+' h.',A0/Math.pow(2,h),' Bq',gW(A0/Math.pow(2,h),[A0/(2*h),A0/Math.pow(2,h+1)]),h+' half-lives: '+A0+'/2'+sup(h)+' = '+gF(A0/Math.pow(2,h))+' Bq.');
+}]);
+add('alp-astro',[function(n){
+  var k=n%2,a=gR(2,4);
+  if(k===0)return T('Star A has the same luminosity as star B but is '+a+' times further away. Find flux_B/flux_A.',a*a,'',gW(a*a,[a,2*a]),'F ∝ 1/d²: '+a+'² = '+(a*a)+'.');
+  return T('Two stars have the same radius. Star A is '+a+' times hotter than star B. Find L_A/L_B.',Math.pow(a,4),'',gW(Math.pow(a,4),[a*a,a]),'L ∝ T⁴: '+a+'⁴ = '+Math.pow(a,4)+'.');
+}]);
+add('alp-medical',[function(n){
+  var p=gP([[1,3],[1,4],[2,3],[1,9],[3,5]]),Z1=p[0],Z2=p[1],f=(Z2-Z1)*(Z2-Z1)/((Z2+Z1)*(Z2+Z1));
+  return T('Ultrasound passes from a medium of impedance '+Z1+' × 10⁶ to one of '+Z2+' × 10⁶ kg m⁻² s⁻¹. Find the fraction of intensity reflected.',f,'',gW(f,[(Z2-Z1)/(Z2+Z1),Z1/Z2]),'(Z₂ − Z₁)²/(Z₂ + Z₁)² = '+((Z2-Z1)*(Z2-Z1))+'/'+((Z2+Z1)*(Z2+Z1))+' = '+gF(f)+'.');
+}]);
+/* ---------- Олимпиадная математика ---------- */
+progAdd('olymp:math',{
+desc:'Олимпиадная математика: свои разделы — алгебра, теория чисел, комбинаторика и геометрия. В каждой теме главная идея, приёмы и трудные задачи с разбором.',
+note:'Уровень — школьный и районный этап олимпиады, 7–11 класс. Дальше решайте задачи прошлых лет: в них те же идеи.',
+sections:[
+{title:'Алгебра',topics:[
+{id:'olm-amgm',tag:'идея',title:'Неравенство о средних',
+ sum:'Для неотрицательных a и b: (a + b)/2 ≥ √(ab), равенство только при a = b. Для n чисел среднее арифметическое не меньше среднего геометрического. Отсюда два главных применения: при постоянном произведении сумма наименьшая, когда числа равны; при постоянной сумме произведение наибольшее, когда числа равны. Полезные частные случаи: x + 1/x ≥ 2 при x > 0, a² + b² ≥ 2ab, (a + b)² ≥ 4ab. Сложив три неравенства a² + b² ≥ 2ab, получим a² + b² + c² ≥ ab + bc + ca.',
+ ex:['При x > 0: x + 9/x ≥ 2√9 = 6, минимум 6 при x = 3','a + b = 10 ⇒ ab ≤ 25','(a + b)(1/a + 1/b) = 2 + a/b + b/a ≥ 4'],
+ tip:'Всегда проверьте, достигается ли равенство. Если нет — найденное число лишь оценка, а не минимум.',
+ qs:[['Наименьшее значение x + 16/x при x > 0:','8','16','4','x + 16/x ≥ 2√16 = 8, равенство при x = 4.'],
+  ['a, b > 0 и a + b = 12. Наибольшее значение ab:','36','72','144','ab ≤ ((a + b)/2)² = 36.'],
+  ['Наименьшее значение (a + b)(1/a + 1/b) при a, b > 0:','4','2','1','= 2 + a/b + b/a ≥ 2 + 2.'],
+  ['tf','Для любых действительных a и b верно a² + b² ≥ 2ab.',true,'Это (a − b)² ≥ 0.'],
+  ['tf','При x > 0 наименьшее значение x + 1/x равно 1.',false,'Оно равно 2, при x = 1.'],
+  ['in','Периметр прямоугольника 40. Наибольшая площадь?',['100'],'a + b = 20, ab ≤ 100 — квадрат 10 × 10.']]},
+{id:'olm-vieta',tag:'идея',title:'Теорема Виета в нестандартных задачах',
+ sum:'Для ax² + bx + c = 0: x₁ + x₂ = −b/a, x₁x₂ = c/a. Любое симметричное выражение корней выражается через s = x₁ + x₂ и p = x₁x₂: x₁² + x₂² = s² − 2p, 1/x₁ + 1/x₂ = s/p, x₁³ + x₂³ = s³ − 3ps, (x₁ − x₂)² = s² − 4p. Для кубического ax³ + bx² + cx + d: сумма корней −b/a, сумма попарных произведений c/a, произведение −d/a. Целые корни многочлена с целыми коэффициентами — среди делителей свободного члена.',
+ ex:['x² − 5x + 3 = 0: x₁² + x₂² = 25 − 6 = 19','Уравнение с корнями x₁² и x₂²: t² − 19t + 9 = 0','x³ − 6x² + 11x − 6 = 0: корни 1, 2, 3 (сумма 6, произведение 6)'],
+ tip:'Сами корни искать не нужно — работайте с s и p.',
+ qs:[['x₁, x₂ — корни x² − 7x + 2 = 0. x₁² + x₂² =','45','49','53','s² − 2p = 49 − 4.'],
+  ['x₁, x₂ — корни x² + 3x − 5 = 0. 1/x₁ + 1/x₂ =','3/5','−3/5','5/3','s/p = (−3)/(−5).'],
+  ['Сумма корней x³ − 4x² + x + 6 = 0:','4','−4','6','−b/a = 4.'],
+  ['tf','Если c/a < 0, корни квадратного уравнения действительные и разных знаков.',true,'Произведение отрицательно, значит D > 0.'],
+  ['tf','Раз у x² + x + 1 = 0 «сумма корней −1», у него есть действительные корни.',false,'D = −3 < 0: формулы Виета верны для комплексных корней, действительных нет.'],
+  ['in','x₁, x₂ — корни x² − 4x + 1 = 0. Найдите x₁³ + x₂³.',['52'],'s³ − 3ps = 64 − 12 = 52.']]},
+{id:'olm-telescoping',tag:'идея',title:'Суммы и телескопирование',
+ sum:'Если каждое слагаемое — разность aₖ = f(k) − f(k + 1), почти всё сокращается: a₁ + … + aₙ = f(1) − f(n + 1). Классика: 1/(k(k + 1)) = 1/k − 1/(k + 1), 1/(k(k + 2)) = ½(1/k − 1/(k + 2)), 1/(√k + √(k + 1)) = √(k + 1) − √k. Готовые суммы: 1 + 2 + … + n = n(n + 1)/2; 1² + … + n² = n(n + 1)(2n + 1)/6; 1³ + … + n³ = (n(n + 1)/2)².',
+ ex:['1/(1·2) + … + 1/(99·100) = 1 − 1/100 = 99/100','1/(1·3) + 1/(3·5) + … + 1/((2n − 1)(2n + 1)) = n/(2n + 1)','1³ + … + 10³ = 55² = 3025'],
+ tip:'Увидели дробь с произведением в знаменателе — попробуйте разбить её на разность двух дробей.',
+ qs:[['1/(1·2) + 1/(2·3) + … + 1/(9·10) =','9/10','1/10','10/9','1 − 1/10.'],
+  ['1 + 2 + … + 100 =','5050','5000','10100','100 · 101/2.'],
+  ['1³ + 2³ + … + 10³ =','3025','55','385','(10 · 11/2)² = 55².'],
+  ['tf','1/(k(k + 2)) = ½(1/k − 1/(k + 2)).',true,'Приведите к общему знаменателю: 2/(2k(k + 2)).'],
+  ['tf','1/(1·3) + 1/(3·5) + … + 1/(99·101) = 100/101.',false,'½(1 − 1/101) = 50/101.'],
+  ['in','Найдите сумму 1/(√1 + √2) + 1/(√2 + √3) + … + 1/(√24 + √25).',['4'],'Каждое слагаемое = √(k + 1) − √k, сумма √25 − √1 = 4.']]},
+{id:'olm-functional',tag:'идея',title:'Функциональные уравнения',
+ sum:'Нужно найти все функции, для которых выполнено равенство. Приёмы: подставить x = 0, y = 0, y = x, y = −x и т. п.; подставить вместо аргумента другое выражение (x → 1 − x, x → 1/x) и решить получившуюся систему; доказать, что f(n) = cn на целых числах, через f(n + 1) = f(n) + c. В конце обязательно проверьте ответ подстановкой.',
+ ex:['f(x) + 2f(1 − x) = x. Подставим 1 − x: f(1 − x) + 2f(x) = 1 − x. Из системы f(x) = (2 − 3x)/3','f(xy) = f(x) + f(y): x = y = 1 даёт f(1) = 0','f(n + 1) = f(n) + 2, f(0) = 3 ⇒ f(n) = 2n + 3'],
+ tip:'Найденная формула — только кандидат. Без проверки подстановкой решение не засчитают.',
+ qs:[['f(x + y) = f(x) + f(y) для всех x, y. f(0) =','0','1','любое число','x = y = 0: f(0) = 2f(0).'],
+  ['f(x) + 2f(1 − x) = x для всех x. f(0) =','2/3','0','1/3','f(x) = (2 − 3x)/3.'],
+  ['f(n + 1) = f(n) + 3, f(1) = 2. f(10) =','29','30','32','f(n) = 3n − 1.'],
+  ['tf','Если f(xy) = f(x) + f(y) для всех x, y > 0, то f(1) = 0.',true,'x = y = 1.'],
+  ['tf','f(x) = x + 1 удовлетворяет f(x + y) = f(x) + f(y).',false,'Слева x + y + 1, справа x + y + 2.'],
+  ['in','f(x) − 2f(1/x) = x при x ≠ 0. Найдите f(1).',['−1','-1'],'x = 1: f(1) − 2f(1) = 1 ⇒ f(1) = −1.']]},
+{id:'olm-floor',tag:'идея',title:'Целая и дробная часть числа',
+ sum:'[x] — наибольшее целое число, не превосходящее x; {x} = x − [x], 0 ≤ {x} < 1. Поэтому [x] ≤ x < [x] + 1. Целое число выносится: [x + n] = [x] + n. Формула Лежандра: степень простого p в n! равна [n/p] + [n/p²] + [n/p³] + … Отсюда число нулей в конце n! — [n/5] + [n/25] + [n/125] + …',
+ ex:['[−2,3] = −3, {−2,3} = 0,7','Нулей в конце 100!: 20 + 4 = 24','[x] = 3 ⇔ 3 ≤ x < 4'],
+ tip:'Для отрицательных чисел [−x] ≠ −[x]: [−2,3] = −3, а не −2.',
+ qs:[['[−3,7] =','−4','−3','3','Наибольшее целое, не превосходящее −3,7.'],
+  ['Сколько нулей в конце числа 50!?','12','10','5','[50/5] + [50/25] = 10 + 2.'],
+  ['{7,25} =','0,25','7','0,75','Дробная часть.'],
+  ['tf','[x + 1] = [x] + 1 для любого x.',true,'Целый сдвиг выносится.'],
+  ['tf','[2x] = 2[x] для любого x.',false,'x = 0,5: [1] = 1, но 2[0,5] = 0.'],
+  ['in','Сколько нулей в конце 125!?',['31'],'25 + 5 + 1 = 31.']]}
+]},
+{title:'Теория чисел',topics:[
+{id:'olm-mod',tag:'идея',title:'Остатки и сравнения по модулю',
+ sum:'a ≡ b (mod m), если a − b делится на m. Сравнения можно складывать, вычитать, умножать и возводить в степень, поэтому остатки больших степеней ищут через маленькие. Удобно брать отрицательные остатки: 2 ≡ −1 (mod 3), 10 ≡ −1 (mod 11). Квадраты: по mod 3 — только 0 и 1, по mod 4 — 0 и 1, по mod 8 — 0, 1 и 4. Малая теорема Ферма: если p простое и a не делится на p, то aᵖ⁻¹ ≡ 1 (mod p).',
+ ex:['2¹⁰⁰ mod 3: 2 ≡ −1 ⇒ (−1)¹⁰⁰ = 1','n² + 1 никогда не делится на 3: n² ≡ 0 или 1','7¹⁰⁰ mod 5: 7 ≡ 2, 2⁴ ≡ 1 ⇒ 2¹⁰⁰ ≡ 1'],
+ tip:'Если хотите доказать, что уравнение не имеет решений в целых числах, посмотрите на обе части по подходящему модулю.',
+ qs:[['Остаток 2¹⁰⁰ при делении на 3:','1','2','0','2 ≡ −1, (−1)¹⁰⁰ = 1.'],
+  ['Остаток 3²⁰²⁶ при делении на 8:','1','3','5','3² = 9 ≡ 1 (mod 8).'],
+  ['Какие остатки даёт квадрат целого числа при делении на 4?','0 или 1','0, 1, 2 или 3','только 0','(2k)² ≡ 0, (2k + 1)² ≡ 1.'],
+  ['tf','Если n не делится на 3, то n² + 2 делится на 3.',true,'n² ≡ 1, 1 + 2 ≡ 0.'],
+  ['tf','Сумма двух квадратов может давать остаток 3 при делении на 4.',false,'Возможны только 0, 1, 2.'],
+  ['in','Остаток 7¹⁰⁰ при делении на 5?',['1'],'7 ≡ 2, 2⁴ ≡ 1, 2¹⁰⁰ = (2⁴)²⁵ ≡ 1.']]},
+{id:'olm-lastdigit',tag:'идея',title:'Последние цифры',
+ sum:'Последняя цифра числа — это остаток при делении на 10, две последние — на 100. Последние цифры степеней повторяются: 2 → 2, 4, 8, 6; 3 → 3, 9, 7, 1; 7 → 7, 9, 3, 1; 8 → 8, 4, 2, 6; 4 → 4, 6; 9 → 9, 1; у 0, 1, 5, 6 цифра не меняется. Поэтому показатель достаточно взять по модулю 4 (остаток 0 означает четвёртый элемент цикла). Факториалы начиная с 5! оканчиваются нулём.',
+ ex:['7²⁰²⁶: 2026 ≡ 2 (mod 4) ⇒ 9','2¹⁰⁰: 100 ≡ 0 (mod 4) ⇒ 6','7⁴ = 2401 ⇒ 7⁴ᵏ оканчивается на 01'],
+ tip:'Если показатель делится на 4, берите четвёртую цифру цикла, а не «нулевую».',
+ qs:[['Последняя цифра 3²⁰²⁵:','3','9','7','2025 ≡ 1 (mod 4).'],
+  ['Последняя цифра 2²⁰²⁶:','4','6','2','2026 ≡ 2 (mod 4).'],
+  ['Последняя цифра суммы 1! + 2! + … + 100!:','3','0','1','1 + 2 + 6 + 24 = 33, остальные оканчиваются на 0.'],
+  ['tf','Любая натуральная степень числа, оканчивающегося на 6, оканчивается на 6.',true,'6 · 6 = 36.'],
+  ['tf','Последняя цифра 9¹⁰¹ равна 1.',false,'Нечётная степень 9 оканчивается на 9.'],
+  ['in','Две последние цифры числа 7¹⁰⁰ (запишите двумя цифрами)?',['01'],'7⁴ = 2401, значит (7⁴)²⁵ оканчивается на 01.']]},
+{id:'olm-primes',tag:'идея',title:'Простые числа и делители',
+ sum:'Каждое натуральное число единственным образом раскладывается на простые множители. Если n = p₁^a₁ · p₂^a₂ · … · pₖ^aₖ, то число делителей n равно (a₁ + 1)(a₂ + 1)…(aₖ + 1). НОД(a, b) · НОК(a, b) = ab. Все простые числа больше 3 имеют вид 6k ± 1. У точного квадрата нечётное число делителей (делители разбиваются на пары d и n/d, кроме √n). aⁿ + bⁿ при нечётном n делится на a + b.',
+ ex:['360 = 2³ · 3² · 5: делителей 4 · 3 · 2 = 24','p² − 1 делится на 24 для простого p > 3','НОД(84, 126) = 42, НОК = 252'],
+ tip:'Чтобы доказать, что число составное, ищите разложение на множители: формулы a² − b², aⁿ + bⁿ.',
+ qs:[['Число делителей 72:','12','8','6','72 = 2³ · 3²: 4 · 3 = 12.'],
+  ['НОД(a, b) = 6, НОК(a, b) = 120, a = 24. b =','30','20','720','ab = 720.'],
+  ['У каких натуральных чисел нечётное количество делителей?','у точных квадратов','у простых','у чётных','Делители идут парами, кроме √n.'],
+  ['tf','Для любого простого p > 3 число p² − 1 делится на 24.',true,'(p − 1)(p + 1): два соседних чётных (одно делится на 4) и одно делится на 3.'],
+  ['tf','Число 2⁵⁰ + 1 простое.',false,'2⁵⁰ + 1 = 4²⁵ + 1²⁵ делится на 4 + 1 = 5.'],
+  ['in','Сколько делителей у числа 2⁴ · 3² · 5?',['30'],'5 · 3 · 2 = 30.']]},
+{id:'olm-diophantine',tag:'идея',title:'Уравнения в целых числах',
+ sum:'Линейное уравнение ax + by = c имеет целые решения тогда и только тогда, когда НОД(a, b) делит c; если (x₀, y₀) — решение и d = НОД(a, b), то все решения: x = x₀ + (b/d)t, y = y₀ − (a/d)t. Для нелинейных уравнений три главных приёма: разложение на множители (xy − x − y = (x − 1)(y − 1) − 1), оценки (ограничить переменные и перебрать), остатки (показать, что по какому-то модулю решений нет).',
+ ex:['3x + 5y = 1: x = 2, y = −1; все решения x = 2 + 5t, y = −1 − 3t','xy = x + y ⇔ (x − 1)(y − 1) = 1','x² − y² = 15 ⇔ (x − y)(x + y) = 15'],
+ tip:'Увидели произведение переменных — попробуйте дополнить выражение до произведения скобок.',
+ qs:[['Есть ли целые решения у 6x + 9y = 7?','нет','да, одно','бесконечно много','НОД(6, 9) = 3 не делит 7.'],
+  ['Сколько пар натуральных (x, y) удовлетворяют x² − y² = 15?','2','1','4','(x − y, x + y) = (1, 15) или (3, 5): (8, 7) и (4, 1).'],
+  ['Уравнение x² = 3y + 2 в целых числах…','не имеет решений','имеет одно решение','имеет бесконечно много решений','Квадрат по mod 3 даёт 0 или 1, а не 2.'],
+  ['tf','Уравнение 4x + 6y = 10 имеет целые решения.',true,'НОД = 2 делит 10: x = 1, y = 1.'],
+  ['tf','Если у ax + by = c есть целое решение, то оно единственное.',false,'Их бесконечно много.'],
+  ['in','Сколько решений в натуральных числах у xy = x + y?',['1'],'(x − 1)(y − 1) = 1 ⇒ x = y = 2.']]}
+]},
+{title:'Комбинаторика',topics:[
+{id:'olm-pigeonhole',tag:'идея',title:'Принцип Дирихле',
+ sum:'Если n + 1 кроликов сидят в n клетках, то в какой-то клетке хотя бы два кролика. Обобщение: если в n клетках больше kn кроликов, в какой-то клетке хотя бы k + 1. Вся трудность — понять, что будет «клетками»: остатки от деления, цвета, части фигуры, пары чисел с одинаковой суммой.',
+ ex:['Из 13 человек двое родились в одном месяце','Из любых 5 целых чисел два дают одинаковый остаток при делении на 4','В квадрате 2 × 2 из 5 точек две на расстоянии не больше √2: разбейте его на 4 квадрата 1 × 1'],
+ tip:'Сначала спросите себя: что здесь клетки и сколько их? Решение почти всегда следует сразу.',
+ qs:[['Наименьшее число учеников, при котором двое наверняка родились в один день недели:','8','7','14','7 клеток — нужно 8 кроликов.'],
+  ['В ящике носки 3 цветов. Сколько носков нужно вынуть вслепую, чтобы наверняка была пара одного цвета?','4','3','6','3 клетки — 4 носка.'],
+  ['Из скольких целых чисел всегда можно выбрать два с разностью, делящейся на 10?','11','10','20','10 возможных остатков.'],
+  ['tf','Среди любых 6 целых чисел найдутся два, разность которых делится на 5.',true,'5 остатков, 6 чисел.'],
+  ['tf','Среди любых 100 человек обязательно найдутся 10, родившихся в одном месяце.',false,'Гарантированно только 9: 12 · 8 = 96 < 100, но можно распределить 100 так, что в каждом месяце не больше 9.'],
+  ['in','Сколько чисел нужно взять из 1, 2, …, 20, чтобы среди них наверняка нашлись два с суммой 21?',['11'],'10 пар (1, 20), (2, 19), …; из 11 чисел два попадут в одну пару.']]},
+{id:'olm-invariants',tag:'идея',title:'Инварианты и раскраски',
+ sum:'Инвариант — величина, которая не меняется при разрешённых операциях: чётность суммы, остаток, сумма, число клеток определённого цвета. Если у начального и желаемого положений инвариант разный, перейти нельзя. Раскраска доски (шахматная, в 4 цвета по диагоналям и т. п.) — частый способ построить инвариант. Полуинвариант — величина, которая меняется только в одну сторону; он доказывает, что процесс когда-нибудь закончится.',
+ ex:['Доску 8 × 8 без двух противоположных угловых клеток нельзя покрыть доминошками: удалены две клетки одного цвета','Числа 1…10, стираем два и пишем разность: чётность суммы не меняется, сумма 55 нечётна ⇒ последнее число нечётно','Конь каждым ходом меняет цвет клетки'],
+ tip:'Если задача спрашивает «можно ли…» и ответ «нельзя», почти наверняка нужен инвариант.',
+ qs:[['На доске 1, 2, …, 10. Можно стереть два числа и записать их разность. Последнее оставшееся число…','нечётное','чётное','может быть любым','Чётность суммы не меняется, а сумма 55 нечётна.'],
+  ['Можно ли доску 8 × 8 без двух противоположных угловых клеток покрыть 31 доминошкой 1 × 2?','нет','да','только если поворачивать доминошки','Удалённые клетки одного цвета, а доминошка всегда покрывает белую и чёрную.'],
+  ['Конь сделал 25 ходов и вернулся на исходную клетку. Это…','невозможно','возможно','возможно только на доске 8 × 8','Каждый ход меняет цвет; после нечётного числа ходов цвет другой.'],
+  ['tf','Если инвариант у начального и конечного положения разный, перейти от одного к другому нельзя.',true,'В этом суть метода.'],
+  ['tf','Доску 10 × 10 можно разрезать на прямоугольники 1 × 4.',false,'Раскрасим клетку (i, j) в цвет (i + j) mod 4: каждая полоска покрывает все 4 цвета по разу, а клеток цветов 25, 26, 25, 24 — поровну не выходит.'],
+  ['in','На доске числа 1, 2, …, 2026. Можно стереть любые два и записать их сумму. Какое число останется в конце?',['2053351'],'Сумма не меняется: 2026 · 2027/2 = 2 053 351.']]},
+{id:'olm-counting',tag:'идея',title:'Подсчёт: включения-исключения и биекции',
+ sum:'Формула включений-исключений: |A ∪ B| = |A| + |B| − |A ∩ B|; для трёх множеств прибавляют |A ∩ B ∩ C| после вычитания попарных пересечений. Часто легче посчитать дополнение. Биекция — сопоставить объекты другим, которые проще считать. «Шары и перегородки»: число решений x₁ + … + xₖ = n в неотрицательных целых равно C(n + k − 1, k − 1). Кратчайших путей по сетке из (0, 0) в (m, n) — C(m + n, m).',
+ ex:['От 1 до 100 делятся на 2 или 3: 50 + 33 − 16 = 67','x + y + z = 10 в неотрицательных целых: C(12, 2) = 66','Путей по сетке из (0, 0) в (4, 3): C(7, 3) = 35'],
+ tip:'Если считать прямо трудно, придумайте, чему взаимно однозначно соответствует каждый объект.',
+ qs:[['Сколько чисел от 1 до 100 не делятся ни на 2, ни на 5?','40','50','60','100 − (50 + 20 − 10) = 40.'],
+  ['Сколько решений у x + y + z = 5 в неотрицательных целых числах?','21','15','10','C(7, 2) = 21.'],
+  ['Число кратчайших путей по сетке из (0, 0) в (3, 3) шагами вправо и вверх:','20','9','6','C(6, 3) = 20.'],
+  ['tf','|A ∪ B| = |A| + |B| − |A ∩ B|.',true,'Общие элементы иначе посчитаны дважды.'],
+  ['tf','Уравнение x + y = n имеет n + 1 решение в натуральных числах (x, y ≥ 1).',false,'Решений n − 1: x = 1, …, n − 1.'],
+  ['in','Сколько чисел от 1 до 1000 делятся на 3 или на 5?',['467'],'333 + 200 − 66 = 467.']]},
+{id:'olm-graphs',tag:'идея',title:'Графы',
+ sum:'Граф — точки (вершины) и соединяющие их линии (рёбра). Сумма степеней всех вершин равна удвоенному числу рёбер, поэтому вершин нечётной степени чётное число (лемма о рукопожатиях). Связный граф можно обойти, пройдя по каждому ребру ровно один раз, если вершин нечётной степени 0 или 2 (эйлеров путь). В дереве на n вершинах n − 1 ребро. В полном графе на n вершинах n(n − 1)/2 рёбер.',
+ ex:['15 человек не могут каждый пожать руку ровно 3 другим: 15 · 3 нечётно','Кёнигсбергские мосты: 4 вершины нечётной степени — обхода нет','Турнир в один круг на 8 команд: 28 матчей'],
+ tip:'Видите «знакомства», «рукопожатия», «дороги между городами» — нарисуйте граф.',
+ qs:[['Сколько рёбер у полного графа на 10 вершинах?','45','90','100','10 · 9/2.'],
+  ['В дереве 20 вершин. Сколько в нём рёбер?','19','20','21','n − 1.'],
+  ['Могут ли 9 человек пожать руку каждый ровно пятерым другим?','нет','да','только если все знакомы','Сумма степеней 9 · 5 = 45 нечётна.'],
+  ['tf','В любом графе число вершин нечётной степени чётно.',true,'Лемма о рукопожатиях.'],
+  ['tf','Связный граф, у которого все 4 вершины нечётной степени, можно обойти, пройдя по каждому ребру ровно один раз.',false,'Нужно 0 или 2 нечётные вершины.'],
+  ['in','В турнире каждый сыграл с каждым один раз, всего сыграно 36 партий. Сколько было участников?',['9'],'n(n − 1)/2 = 36 ⇒ n = 9.']]}
+]},
+{title:'Геометрия',topics:[
+{id:'olm-angles',tag:'идея',title:'Счёт углов и вписанные углы',
+ sum:'Вписанный угол равен половине центрального, опирающегося на ту же дугу; вписанные углы, опирающиеся на одну дугу, равны; угол, опирающийся на диаметр, прямой. Четырёхугольник можно вписать в окружность тогда и только тогда, когда сумма его противоположных углов 180°. Угол между касательной и хордой равен половине дуги между ними. Сумма углов выпуклого n-угольника 180°(n − 2), внешний угол правильного n-угольника 360°/n.',
+ ex:['Центральный угол 100° ⇒ вписанный 50°','ABCD вписан, ∠A = 70° ⇒ ∠C = 110°','Правильный 12-угольник: внешний угол 30°, внутренний 150°'],
+ tip:'Отмечайте на чертеже все равные вписанные углы — часто ответ виден сразу.',
+ qs:[['Центральный угол 140°. Вписанный угол, опирающийся на ту же дугу:','70°','140°','40°','Половина центрального.'],
+  ['Четырёхугольник вписан в окружность, ∠B = 65°. ∠D =','115°','65°','25°','180° − 65°.'],
+  ['Сумма углов выпуклого 10-угольника:','1440°','1800°','1260°','180° · 8.'],
+  ['tf','Вписанный угол, опирающийся на диаметр, прямой.',true,'Половина от 180°.'],
+  ['tf','Любой параллелограмм можно вписать в окружность.',false,'Только прямоугольник: противоположные углы должны давать 180°.'],
+  ['in','Внутренний угол правильного многоугольника 150°. Сколько у него сторон?',['12'],'Внешний угол 30°, 360/30 = 12.']]},
+{id:'olm-areas',tag:'идея',title:'Площади и отношения отрезков',
+ sum:'У треугольников с общей высотой площади относятся как основания. Медиана делит треугольник на две равные по площади части, а три медианы — на шесть равных. У подобных фигур с коэффициентом k площади относятся как k². Формулы: S = ½ab sin C, формула Герона S = √(p(p − a)(p − b)(p − c)). Метод площадей: выразить одну и ту же площадь двумя способами.',
+ ex:['D на BC, BD : DC = 2 : 3 ⇒ S(ABD) : S(ADC) = 2 : 3','Средняя линия отсекает треугольник площадью ¼ от исходного','Треугольник 13, 14, 15: p = 21, S = 84'],
+ tip:'Нужно отношение отрезков — сравните площади треугольников с общей высотой.',
+ qs:[['Средняя линия отсекает от треугольника треугольник. Какую долю площади?','1/4','1/2','1/3','k = ½, площадь k² = ¼.'],
+  ['Три медианы делят треугольник на 6 частей. Их площади…','равны','относятся как 1 : 2','все разные','Каждая — шестая часть.'],
+  ['Площадь треугольника со сторонами 13, 14, 15:','84','91','42','√(21 · 8 · 7 · 6) = 84.'],
+  ['tf','Если треугольники подобны с коэффициентом 3, их площади относятся как 9 : 1.',true,'k² = 9.'],
+  ['tf','Медиана делит треугольник на две части разной площади.',false,'Равные основания и общая высота — площади равны.'],
+  ['in','Треугольник площади 60. Точка делит сторону в отношении 1 : 2 и соединена с противоположной вершиной. Площадь меньшей части?',['20'],'60 · 1/3.']]},
+{id:'olm-triangle-ineq',tag:'идея',title:'Неравенство треугольника и экстремальные задачи',
+ sum:'В треугольнике каждая сторона меньше суммы и больше разности двух других: |b − c| < a < b + c. Против большей стороны лежит больший угол. Кратчайший путь между точками — отрезок; если путь должен коснуться прямой, отразите одну из точек относительно неё, и ломаная станет отрезком. Среди треугольников с данным периметром наибольшая площадь у равностороннего, среди прямоугольников — у квадрата.',
+ ex:['Стороны 3, 4, x: 1 < x < 7','Путь из A к реке и в B: отразите B относительно берега и соедините с A','Стороны 5, 7 и целая третья: от 3 до 11 — 9 вариантов'],
+ tip:'«Найти кратчайший путь» с условием на прямой — почти всегда отражение.',
+ qs:[['Две стороны треугольника 5 и 9. Сколько целых значений может принимать третья?','9','10','8','4 < x < 14: от 5 до 13.'],
+  ['Существует ли треугольник со сторонами 2, 3, 6?','нет','да','только тупоугольный','2 + 3 < 6.'],
+  ['Как найти кратчайший путь из A в B с заходом на прямую l (A и B по одну сторону)?','отразить B относительно l и соединить с A','опустить перпендикуляр из A на l','взять середину AB','После отражения ломаная становится отрезком.'],
+  ['tf','В любом треугольнике против большей стороны лежит больший угол.',true,'Классическая теорема.'],
+  ['tf','Существует треугольник со сторонами 1, 2 и 3.',false,'1 + 2 = 3 — он вырожденный.'],
+  ['in','Периметр прямоугольника 24. Наибольшая площадь?',['36'],'Квадрат 6 × 6.']]}
+]}
+]});
+
+/* Генераторы олимпиадной математики */
+function mpow(a,e,m){var r=1;a%=m;while(e>0){if(e&1)r=r*a%m;a=a*a%m;e>>=1;}return r;}
+add('olm-amgm',[function(n){
+  var k=n%2;
+  if(k===0){var c=gR(2,12);return T('Найдите наименьшее значение x + '+(c*c)+'/x при x > 0.',2*c,'',gW(2*c,[c*c,c]),'По неравенству о средних x + '+(c*c)+'/x ≥ 2√'+(c*c)+' = '+(2*c)+', равенство при x = '+c+'.');}
+  var s=2*gR(3,15);return T('a, b > 0 и a + b = '+s+'. Найдите наибольшее значение ab.',s*s/4,'',gW(s*s/4,[s*s/2,s]),'ab ≤ ((a + b)/2)² = '+(s/2)+'² = '+(s*s/4)+', равенство при a = b = '+(s/2)+'.');
+}]);
+add('olm-vieta',[function(n){
+  var s=gR(-9,9)||5,p=gR(-9,9)||2,k=n%2;
+  if(k===0)return T('x₁, x₂ — корни уравнения x²'+sgn(-s)+'x'+sgn(p)+' = 0. Найдите x₁² + x₂².',s*s-2*p,'',gW(s*s-2*p,[s*s+2*p,s*s-p],true),'x₁ + x₂ = '+s+', x₁x₂ = '+p+'; x₁² + x₂² = '+(s*s)+' − 2·('+p+') = '+(s*s-2*p)+'.');
+  return T('x₁, x₂ — корни уравнения x²'+sgn(-s)+'x'+sgn(p)+' = 0. Найдите x₁³ + x₂³.',s*s*s-3*p*s,'',gW(s*s*s-3*p*s,[s*s*s+3*p*s,s*s*s-p*s],true),'x₁³ + x₂³ = s³ − 3ps = '+(s*s*s)+' − 3·('+p+')·('+s+') = '+(s*s*s-3*p*s)+'.');
+}]);
+add('olm-telescoping',[function(n){
+  var k=n%3,N=gR(5,99);
+  if(k===0)return T('Найдите 1/(1·2) + 1/(2·3) + … + 1/('+N+'·'+(N+1)+').',N+'/'+(N+1),'',[1+'/'+(N+1),(N+1)+'/'+N],'1/(k(k + 1)) = 1/k − 1/(k + 1), сумма = 1 − 1/'+(N+1)+' = '+N+'/'+(N+1)+'.',true);
+  if(k===1){var M=gR(10,60);return T('Найдите 1 + 2 + … + '+M+'.',M*(M+1)/2,'',gW(M*(M+1)/2,[M*M,M*(M-1)/2]),'n(n + 1)/2 = '+M+' · '+(M+1)+'/2 = '+(M*(M+1)/2)+'.');}
+  var q=gR(3,12),S=Math.pow(q*(q+1)/2,2);return T('Найдите 1³ + 2³ + … + '+q+'³.',S,'',gW(S,[q*(q+1)/2,q*(q+1)*(2*q+1)/6]),'(n(n + 1)/2)² = '+(q*(q+1)/2)+'² = '+S+'.');
+}]);
+add('olm-functional',[function(n){
+  var d=gR(2,9),a=gR(-5,9),N=gR(5,30);
+  return T('f(n + 1) = f(n) + '+d+' для всех n, f(1) = '+a+'. Найдите f('+N+').',a+(N-1)*d,'',gW(a+(N-1)*d,[a+N*d,N*d],true),'f(n) = '+a+' + (n − 1)·'+d+', f('+N+') = '+(a+(N-1)*d)+'.');
+}]);
+add('olm-floor',[function(n){
+  var N=gR(20,400),z=0,p=5;while(p<=N){z+=Math.floor(N/p);p*=5;}
+  return T('Сколько нулей в конце числа '+N+'!?',z,'',gW(z,[Math.floor(N/5),Math.floor(N/10)]),'['+N+'/5] + ['+N+'/25] + ['+N+'/125] + … = '+z+'.');
+}]);
+add('olm-mod',[function(n){
+  var m=gP([3,4,5,7,8,9,11]),a=gR(2,12),e=gR(20,2026);if(a%m===0)a++;
+  var r=mpow(a,e,m);
+  var w1=(r+1)%m,w2=(a%m)!==r&&(a%m)!==w1?a%m:(r+2)%m;
+  return T('Найдите остаток от деления '+a+sup(e)+' на '+m+'.',r,'',[w1,w2],'Остатки степеней '+a+' по модулю '+m+' повторяются циклом; '+a+sup(e)+' ≡ '+r+' (mod '+m+').');
+}]);
+add('olm-lastdigit',[function(n){
+  var a=gR(2,99),e=gR(10,2026),r=mpow(a,e,10);
+  return T('Найдите последнюю цифру числа '+a+sup(e)+'.',r,'',[(r+2)%10,(r+5)%10],'Последняя цифра '+a+' — '+(a%10)+', её степени повторяются с периодом не больше 4; показатель '+e+' ≡ '+(e%4)+' (mod 4) ⇒ '+r+'.');
+}]);
+add('olm-primes',[function(n){
+  var a=gR(1,5),b=gR(0,3),c=gR(0,2),N=Math.pow(2,a)*Math.pow(3,b)*Math.pow(5,c),d=(a+1)*(b+1)*(c+1);
+  return T('Сколько натуральных делителей у числа '+N+'?',d,'',gW(d,[a+b+c,a*Math.max(b,1)*Math.max(c,1)+1]),N+' = 2'+sup(a)+(b?' · 3'+(b>1?sup(b):''):'')+(c?' · 5'+(c>1?sup(c):''):'')+'; делителей ('+(a+1)+')('+(b+1)+')('+(c+1)+') = '+d+'.');
+}]);
+add('olm-diophantine',[function(n){
+  var N=gP([15,21,33,35,45,63,77,91,105]),cnt=0,list=[];
+  for(var d=1;d*d<N;d++)if(N%d===0&&(d+N/d)%2===0){cnt++;list.push('('+((d+N/d)/2)+', '+((N/d-d)/2)+')');}
+  return T('Сколько пар натуральных чисел (x, y) удовлетворяют x² − y² = '+N+'?',cnt,'',gW(cnt,[cnt+1,cnt*2]),'(x − y)(x + y) = '+N+', множители одной чётности: '+list.join(', ')+'.');
+}]);
+add('olm-pigeonhole',[function(n){
+  var k=n%2;
+  if(k===0){var c=gR(3,9);return T('В ящике носки '+c+' цветов. Сколько носков нужно вынуть вслепую, чтобы наверняка нашлась пара одного цвета?',c+1,'',gW(c+1,[c,2*c]),c+' цветов — '+c+' клеток; '+(c+1)+' носков — двое в одной.');}
+  var N=gR(30,200),m=gP([7,12]),g=Math.ceil(N/m);return T('Среди '+N+' человек какое наибольшее число родившихся в '+(m===7?'один день недели':'один месяц')+' гарантировано?',g,'',gW(g,[Math.floor(N/m),g+1]),'Обобщённый принцип Дирихле: ⌈'+N+'/'+m+'⌉ = '+g+'.');
+}]);
+add('olm-invariants',[function(n){
+  var N=gR(10,300),S=N*(N+1)/2;
+  return T('На доске числа 1, 2, …, '+N+'. Можно стереть любые два и записать их сумму. Какое число останется в конце?',S,'',gW(S,[N*N,S-N]),'Сумма не меняется: '+N+' · '+(N+1)+'/2 = '+S+'.');
+}]);
+add('olm-counting',[function(n){
+  var k=n%2;
+  if(k===0){var a=gR(2,6),b=gR(2,6);return T('Сколько кратчайших путей по клеткам ведут из (0, 0) в ('+a+', '+b+') шагами вправо и вверх?',cC(a+b,a),'',gW(cC(a+b,a),[a*b,(a+b)*2]),'Из '+(a+b)+' шагов выбираем '+a+' шагов вправо: C('+(a+b)+', '+a+') = '+cC(a+b,a)+'.');}
+  var N=gR(3,12),v=gR(2,4);return T('Сколько решений в неотрицательных целых числах у уравнения '+['x + y','x + y + z','x + y + z + t'][v-2]+' = '+N+'?',cC(N+v-1,v-1),'',gW(cC(N+v-1,v-1),[cC(N,v-1),N+1]),'Шары и перегородки: C('+(N+v-1)+', '+(v-1)+') = '+cC(N+v-1,v-1)+'.');
+}]);
+add('olm-graphs',[function(n){
+  var N=gR(5,30),k=n%2;
+  if(k===0)return T('В турнире в один круг участвуют '+N+' команд. Сколько всего матчей?',N*(N-1)/2,'',gW(N*(N-1)/2,[N*(N-1),N*N/2]),'n(n − 1)/2 = '+(N*(N-1)/2)+'.');
+  return T('В турнире каждый сыграл с каждым один раз, всего '+(N*(N-1)/2)+' партий. Сколько было участников?',N,'',gW(N,[N+1,N-1]),'n(n − 1)/2 = '+(N*(N-1)/2)+' ⇒ n = '+N+'.');
+}]);
+add('olm-angles',[function(n){
+  var N=gP([5,6,8,9,10,12,15,18,20,24,30,36]),k=n%2;
+  if(k===0)return T('Внутренний угол правильного многоугольника равен '+gF(180-360/N)+'°. Сколько у него сторон?',N,'',gW(N,[N+2,N-2]),'Внешний угол '+gF(360/N)+'°, n = 360/'+gF(360/N)+' = '+N+'.');
+  return T('Найдите сумму углов выпуклого '+N+'-угольника.',180*(N-2),'°',gW(180*(N-2),[180*N,180*(N-1)]),'180°('+N+' − 2) = '+(180*(N-2))+'°.');
+}]);
+add('olm-areas',[function(n){
+  var S=gR(2,20)*36,p=gR(1,4),q=gR(1,4);if(p===q)q++;
+  return T('Треугольник площади '+S+'. Точка делит сторону в отношении '+p+' : '+q+' и соединена с противоположной вершиной. Найдите площадь части, прилежащей к отрезку длины «'+p+'».',S*p/(p+q),'',gW(S*p/(p+q),[S*q/(p+q),S/2]),'Общая высота: площади относятся как '+p+' : '+q+', '+S+' · '+p+'/'+(p+q)+' = '+gF(S*p/(p+q))+'.');
+}]);
+add('olm-triangle-ineq',[function(n){
+  var a=gR(2,15),b=a+gR(0,12);
+  return T('Две стороны треугольника '+a+' и '+b+'. Сколько целых значений может принимать третья сторона?',2*a-1,'',gW(2*a-1,[2*a,2*a+1]),(b-a)+' < x < '+(a+b)+': целые от '+(b-a+1)+' до '+(a+b-1)+' — '+(2*a-1)+' значений.');
+}]);
+/* ---------- Олимпиадная физика ---------- */
+progAdd('olymp:phys',{
+desc:'Олимпиадная физика: механика, тепло, электричество, оптика и методы решения. В каждой теме главная идея, типичные ловушки и трудные задачи с разбором.',
+note:'Уровень — школьный и районный этап олимпиады, 7–11 класс. g = 10 м/с², если не сказано иначе.',
+sections:[
+{title:'Механика',topics:[
+{id:'olp-relative',tag:'идея',title:'Относительное движение и средняя скорость',
+ sum:'Скорость тела относительно земли равна его скорости относительно движущейся системы плюс скорость самой системы (векторно). Навстречу друг другу скорости сближения складываются, вдогонку — вычитаются. Лодка: по течению v + u, против течения v − u; чтобы пересечь реку по кратчайшему пути, нос направляют наискосок против течения, и скорость поперёк реки равна √(v² − u²). Средняя скорость — весь путь, делённый на всё время, а не среднее арифметическое. Для двух равных половин пути v_ср = 2v₁v₂/(v₁ + v₂).',
+ ex:['Половина пути 60 км/ч, половина 40 км/ч: v_ср = 2·60·40/100 = 48 км/ч','Лодка 5 м/с, течение 3 м/с, ширина 100 м: поперёк 4 м/с, t = 25 с','По неподвижному эскалатору 60 с, стоя на движущемся 40 с ⇒ идя по движущемуся 24 с'],
+ tip:'Перейдите в систему отсчёта, где одно из тел покоится, — задача часто становится тривиальной.',
+ qs:[['Половину пути машина ехала со скоростью 30 км/ч, половину — 60 км/ч. Средняя скорость:','40 км/ч','45 км/ч','50 км/ч','2·30·60/90 = 40.'],
+  ['Лодка проходит 12 км по течению за 1 ч, а обратно — за 2 ч. Скорость течения:','3 км/ч','6 км/ч','4,5 км/ч','v + u = 12, v − u = 6 ⇒ u = 3.'],
+  ['По неподвижному эскалатору человек поднимается за 60 с, стоя на движущемся — за 30 с. Сколько займёт подъём, если идти по движущемуся?','20 с','45 с','90 с','Скорости складываются: 1/60 + 1/30 = 1/20.'],
+  ['tf','Средняя скорость всегда равна среднему арифметическому скоростей на участках.',false,'Только если на участках затрачено одинаковое время.'],
+  ['tf','Если время движения на двух участках одинаково, средняя скорость равна среднему арифметическому.',true,'(v₁t + v₂t)/(2t).'],
+  ['in','Лодка плывёт со скоростью 5 м/с относительно воды, течение 3 м/с, ширина реки 120 м. За сколько секунд она переплывёт реку по кратчайшему пути?',['30'],'Поперёк √(25 − 9) = 4 м/с, 120/4 = 30 с.']]},
+{id:'olp-statics',tag:'идея',title:'Статика: моменты и центр масс',
+ sum:'Тело в равновесии, если сумма сил равна нулю и сумма моментов относительно любой точки равна нулю. Моменты удобно брать относительно точки, через которую проходят неизвестные силы, — они выпадают из уравнения. Центр масс системы x_c = Σmᵢxᵢ/Σmᵢ. Тело не опрокидывается, пока вертикаль через центр масс проходит через площадь опоры. Подвижный блок даёт выигрыш в силе в 2 раза и проигрыш в пути во столько же раз («золотое правило механики»).',
+ ex:['Доска 4 м, 20 кг на опорах по концам, груз 40 кг в 1 м от левого края: правая опора 200 Н','Шары 1 кг и 3 кг на расстоянии 4 м: центр масс в 3 м от лёгкого','Полиспаст из n ветвей верёвки: выигрыш в силе в n раз'],
+ tip:'Вес однородного стержня приложите в его середине — и пишите моменты.',
+ qs:[['Однородный стержень массой 6 кг лежит на двух опорах по концам. Сила давления на каждую опору (g = 10):','30 Н','60 Н','15 Н','По симметрии — половина веса.'],
+  ['Грузы 2 кг и 6 кг на концах лёгкого стержня длиной 2 м. Центр масс от лёгкого груза:','1,5 м','0,5 м','1 м','6·2/8 = 1,5 м.'],
+  ['Подвижный блок даёт выигрыш в силе…','в 2 раза','в 4 раза','не даёт','Груз держат две ветви верёвки.'],
+  ['tf','В равновесии моменты можно считать относительно любой точки.',true,'Если сумма сил равна нулю, результат от выбора точки не зависит.'],
+  ['tf','Тело опрокидывается, как только центр масс оказывается выше половины его высоты.',false,'Важно, проходит ли вертикаль через центр масс через площадь опоры.'],
+  ['in','Однородная доска длиной 4 м и массой 20 кг лежит на опорах по концам; груз 40 кг стоит в 1 м от левого конца. С какой силой (Н) доска давит на правую опору? g = 10.',['200'],'Моменты относительно левой опоры: (200·2 + 400·1)/4 = 200 Н.']]},
+{id:'olp-hydro',tag:'идея',title:'Гидростатика и плавание',
+ sum:'Давление на глубине p = p₀ + ρgh, в жидкости оно передаётся во все стороны одинаково (закон Паскаля). В сообщающихся сосудах с разными жидкостями ρ₁h₁ = ρ₂h₂. Сила Архимеда F = ρ_жидкости · g · V_погружённой части. Плавающее тело погружено на долю ρ_тела/ρ_жидкости своего объёма. Плавающий лёд, растаяв, не меняет уровень воды. Гидравлический пресс: F₁/S₁ = F₂/S₂.',
+ ex:['Дерево ρ = 600 кг/м³ в воде: погружено 60% объёма','Лодка с камнем: камень выбросили в воду — уровень в бассейне понижается','1 см ртути уравновешивает 13,6 см воды'],
+ tip:'Плавающее тело вытесняет воду массой, равной своей массе; утонувшее — только своим объёмом.',
+ qs:[['Тело плотностью 800 кг/м³ плавает в воде. Какая доля объёма над водой?','20%','80%','8%','Погружено 800/1000 = 80%.'],
+  ['Кусок льда плавает в стакане с водой. Когда лёд растает, уровень воды…','не изменится','поднимется','опустится','Масса талой воды равна массе вытесненной.'],
+  ['В лодке, плавающей в бассейне, лежит камень. Его бросили в воду. Уровень воды в бассейне…','понизится','повысится','не изменится','В лодке камень вытеснял воду по массе, на дне — только по объёму.'],
+  ['tf','Сила Архимеда зависит от плотности самого тела.',false,'От плотности жидкости и объёма погружённой части.'],
+  ['tf','На глубине 10 м давление воды примерно на 1 атмосферу больше, чем у поверхности.',true,'ρgh = 1000·10·10 = 10⁵ Па.'],
+  ['in','Площади поршней гидравлического пресса 10 см² и 500 см². На малый поршень давят с силой 200 Н. С какой силой (Н) давит большой?',['10000'],'200 · 50 = 10 000 Н.']]},
+{id:'olp-conservation',tag:'идея',title:'Законы сохранения: энергия и импульс',
+ sum:'Импульс системы сохраняется, если внешние силы скомпенсированы или удар очень короткий. Механическая энергия сохраняется, если нет трения и неупругих ударов. При абсолютно неупругом ударе тела слипаются, импульс сохраняется, а часть кинетической энергии переходит в тепло. При упругом лобовом ударе одинаковых шаров они обмениваются скоростями. Баллистический маятник решают в два шага: удар — по импульсу, подъём — по энергии.',
+ ex:['Пуля 10 г, 500 м/с застревает в бруске 2 кг: v = 5/2,01 ≈ 2,49 м/с','Упругий лобовой удар одинаковых шаров: первый останавливается','С гладкой горки высотой h: v = √(2gh) при любой форме горки'],
+ tip:'Во время удара энергию не сохраняйте — только импульс. Энергию используйте до и после.',
+ qs:[['Пластилиновый шар массой m налетает со скоростью v на такой же неподвижный и прилипает. Какая доля кинетической энергии перешла в тепло?','половина','четверть','вся','До: mv²/2; после: 2m(v/2)²/2 = mv²/4.'],
+  ['Упругий лобовой удар двух одинаковых шаров, второй покоился. После удара первый…','останавливается','отскакивает назад','движется со скоростью v/2','Шары обмениваются скоростями.'],
+  ['Тело соскальзывает с гладкой горки высотой 5 м (g = 10). Скорость внизу:','10 м/с','50 м/с','5 м/с','v = √(2gh) = √100.'],
+  ['tf','При неупругом ударе импульс системы не сохраняется.',false,'Импульс сохраняется; теряется кинетическая энергия.'],
+  ['tf','Скорость внизу гладкой горки не зависит от её формы.',true,'Работу совершает только сила тяжести.'],
+  ['in','Пуля массой 10 г летит со скоростью 600 м/с и застревает в бруске массой 2,99 кг на гладком столе. Скорость бруска (м/с)?',['2'],'0,01·600/3 = 2 м/с.']]},
+{id:'olp-circular',tag:'идея',title:'Движение по окружности и тяготение',
+ sum:'При движении по окружности ускорение v²/R направлено к центру; его создаёт равнодействующая реальных сил (натяжение, трение, тяжесть, реакция опоры). Мёртвая петля: в верхней точке минимальная скорость √(gR), поэтому с гладкой горки нужно стартовать с высоты не меньше 2,5R. Поворот без заноса: v ≤ √(μgR). Спутник у поверхности Земли: v₁ = √(gR) ≈ 7,9 км/с; для орбит T² ∝ R³ (третий закон Кеплера).',
+ ex:['Петля R = 4 м: v_min вверху √40 ≈ 6,3 м/с','Поворот R = 50 м, μ = 0,5: v ≤ √250 ≈ 15,8 м/с','Радиус орбиты ×4 ⇒ период ×8'],
+ tip:'Центробежной силы в инерциальной системе нет. Пишите второй закон Ньютона: сумма сил = mv²/R.',
+ qs:[['С какой наименьшей высоты нужно скатиться по гладкой горке, чтобы пройти мёртвую петлю радиуса R?','2,5R','2R','3R','Вверху v² = gR; mgh = mg·2R + mgR/2.'],
+  ['Машина проходит поворот радиусом 40 м, μ = 0,4, g = 10. Наибольшая скорость без заноса:','≈ 12,6 м/с','16 м/с','40 м/с','v = √(μgR) = √160.'],
+  ['Радиус орбиты спутника увеличили в 4 раза. Период обращения…','увеличится в 8 раз','увеличится в 4 раза','увеличится в 16 раз','T² ∝ R³ ⇒ T ∝ R^1,5.'],
+  ['tf','Чем выше круговая орбита спутника, тем меньше его скорость.',true,'v = √(GM/R).'],
+  ['tf','В верхней точке мёртвой петли на тело действует отдельная центробежная сила.',false,'В инерциальной системе её нет: ускорение создают тяжесть и реакция опоры.'],
+  ['in','Шарик на нити длиной 0,9 м вращают в вертикальной плоскости. Наименьшая скорость (м/с) в верхней точке, при которой нить не провисает? g = 10.',['3'],'mg = mv²/L ⇒ v = √(gL) = 3 м/с.']]}
+]},
+{title:'Тепло',topics:[
+{id:'olp-heat',tag:'идея',title:'Тепловой баланс и фазовые переходы',
+ sum:'Отданное тепло равно полученному. Нагрев Q = cmΔt, плавление Q = λm, парообразование Q = Lm. Главная ловушка: сначала проверьте, хватит ли тепла на полное плавление льда или нагрев до 0 °C. Часто в итоге остаётся смесь льда и воды при 0 °C. Константы: c воды 4200, c льда 2100 Дж/(кг·°C), λ льда 3,3·10⁵ Дж/кг, L воды 2,3·10⁶ Дж/кг.',
+ ex:['1 кг воды при 80 °C + 3 кг при 20 °C: t = (80 + 60)/4 = 35 °C','1 кг льда при 0 °C в 1 кг воды при 50 °C: вода отдаст 210 кДж < 330 кДж — растает ≈ 0,64 кг, итог 0 °C','Пар при 100 °C обжигает сильнее воды при 100 °C: он ещё отдаёт L при конденсации'],
+ tip:'Не пишите сразу уравнение с неизвестной t — сначала сравните запасы тепла.',
+ qs:[['Смешали 2 кг воды при 10 °C и 1 кг воды при 70 °C. Температура смеси:','30 °C','40 °C','35 °C','(2·10 + 70)/3 = 30.'],
+  ['В 1 кг воды при 50 °C бросили 1 кг льда при 0 °C. Конечная температура:','0 °C','25 °C','10 °C','Вода отдаст 210 кДж, а на плавление всего льда нужно 330 кДж.'],
+  ['Сколько льда растает в предыдущей задаче?','≈ 0,64 кг','1 кг','0,5 кг','210 000/330 000 ≈ 0,64.'],
+  ['tf','Пока чистая вода кипит при постоянном давлении, её температура не меняется.',true,'Энергия идёт на парообразование.'],
+  ['tf','Растопить 1 кг льда при 0 °C требует меньше энергии, чем нагреть 1 кг воды от 0 до 50 °C.',false,'330 кДж против 210 кДж.'],
+  ['in','Смешали 3 кг воды при 20 °C и 1 кг воды при 100 °C. Температура смеси (°C)?',['40'],'(60 + 100)/4 = 40.']]},
+{id:'olp-gas',tag:'идея',title:'Газовые законы',
+ sum:'Уравнение состояния pV = νRT, температура — только в кельвинах. Изотермический процесс: pV = const; изобарный: V/T = const; изохорный: p/T = const. В смеси газов давления складываются (закон Дальтона). Работа газа равна площади под графиком p(V), при постоянном давлении A = pΔV. Первый закон термодинамики: Q = ΔU + A; для одноатомного газа U = 3/2 νRT.',
+ ex:['Изотермически сжали в 3 раза — давление выросло в 3 раза','При p = const нагрели с 300 K до 450 K — объём ×1,5','Изобарный нагрев одноатомного газа: Q = 5/2 νRΔT, A = νRΔT'],
+ tip:'Увидели градусы Цельсия — сразу прибавьте 273.',
+ qs:[['Газ изотермически сжали от 6 л до 2 л. Давление…','увеличилось в 3 раза','уменьшилось в 3 раза','не изменилось','pV = const.'],
+  ['При постоянном давлении газ нагрели с 27 °C до 327 °C. Объём…','увеличился в 2 раза','увеличился в 12 раз','не изменился','300 K → 600 K.'],
+  ['Какая доля теплоты идёт на работу при изобарном нагреве одноатомного газа?','2/5','3/5','1/2','A = νRΔT, Q = 5/2 νRΔT.'],
+  ['tf','При изохорном процессе газ не совершает работы.',true,'ΔV = 0.'],
+  ['tf','Если при постоянном объёме нагреть газ с 10 °C до 20 °C, давление удвоится.',false,'283 K → 293 K: рост около 3,5%.'],
+  ['in','Газ при 200 кПа и 300 K нагрели при постоянном объёме до 450 K. Давление (кПа)?',['300'],'p ∝ T: 200 · 1,5.']]}
+]},
+{title:'Электричество',topics:[
+{id:'olp-circuits',tag:'идея',title:'Сопротивление сложных цепей',
+ sum:'Главный приём — найти точки с одинаковым потенциалом (часто по симметрии): их можно соединить проводом или разъединить, ток между ними не пойдёт. Мост Уитстона в равновесии (R₁/R₂ = R₃/R₄) — ток через диагональ равен нулю. Бесконечную цепочку решают уравнением: добавление одного звена не меняет сопротивление. Идеальный амперметр заменяют проводом, идеальный вольтметр — разрывом.',
+ ex:['Куб из 12 резисторов R между противоположными вершинами: R/3 + R/6 + R/3 = 5R/6','Бесконечная лестница из резисторов 1 Ом: R = 1 + R/(1 + R) ⇒ R = (1 + √5)/2','Треугольник из трёх R между двумя вершинами: R ∥ 2R = 2R/3'],
+ tip:'Перерисуйте схему, сгруппировав точки одинакового потенциала, — запутанная цепь станет простой.',
+ qs:[['Сопротивление каркаса куба из 12 одинаковых резисторов R между противоположными вершинами:','5R/6','R','3R/4','По симметрии: R/3 + R/6 + R/3.'],
+  ['Мост, в котором R₁/R₂ = R₃/R₄. Ток через гальванометр в диагонали:','0','наибольший','зависит от ЭДС','Потенциалы концов диагонали равны.'],
+  ['Бесконечная цепочка: резистор 1 Ом последовательно, затем 1 Ом параллельно остальной цепочке, и так далее. Сопротивление:','(1 + √5)/2 Ом','2 Ом','1 Ом','R = 1 + R/(1 + R) ⇒ R² − R − 1 = 0.'],
+  ['tf','Точки одинакового потенциала можно соединить проводом, и токи в цепи не изменятся.',true,'По перемычке ток не пойдёт.'],
+  ['tf','Идеальный вольтметр в схеме можно заменить проводом.',false,'Его заменяют разрывом цепи.'],
+  ['in','Три резистора по 6 Ом соединены треугольником. Сопротивление между двумя вершинами (Ом)?',['4'],'6 Ом параллельно 12 Ом: 72/18 = 4.']]},
+{id:'olp-power',tag:'идея',title:'Мощность в цепях и оптимизация',
+ sum:'P = UI = I²R = U²/R. При последовательном соединении больше мощности выделяется на большем сопротивлении, при параллельном — на меньшем. Источник с ЭДС ℰ и внутренним сопротивлением r отдаёт во внешнюю цепь наибольшую мощность ℰ²/(4r) при R = r; КПД при этом 50%, а КПД вообще η = R/(R + r). У ламп на одно напряжение: чем больше мощность, тем меньше сопротивление.',
+ ex:['Лампы 40 Вт и 100 Вт (220 В) последовательно в сеть: ярче 40-ваттная','ℰ = 12 В, r = 2 Ом: P_max = 18 Вт при R = 2 Ом','R = 484 Ом у лампы 100 Вт / 220 В'],
+ tip:'«Какая лампа ярче» — сначала найдите сопротивления R = U²/P, потом смотрите на тип соединения.',
+ qs:[['Лампы 60 Вт и 100 Вт (рассчитанные на 220 В) включили последовательно в сеть 220 В. Ярче горит…','60-ваттная','100-ваттная','одинаково','У неё больше сопротивление, а ток общий.'],
+  ['Источник ℰ = 12 В, r = 3 Ом. Наибольшая мощность во внешней цепи:','12 Вт','48 Вт','24 Вт','ℰ²/(4r) = 144/12.'],
+  ['КПД источника при наибольшей полезной мощности:','50%','100%','25%','R = r ⇒ η = R/(R + r) = ½.'],
+  ['tf','У лампы 100 Вт / 220 В сопротивление меньше, чем у лампы 40 Вт / 220 В.',true,'R = U²/P.'],
+  ['tf','Наибольший КПД источника получается при R = r.',false,'При R = r наибольшая мощность; КПД растёт с ростом R.'],
+  ['in','Сопротивление лампы 100 Вт, 220 В (Ом)?',['484'],'220²/100 = 484.']]}
+]},
+{title:'Оптика',topics:[
+{id:'olp-optics',tag:'идея',title:'Зеркала и линзы',
+ sum:'Плоское зеркало даёт мнимое изображение, симметричное предмету. Если повернуть зеркало на угол α, отражённый луч повернётся на 2α. Число изображений в двух зеркалах под углом α (360° делится на α): 360°/α − 1. Тонкая собирающая линза: 1/F = 1/d + 1/f, увеличение Γ = f/d; предмет в 2F даёт равное изображение в 2F. Рассеивающая линза для реального предмета всегда даёт мнимое уменьшенное изображение. Оптическая сила D = 1/F (в диоптриях, F в метрах).',
+ ex:['d = 30 см, F = 10 см: f = 15 см, Γ = 0,5','Два зеркала под 60°: 5 изображений','Чтобы видеть себя в полный рост, хватит зеркала в половину роста'],
+ tip:'Стройте ход двух лучей: через центр линзы и параллельно оси. Чертёж проверит ваш расчёт.',
+ qs:[['Два зеркала под углом 90°. Сколько изображений точки между ними?','3','4','2','360/90 − 1.'],
+  ['Предмет в 30 см от собирающей линзы с F = 10 см. Изображение находится на расстоянии:','15 см','20 см','30 см','1/10 = 1/30 + 1/f ⇒ f = 15.'],
+  ['Какой наименьшей высоты нужно вертикальное зеркало, чтобы увидеть себя в полный рост?','половина роста','весь рост','четверть роста','Отражения от макушки и ног идут через середины расстояний до глаз.'],
+  ['tf','Если зеркало повернуть на 10°, отражённый луч повернётся на 20°.',true,'Меняются и угол падения, и угол отражения.'],
+  ['tf','Рассеивающая линза может дать действительное изображение реального предмета.',false,'Только мнимое уменьшенное.'],
+  ['in','Предмет стоит на двойном фокусном расстоянии от собирающей линзы. Увеличение?',['1'],'Изображение в 2F, равное предмету.']]}
+]},
+{title:'Методы решения',topics:[
+{id:'olp-dimensions',tag:'идея',title:'Размерности и оценки',
+ sum:'Метод размерностей: если величина зависит от известных параметров, ищите формулу вида x = C · aᵅ · bᵝ…, приравнивая единицы измерения слева и справа. Так получают, что период маятника T ~ √(l/g), без решения уравнений. Безразмерный коэффициент (например, 2π) этим методом не найти. Оценки (задачи Ферми): берите разумные круглые числа, важен порядок ответа.',
+ ex:['T ~ √(l/g): [с] = √(м/(м/с²))','Скорость волн на глубокой воде v ~ √(gλ)','Секунд в году ≈ 3·10⁷'],
+ tip:'Проверяйте размерность каждого ответа — это ловит половину ошибок.',
+ qs:[['Из соображений размерности период маятника пропорционален…','√(l/g)','l/g','√(g/l)','[с] = √(м/(м/с²)).'],
+  ['Джоуль в основных единицах СИ:','кг·м²/с²','кг·м/с²','кг·м²/с','Н·м = кг·м/с² · м.'],
+  ['Порядок числа секунд в году:','10⁷','10⁵','10⁹','≈ 3,15·10⁷.'],
+  ['tf','Методом размерностей нельзя найти безразмерный коэффициент вроде 2π.',true,'Его даёт только точное решение.'],
+  ['tf','Выражение √(g/h) (g — ускорение, h — высота) имеет размерность скорости.',false,'Его размерность 1/с.'],
+  ['in','Период маятника длиной l равен 2 с. Каким станет период (с), если длину увеличить в 4 раза?',['4'],'T ∝ √l: ×2.']]},
+{id:'olp-graphs',tag:'идея',title:'Графические методы',
+ sum:'Площадь под графиком — физическая величина: под v(t) — путь, под a(t) — изменение скорости, под F(x) — работа, под p(V) — работа газа, под I(t) — прошедший заряд. Наклон касательной к графику x(t) — мгновенная скорость, к графику v(t) — ускорение. Работа газа за цикл равна площади цикла на диаграмме p–V. Линеаризация: если ожидаете y ∝ x², стройте y от x² — должна получиться прямая.',
+ ex:['v растёт от 0 до 10 м/с за 4 с и падает до 0 за 4 с: путь 40 м','F = kx от 0 до x: работа kx²/2 — площадь треугольника','Прямоугольный цикл на p–V: A = Δp · ΔV'],
+ tip:'Не можете посчитать интегралом — посчитайте площадь фигуры на графике.',
+ qs:[['Площадь под графиком силы тока I(t) равна…','прошедшему заряду','мощности','напряжению','q = ∫I dt.'],
+  ['Скорость равномерно растёт от 0 до 20 м/с за 10 с. Путь за это время:','100 м','200 м','20 м','Площадь треугольника ½ · 10 · 20.'],
+  ['Работа газа за цикл на диаграмме p–V равна…','площади цикла','нулю всегда','площади под верхней ветвью','Разность работ на ветвях расширения и сжатия.'],
+  ['tf','Наклон касательной к графику x(t) равен мгновенной скорости.',true,'v = dx/dt.'],
+  ['tf','Площадь под графиком a(t) равна пройденному пути.',false,'Она равна изменению скорости.'],
+  ['in','Газ прошёл прямоугольный цикл: p от 100 до 300 кПа, V от 1 до 3 л. Работа за цикл (Дж)?',['400'],'2·10⁵ Па · 2·10⁻³ м³ = 400 Дж.']]}
+]}
+]});
+
+/* Генераторы олимпиадной физики */
+add('olp-relative',[function(n){
+  var k=n%2;
+  if(k===0){var P=gP([[30,60,40],[40,60,48],[20,30,24],[60,90,72],[45,90,60],[40,120,60],[30,70,42],[50,75,60]]);return T('Половину пути машина ехала со скоростью '+P[0]+' км/ч, вторую половину — '+P[1]+' км/ч. Средняя скорость?',P[2],' км/ч',gW(P[2],[(P[0]+P[1])/2,P[1]-P[0]]),'v_ср = 2v₁v₂/(v₁ + v₂) = 2·'+P[0]+'·'+P[1]+'/'+(P[0]+P[1])+' = '+P[2]+' км/ч.');}
+  var t=gP([[5,3,4],[10,6,8],[13,5,12],[5,4,3],[15,9,12],[17,8,15]]),W=t[2]*gR(5,30);return T('Лодка плывёт со скоростью '+t[0]+' м/с относительно воды, скорость течения '+t[1]+' м/с, ширина реки '+W+' м. За сколько секунд лодка переплывёт реку по кратчайшему пути?',W/t[2],' с',gW(W/t[2],[W/t[0],W/(t[0]-t[1])]),'Скорость поперёк реки √('+t[0]+'² − '+t[1]+'²) = '+t[2]+' м/с; t = '+W+'/'+t[2]+' = '+gF(W/t[2])+' с.');
+}]);
+add('olp-statics',[function(n){
+  var m1=gR(1,6),m2=gR(1,9),L=gR(1,6);
+  return T('Грузы '+m1+' кг и '+m2+' кг закреплены на концах лёгкого стержня длиной '+L+' м. На каком расстоянии от первого груза центр масс?',m2*L/(m1+m2),' м',gW(m2*L/(m1+m2),[m1*L/(m1+m2),L/2]),'x = m₂L/(m₁ + m₂) = '+m2+'·'+L+'/'+(m1+m2)+' = '+gF(m2*L/(m1+m2))+' м.');
+}]);
+add('olp-hydro',[function(n){
+  var rho=gP([200,250,400,500,600,700,750,800,900]),k=n%2;
+  if(k===0)return T('Тело плотностью '+rho+' кг/м³ плавает в воде. Какая доля объёма (в %) находится над водой?',100-rho/10,'%',gW(100-rho/10,[rho/10,100-rho/100]),'Погружено '+rho+'/1000 = '+(rho/10)+'% объёма, над водой '+(100-rho/10)+'%.');
+  var S1=gP([2,5,10,20]),S2=S1*gP([10,20,50,100]),F=gR(1,10)*50;return T('Площади поршней гидравлического пресса '+S1+' см² и '+S2+' см². На малый поршень давят с силой '+F+' Н. С какой силой давит большой поршень?',F*S2/S1,' Н',gW(F*S2/S1,[F*S1/S2,F+S2]),'F₂ = F₁ · S₂/S₁ = '+F+' · '+(S2/S1)+' = '+gF(F*S2/S1)+' Н.');
+}]);
+add('olp-conservation',[function(n){
+  var k=n%2;
+  if(k===0){var m=gP([0.005,0.01,0.02]),v=gP([300,400,500,600,800]),M=gP([0.99,1.99,2.99,4.99,0.995,1.995]),u=m*v/(m+M);return T('Пуля массой '+gF(m*1000)+' г летит со скоростью '+v+' м/с и застревает в бруске массой '+gF(M)+' кг на гладком столе. Скорость бруска с пулей?',u,' м/с',gW(u,[m*v/M*2,m*v]),'Импульс: '+gF(m)+'·'+v+' = ('+gF(m)+' + '+gF(M)+')·u ⇒ u = '+gF(u)+' м/с.');}
+  var h=gP([0.2,0.45,0.8,1.25,1.8,3.2,5,7.2,20]),vv=Math.sqrt(20*h);return T('Тело соскальзывает без трения с горки высотой '+gF(h)+' м. Какова его скорость внизу? g = 10.',vv,' м/с',gW(vv,[20*h,10*h]),'mgh = mv²/2 ⇒ v = √(2gh) = √'+gF(20*h)+' = '+gF(vv)+' м/с.');
+}]);
+add('olp-circular',[function(n){
+  var k=n%2;
+  if(k===0){var P=gP([[0.4,40],[0.5,50],[0.4,90],[0.5,20],[0.8,20],[0.2,20],[0.9,10],[0.6,60]]),v=Math.sqrt(P[0]*10*P[1]);return T('Машина проходит поворот радиусом '+P[1]+' м, коэффициент трения '+gF(P[0])+'. Наибольшая скорость без заноса? g = 10.',v,' м/с',gW(v,[P[0]*10*P[1],v*2]),'μmg = mv²/R ⇒ v = √(μgR) = √'+gF(P[0]*10*P[1])+' = '+gF(v)+' м/с.');}
+  var R=gR(2,20);return T('С какой наименьшей высоты должно скатиться тело по гладкой горке, чтобы пройти мёртвую петлю радиусом '+R+' м?',2.5*R,' м',gW(2.5*R,[2*R,3*R]),'Вверху v² ≥ gR; mgh = mg·2R + mgR/2 ⇒ h = 2,5R = '+gF(2.5*R)+' м.');
+}]);
+add('olp-heat',[function(n){
+  var m1=gR(1,5),t1=gR(1,8)*10,m2=gR(1,5),t2=gR(1,10)*10,t=(m1*t1+m2*t2)/(m1+m2);
+  return T('Смешали '+m1+' кг воды при '+t1+' °C и '+m2+' кг воды при '+t2+' °C. Температура смеси (потерями пренебречь)?',t,' °C',gW(t,[(t1+t2)/2,Math.abs(t1-t2)]),'t = ('+m1+'·'+t1+' + '+m2+'·'+t2+')/('+m1+' + '+m2+') = '+gF(t)+' °C.');
+}]);
+add('olp-gas',[function(n){
+  var p=gP([100,150,200,300]),T1=gP([200,250,300,400]),f=gP([1.5,2,2.5,3]),k=n%2;
+  if(k===0)return T('Газ при '+p+' кПа и '+T1+' K нагрели при постоянном объёме до '+gF(T1*f)+' K. Каким стало давление?',p*f,' кПа',gW(p*f,[p/f,p+T1*(f-1)]),'p/T = const: '+p+' · '+gF(f)+' = '+gF(p*f)+' кПа.');
+  var V=gP([2,3,6,12]),r=gP([2,3,4]);return T('Газ изотермически сжали от '+(V*r)+' л до '+V+' л. Во сколько раз выросло давление?',r,'',gW(r,[r*r,1/r]),'pV = const ⇒ давление выросло в '+(V*r)+'/'+V+' = '+r+' раза.');
+}]);
+add('olp-circuits',[function(n){
+  var R=gP([3,6,9,12,15,30]),k=n%2;
+  if(k===0)return T('Три резистора по '+R+' Ом соединены треугольником. Найдите сопротивление между двумя вершинами.',2*R/3,' Ом',gW(2*R/3,[3*R,R/3]),R+' Ом параллельно '+(2*R)+' Ом: '+R+'·'+(2*R)+'/'+(3*R)+' = '+gF(2*R/3)+' Ом.');
+  var R6=gP([6,12,18,24,30,36]);return T('Каркас куба собран из 12 резисторов по '+R6+' Ом. Найдите сопротивление между противоположными вершинами.',5*R6/6,' Ом',gW(5*R6/6,[R6,3*R6/4]),'По симметрии R/3 + R/6 + R/3 = 5R/6 = '+gF(5*R6/6)+' Ом.');
+}]);
+add('olp-power',[function(n){
+  var k=n%2;
+  if(k===0){var E=gP([6,9,12,18,24]),r=gP([1,2,3,4,6]),P=E*E/(4*r);return T('Источник: ЭДС '+E+' В, внутреннее сопротивление '+r+' Ом. Какую наибольшую мощность он может отдать во внешнюю цепь?',P,' Вт',gW(P,[E*E/r,E*E/(2*r)]),'P_max = ℰ²/(4r) при R = r: '+(E*E)+'/'+(4*r)+' = '+gF(P)+' Вт.');}
+  var U=gP([12,24,110,220]),Pw=gP([10,20,40,60,100]),R=U*U/Pw;return T('Найдите сопротивление лампы, рассчитанной на '+U+' В и '+Pw+' Вт.',R,' Ом',gW(R,[U/Pw,Pw/U*100]),'R = U²/P = '+(U*U)+'/'+Pw+' = '+gF(R)+' Ом.');
+}]);
+add('olp-optics',[function(n){
+  var k=n%2;
+  if(k===0){var P=gP([[10,30,15],[10,15,30],[20,30,60],[20,60,30],[12,24,24],[15,20,60],[10,20,20],[6,9,18],[8,24,12],[20,25,100]]);return T('Предмет находится на расстоянии '+P[1]+' см от собирающей линзы с фокусным расстоянием '+P[0]+' см. На каком расстоянии от линзы изображение?',P[2],' см',gW(P[2],[P[1]-P[0],P[0]+P[1]]),'1/F = 1/d + 1/f ⇒ 1/f = 1/'+P[0]+' − 1/'+P[1]+' ⇒ f = '+P[2]+' см.');}
+  var a=gP([20,30,36,40,45,60,72,90,120]);return T('Два плоских зеркала поставлены под углом '+a+'°. Сколько изображений точечного предмета между ними видно?',360/a-1,'',gW(360/a-1,[360/a,360/a+1]),'360°/'+a+'° − 1 = '+(360/a-1)+'.');
+}]);
+add('olp-dimensions',[function(n){
+  var T0=gR(1,4),f=gP([4,9,16,25]);
+  return T('Период маятника длиной l равен '+T0+' с. Каким станет период, если длину увеличить в '+f+' раз?',T0*Math.sqrt(f),' с',gW(T0*Math.sqrt(f),[T0*f,T0*f/2]),'T ∝ √l: период вырастет в √'+f+' = '+Math.sqrt(f)+' раза: '+gF(T0*Math.sqrt(f))+' с.');
+}]);
+add('olp-graphs',[function(n){
+  var k=n%2;
+  if(k===0){var v=gR(2,20)*2,t=gR(2,12);return T('Скорость тела равномерно растёт от 0 до '+v+' м/с за '+t+' с. Какой путь пройден за это время?',v*t/2,' м',gW(v*t/2,[v*t,v/t]),'Площадь треугольника под графиком v(t): ½·'+t+'·'+v+' = '+gF(v*t/2)+' м.');}
+  var dp=gP([100,200,300]),dV=gP([1,2,3,4]);return T('Газ совершает прямоугольный цикл: давление меняется на '+dp+' кПа, объём — на '+dV+' л. Найдите работу газа за цикл (Дж).',dp*dV,' Дж',gW(dp*dV,[dp*dV*10,dp+dV]),'A = Δp·ΔV = '+dp+'·10³ Па · '+dV+'·10⁻³ м³ = '+(dp*dV)+' Дж.');
+}]);
+/* Программы: задачи только с «красивыми» ответами — генератор пропускает неудачные числа */
+(function(){
+  Object.keys(PROGS).forEach(function(k){PROGS[k].sections.forEach(function(s){s.topics.forEach(function(t){
+    var g=GEN[t.id];if(!g||g.guarded)return;
+    GEN[t.id]=g.map(function(f){return function(n){var x=f(n);if(!x)return null;if(!x.s&&!gNice(x.a))return null;if(!x.w||x.w.length<2)return null;return x;};});
+    GEN[t.id].guarded=true;
+  });});});
+})();
 
 var DAYS=['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
 var KEY='skillmap.v1';
@@ -2745,7 +4061,9 @@ var Core={
       default:return 'обычная школьная программа: база, задачи как в учебнике';
     }
   },
-  tracksFor:function(sid){return (Core.CT[sid]||['school']).map(function(k){return [k,Core.TRK[k][0],Core.trkDesc(k,sid),Core.aiTrack(k,sid)];});},
+  prog:function(s,sid){var k=Core.track(s,sid)[0];return (typeof PROGS!=='undefined'&&PROGS[k+':'+sid])||null;},
+  eff:function(s,sid){var k=Core.track(s,sid)[0];return Core.prog(s,sid)?'school':k;},
+  tracksFor:function(sid){return (Core.CT[sid]||['school']).map(function(k){var P=typeof PROGS!=='undefined'&&PROGS[k+':'+sid];return [k,Core.TRK[k][0],P&&P.desc||Core.trkDesc(k,sid),Core.aiTrack(k,sid)];});},
   track:function(s,sid){var k=s.track&&s.track[sid],l=Core.tracksFor(sid),i;for(i=0;i<l.length;i++)if(l[i][0]===k)return l[i];return l[0];},
   langLine:function(lang){return lang==='kk'?'Пиши на казахском языке (қазақ тілінде), простым и правильным литературным языком; научные термины давай на казахском, а если термин малоизвестен — добавь русский в скобках.':'Пиши по-русски.';},
   GFUN:{sin:Math.sin,cos:Math.cos,tan:Math.tan,tg:Math.tan,cot:function(x){return 1/Math.tan(x);},ctg:function(x){return 1/Math.tan(x);},asin:Math.asin,arcsin:Math.asin,acos:Math.acos,arccos:Math.acos,atan:Math.atan,arctan:Math.atan,arctg:Math.atan,sqrt:Math.sqrt,abs:Math.abs,ln:Math.log,lg:function(x){return Math.log(x)/Math.LN10;},log:function(x){return Math.log(x)/Math.LN10;},log2:function(x){return Math.log(x)/Math.LN2;},exp:Math.exp},
@@ -2949,7 +4267,7 @@ var Core={
   subject:function(s,id){return Core.subjects(s).filter(function(x){return x.id===id;})[0]||null;},
   sections:function(s,subj){
     var mine=s.topics.filter(function(t){return t.subjectId===subj.id;});
-    var out=subj.sections.slice();
+    var P=Core.prog(s,subj.id),out=(P?P.sections:subj.sections).slice();
     if(mine.length) out.push({title:'Мои темы',topics:mine.map(function(t){return {id:t.id,title:t.title,sum:t.note||'',ex:t.ex||[],tip:t.tip||'',qs:t.qs||[],custom:true,ai:!!t.ai,lab:t.lab||''};})});
     return out;
   },
@@ -4082,7 +5400,7 @@ function aiPractice(level,depth,trackKey){
 }
 function genProg(force){
   var subj=Core.subject(state,ui.subjectId),f=subj&&Core.find(state,subj,ui.topicId);if(!f)return;
-  var trk=Core.track(state,subj.id),tk=trk[0];if(tk==='school')return;
+  var trk=Core.track(state,subj.id),tk=Core.eff(state,subj.id);if(tk==='school')return;
   var t=f.topic,key=tk+':'+t.id+':'+state.prefs.lang;
   if(ui.pgen&&ui.pgen.busy)return;
   if(!force&&progCache[key])return;
@@ -4103,7 +5421,7 @@ function genProg(force){
 function autoProg(){
   if(aiState!=='ready'||ui.view!=='topic')return;
   var subj=Core.subject(state,ui.subjectId);if(!subj)return;
-  var tk=Core.track(state,subj.id)[0];if(tk==='school')return;
+  var tk=Core.eff(state,subj.id);if(tk==='school')return;
   var key=tk+':'+ui.topicId+':'+state.prefs.lang;
   if(progCache[key]||(ui.pgen&&ui.pgen.key===key))return;
   setTimeout(function(){genProg(false);},0);
@@ -4175,15 +5493,16 @@ function viewHome(){
      '<p class="small"><span class="stars">★</span> Звёзд за глубину: '+Core.totalStars(state)+' из '+o.total*3+'</p>'+
      '</div></section>';
   var sk=Core.streak(state.days,Core.day(new Date())),tday=Core.day(new Date()),dots='',WD=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-  for(var di=6;di>=0;di--){
-    var dd=Core.addDays(tday,-di),pa=dd.split('-'),on=state.days.indexOf(dd)>=0;
+  var mon=Core.addDays(tday,-Core.dayIndex(new Date()));
+  for(var di=0;di<7;di++){
+    var dd=Core.addDays(mon,di),on=state.days.indexOf(dd)>=0,fut=dd>tday;
     var ice=sk.frozen.indexOf(dd)>=0;
-    dots+='<span class="d7'+(on?' on':'')+(ice?' ice':'')+(di===0?' now':'')+'"><i>'+(on?'✓':ice?'❄':'')+'</i>'+WD[Core.dayIndex(new Date(+pa[0],+pa[1]-1,+pa[2]))]+'</span>';
+    dots+='<span class="d7'+(on?' on':'')+(ice?' ice':'')+(dd===tday?' now':'')+(fut?' fut':'')+'"><i>'+(on?'✓':ice?'❄':'')+'</i>'+WD[di]+'</span>';
   }
   h+='<section class="card streak" id="streak-card"><div class="row" style="gap:12px;align-items:baseline"><span class="big" id="streak-n">'+sk.count+'</span><div><strong>'+plural(sk.count,'день','дня','дней')+' подряд</strong>'+
      '<p class="small muted">'+(sk.today?'Сегодня занятие засчитано.':sk.count?'Позанимайтесь сегодня, чтобы серия не прервалась.':'Пройдите тест или отметьте тему — серия начнётся.')+(sk.best>sk.count?' Рекорд: '+sk.best+'.':'')+'</p>'+
      '<p class="small muted" id="freeze-note">'+(sk.frozen.length&&!sk.ready?'Заморозка спасла серию в пропущенный день. Новая появится после 7 дней занятий.':'Заморозка готова: один пропущенный день не оборвёт серию.')+'</p></div></div>'+
-     '<div class="week7" aria-label="Занятия за последние 7 дней">'+dots+'</div></section>';
+     '<div class="week7" id="week7" aria-label="Занятия на этой неделе, с понедельника по воскресенье">'+dots+'</div></section>';
   var dn=dayNum(),pend=state.pending&&Core.subject(state,state.pending.subjectId)?state.pending:null,lastS=state.last&&Core.subject(state,state.last.s),lastF=lastS&&Core.find(state,lastS,state.last.t);
   var HL=KKL()?HELLO_KK:HELLO,MV=KKL()?MOTIV_KK:MOTIV;
   var say0='<p id="hello"><strong>'+HL[dn%HL.length]+'</strong>'+(o.done||sk.count?'':TT(' Я Барс, ваш учитель: объясню тему, разберу ошибки и дам задачи посложнее.',' Мен Барспын, сіздің ұстазыңыз: тақырыпты түсіндіремін, қателерді талдаймын және қиынырақ есептер беремін.'))+'</p>';
@@ -4319,7 +5638,7 @@ function startQuiz2(sid,opt,title,key,items,aiMade){
 }
 function levelTest(sid){
   var subj=Core.subject(state,sid);if(!subj)return;
-  var trk=Core.track(state,sid),tk=trk[0],picks=Core.placeTopics(state,subj),secs=Core.sections(state,subj);
+  var trk=Core.track(state,sid),tk=Core.eff(state,sid),picks=Core.placeTopics(state,subj),secs=Core.sections(state,subj);
   if(!picks.length)return;
   var title=TT('Определение уровня: ','Деңгейді анықтау: ')+subj.name+(tk!=='school'?' · '+trk[1]:''),key='level:'+sid+':'+tk;
   function local(){var items=[];picks.forEach(function(p){var g=Math.random()<0.5?genTasks(p.t.id,1):[];items=items.concat(g.length?Core.buildQuiz([{id:p.t.id,title:p.t.title,qs:[genQ(g[0],false)]}],0):Core.buildQuiz([p.t],1));});startQuiz2(sid,{place:tk},title,key,items,false);}
@@ -4341,7 +5660,7 @@ function levelTest(sid){
 }
 function planDays(n){
   var base=n>=7?[0,1,2,3,4,5,6]:n>=5?[0,1,2,3,4]:[0,2,4],t=(Core.dayIndex(new Date())+1)%7;
-  return base.slice().sort(function(a,b){return ((a-t+7)%7)-((b-t+7)%7);});
+  return base.slice();
 }
 function planList(q,subj){
   var tk=q.opt.place,rep=Core.placeReport(state,subj,q.items,q.answers),n=q.planN||5,days=planDays(n),out=[],used={};
@@ -4410,7 +5729,7 @@ function finalBox(subj,tk,i,c){
 function finalErr(subj,i){var fb=ui.fin&&ui.fin.sid===subj.id&&ui.fin.i===i?ui.fin:null;return fb&&fb.err?'<p class="msg err" id="final-err">'+esc(fb.err)+'</p>':'';}
 function finalTest(sid,i){
   var subj=Core.subject(state,sid),sec=subj&&Core.sections(state,subj)[i];if(!sec)return;
-  var trk=Core.track(state,sid),tk=trk[0],ts=sec.topics.slice(0,15);
+  var trk=Core.track(state,sid),tk=Core.eff(state,sid),ts=sec.topics.slice(0,15);
   if(!ts.length||!ts.every(function(t){return trackDone(tk,t.id);}))return;
   if(ui.fin&&ui.fin.busy)return;
   var title=TT('Итоговый тест: ','Қорытынды тест: ')+sec.title+(tk!=='school'?' · '+trk[1]:''),key='final:'+sid+':'+i+':'+tk,opt={final:i};
@@ -4660,7 +5979,7 @@ function viewLabs(){
 function viewSubject(){
   var subj=Core.subject(state,ui.subjectId);
   if(!subj){ui.view='home';return viewHome();}
-  var trk=Core.track(state,subj.id),tk=trk[0],prog=tk!=='school',tl=Core.tracksFor(subj.id);
+  var trk=Core.track(state,subj.id),sel=trk[0],P=Core.prog(state,subj.id),tk=Core.eff(state,subj.id),prog=tk!=='school',tl=Core.tracksFor(subj.id);
   var secs=Core.sections(state,subj),all=Core.topics(state,subj),p=prog?progCount(all,tk):Core.progress(state,subj);
   var hasQs=all.some(function(t){return t.qs&&t.qs.length;});
   var h='<div class="stack" '+col(subj)+'>';
@@ -4674,11 +5993,12 @@ function viewSubject(){
      '</div></section>';
   if(tl.length>1){
     h+='<section class="card stack" style="gap:12px" id="track-card"><h2>Программа обучения</h2><div class="row" style="gap:12px;align-items:flex-end">'+
-       '<button class="btn'+(tk==='school'?' primary':'')+'" id="trk-school" data-a="track" data-id="'+esc(subj.id)+'|school" aria-pressed="'+(tk==='school')+'">Школьная (основная)</button>'+
-       '<label class="f" for="track-select" style="flex:1 1 220px">'+TT('Другая программа','Басқа бағдарлама')+'<select id="track-select" data-c="track" data-id="'+esc(subj.id)+'"><option value=""'+(tk==='school'?' selected':'')+'>'+TT('— выбрать —','— таңдау —')+'</option>'+
-       tl.filter(function(x){return x[0]!=='school';}).map(function(x){return '<option value="'+x[0]+'"'+(x[0]===tk?' selected':'')+'>'+esc(x[1])+'</option>';}).join('')+'</select></label></div>'+
+       '<button class="btn'+(sel==='school'?' primary':'')+'" id="trk-school" data-a="track" data-id="'+esc(subj.id)+'|school" aria-pressed="'+(sel==='school')+'">Школьная (основная)</button>'+
+       '<label class="f" for="track-select" style="flex:1 1 220px">'+TT('Другая программа','Басқа бағдарлама')+'<select id="track-select" data-c="track" data-id="'+esc(subj.id)+'"><option value=""'+(sel==='school'?' selected':'')+'>'+TT('— выбрать —','— таңдау —')+'</option>'+
+       tl.filter(function(x){return x[0]!=='school';}).map(function(x){return '<option value="'+x[0]+'"'+(x[0]===sel?' selected':'')+'>'+esc(x[1])+(PROGS[x[0]+':'+subj.id]?' ✓':'')+'</option>';}).join('')+'</select></label></div>'+
        '<p class="small" id="track-desc"><strong>'+esc(trk[1])+'.</strong> '+esc(trk[2])+'</p>'+
-       (prog?'<p class="msg" id="track-note">'+TT('Классы и темы те же, что в школьной программе, но объяснения и задачи здесь уровня «'+esc(trk[1])+'». Барс составляет урок при первом открытии темы и сохраняет его на этом устройстве. Важное сверяйте с официальными материалами программы.','Сыныптар мен тақырыптар мектеп бағдарламасындағыдай, бірақ мұндағы түсіндірмелер мен есептер «'+esc(trk[1])+'» деңгейінде. Барс тақырып алғаш ашылғанда сабақты құрастырып, осы құрылғыда сақтайды. Маңыздысын бағдарламаның ресми материалдарымен салыстырыңыз.')+'</p>':
+       (P?'<p class="msg ok-note" id="track-note">'+TT('Готовая программа «'+esc(trk[1])+'»: '+Core.topics(state,subj).length+' тем в '+P.sections.length+' разделах, свои объяснения и задачи этого уровня. Работает без ИИ.'+(P.en?' Задачи на английском, как на экзамене.':''),'«'+esc(trk[1])+'» дайын бағдарламасы: '+Core.topics(state,subj).length+' тақырып, '+P.sections.length+' бөлім, осы деңгейдің өз түсіндірмелері мен есептері. ЖИ-сіз жұмыс істейді.'+(P.en?' Есептер ағылшын тілінде, емтихандағыдай.':''))+'</p>'+(P.note?'<p class="small muted" id="prog-src">'+esc(P.note)+'</p>':''):'')+
+       (P?'':prog?'<p class="msg" id="track-note">'+TT('Классы и темы те же, что в школьной программе, но объяснения и задачи здесь уровня «'+esc(trk[1])+'». Барс составляет урок при первом открытии темы и сохраняет его на этом устройстве. Важное сверяйте с официальными материалами программы.','Сыныптар мен тақырыптар мектеп бағдарламасындағыдай, бірақ мұндағы түсіндірмелер мен есептер «'+esc(trk[1])+'» деңгейінде. Барс тақырып алғаш ашылғанда сабақты құрастырып, осы құрылғыда сақтайды. Маңыздысын бағдарламаның ресми материалдарымен салыстырыңыз.')+'</p>':
         '<p class="small muted">'+TT('Школьная программа — основная: готовые уроки по классам. Выберите другую программу — классы и темы останутся теми же, а объяснения и задачи станут уровня этой программы.','Мектеп бағдарламасы — негізгі: сыныптар бойынша дайын сабақтар. Басқа бағдарламаны таңдасаңыз, сыныптар мен тақырыптар сол күйі қалады, ал түсіндірмелер мен есептер сол бағдарламаның деңгейіне ауысады.')+'</p>')+'</section>';
   }
   h+=examCard(subj);
@@ -4728,7 +6048,7 @@ function viewTopic(){
   var t=f.topic,done=!!state.done[t.id],res=state.results['topic:'+t.id],n=t.qs?t.qs.length:0;
   var links=state.links[t.id]||[],sid=esc(subj.id)+'|',st=Core.stars(state,t.id),step=0,chat=ui.chat;
   var off=chat.busy||chat.gen?' disabled':'';
-  var trk=Core.track(state,subj.id),tk=trk[0],prog=tk!=='school',pkey=tk+':'+t.id+':'+state.prefs.lang,pl=prog?progCache[pkey]:null,pdn=prog?!!state.pdone[tk+':'+t.id]:done;
+  var trk=Core.track(state,subj.id),tk=Core.eff(state,subj.id),prog=tk!=='school',pkey=tk+':'+t.id+':'+state.prefs.lang,pl=prog?progCache[pkey]:null,pdn=prog?!!state.pdone[tk+':'+t.id]:done;
   var h='<div class="stack lesson" '+col(subj)+' style="max-width:680px">';
   h+='<div><button class="link" data-a="subject" data-id="'+esc(subj.id)+'">← '+esc(subj.name)+'</button></div>';
   h+='<header class="stack" style="gap:8px"><div class="row" style="gap:6px"><span class="pill">'+esc(f.section.title)+'</span>'+(t.tag?'<span class="pill">'+esc(t.tag)+'</span>':'')+
@@ -5077,7 +6397,7 @@ function drawGraph(){
   if(info)info.innerHTML=lines.join('')||'<p class="small muted">Впишите функцию, например x^2-4.</p>';
 }
 /* ---------- Казахский интерфейс: перевод готовых надписей ---------- */
-var KK={
+var KK={'Комбинаторика: перестановки, размещения, сочетания':'Комбинаторика: алмастырулар, орналастырулар, терулер','Бином Ньютона и треугольник Паскаля':'Ньютон биномы және Паскаль үшбұрышы','Вероятность событий':'Оқиғалардың ықтималдығы','Занятия на этой неделе, с понедельника по воскресенье':'Осы аптадағы сабақтар, дүйсенбіден жексенбіге дейін',
 'Опыты':'Тәжірибелер','Мои ошибки':'Менің қателерім','Программа обучения':'Оқу бағдарламасы','Школьная (основная)':'Мектеп (негізгі)','Пробный экзамен с таймером':'Таймері бар сынақ емтихан',
 'Маятник':'Маятник','Наклонная плоскость Галилея':'Галилейдің көлбеу жазықтығы','Тело в жидкости':'Сұйықтағы дене','Цепь с резистором':'Резисторлы тізбек','Груз на пружине':'Серіппедегі жүк','Рычаг':'Иінтірек','Линза':'Линза','Преломление света':'Жарықтың сынуы','Газ под поршнем':'Поршень астындағы газ','Бегущая волна':'Жүгірме толқын','Радиоактивный распад':'Радиоактивті ыдырау','Шкала pH':'pH шкаласы','Раствор соли':'Тұз ерітіндісі','Решётка Пеннета':'Пеннет торы','Парабола':'Парабола','Единичная окружность':'Бірлік шеңбер',
 'Определить уровень':'Деңгейді анықтау','Гонка двух машин':'Екі көліктің жарысы','Сила трения':'Үйкеліс күші','Брусок на песке':'Құмдағы білеуше','Второй закон Ньютона':'Ньютонның екінші заңы','Столкновение тележек':'Арбашалардың соқтығысуы','Движение по окружности':'Шеңбер бойымен қозғалыс','Сохранение энергии':'Энергияның сақталуы','Спутник на орбите':'Орбитадағы серік','Лампочки в цепи':'Тізбектегі шамдар','Нагревание воды':'Суды қыздыру','Плавление льда':'Мұздың еруі','Магнит и компасы':'Магнит және компастар','Магнит в катушке':'Катушкадағы магнит','Взаимодействие зарядов':'Зарядтардың өзара әрекеттесуі','Зарядка конденсатора':'Конденсаторды зарядтау','Фотоэффект':'Фотоэффект','Длина волны и цвет':'Толқын ұзындығы және түс','Атом водорода':'Сутек атомы','Скорость реакции':'Реакция жылдамдығы','Электронные оболочки':'Электрондық қабаттар','Электролиз':'Электролиз','Рост популяции':'Популяцияның өсуі','Фотосинтез':'Фотосинтез','Подбрасывание монеты':'Тиын лақтыру','Квадраты Пифагора':'Пифагор квадраттары','Сложение векторов':'Векторларды қосу','Итоговый тест':'Қорытынды тест','Новые задачи этого уровня':'Осы деңгейдің жаңа есептері','Шутка дня':'Күннің әзілі','Ещё шутку':'Тағы бір әзіл',
@@ -5361,13 +6681,13 @@ var actions={
     else startQuiz(q.subjectId,q.opt);
   },
   depth:function(id){
-    var d=Number(id),subj=Core.subject(state,ui.subjectId),tk=subj?Core.track(state,subj.id)[0]:'school',st=Core.stars(state,ui.topicId);
+    var d=Number(id),subj=Core.subject(state,ui.subjectId),tk=subj?Core.eff(state,subj.id):'school',st=Core.stars(state,ui.topicId);
     if((d===2&&(st>=1||(tk!=='school'&&state.pdone[tk+':'+ui.topicId])))||(d===3&&st>=2))aiPractice(d,d);
   },
   aiPractice:function(){var el=document.getElementById('ai-level');aiPractice(Number(el&&el.value)||2);},
   quizProg:function(id){
     var p=id.split('|'),subj=Core.subject(state,p[0]);if(!subj)return;
-    var tk=Core.track(state,p[0])[0],l=progCache[tk+':'+p[1]+':'+state.prefs.lang],f=Core.find(state,subj,p[1]);
+    var tk=Core.eff(state,p[0]),l=progCache[tk+':'+p[1]+':'+state.prefs.lang],f=Core.find(state,subj,p[1]);
     if(!l||!f||tk==='school')return;
     startQuiz(p[0],{topicId:p[1],aiQs:l.qs,title:f.topic.title,prog:tk});
   },
@@ -5376,7 +6696,7 @@ var actions={
   progRedo:function(){genProg(true);},
   speakProg:function(){
     var subj=Core.subject(state,ui.subjectId);if(!subj)return;
-    var l=progCache[Core.track(state,subj.id)[0]+':'+ui.topicId+':'+state.prefs.lang];if(l)say(sentences(l.sum).concat(l.tip?[TT('Главная ловушка.','Басты қақпан.'),l.tip]:[]),true);
+    var l=progCache[Core.eff(state,subj.id)+':'+ui.topicId+':'+state.prefs.lang];if(l)say(sentences(l.sum).concat(l.tip?[TT('Главная ловушка.','Басты қақпан.'),l.tip]:[]),true);
   },
   kkTranslate:function(){translateLesson();},
   levelTest:function(id){levelTest(id);},
@@ -5396,7 +6716,7 @@ var actions={
   finalTest:function(id){var a=id.split('|');finalTest(a[0],Number(a[1]));},
   repeatLast:function(id){
     var p=id.split('|'),subj=Core.subject(state,p[0]),f=subj&&Core.find(state,subj,p[1]);if(!f)return;
-    var tk=Core.track(state,p[0])[0];
+    var tk=Core.eff(state,p[0]);
     if(tk!=='school'){var l=progCache[tk+':'+p[1]+':'+state.prefs.lang];if(l)startQuiz(p[0],{topicId:p[1],aiQs:l.qs,title:f.topic.title,prog:tk,repeat:true});else actions.topic(id);return;}
     if(f.topic.qs&&f.topic.qs.length)startQuiz(p[0],{topicId:p[1],repeat:true});else actions.topic(id);
   },
