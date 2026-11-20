@@ -146,6 +146,7 @@ ol.ex{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
 .d7.now{color:var(--ink);font-weight:600}
 .d7.now i{border-color:var(--accent);border-width:3px}
 .d7.fut{opacity:.45}
+.flash{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:20px 12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}.flash-word{font-size:1.9rem;line-height:1.2}.card-emoji{font-size:4.2rem;line-height:1}.card-img{max-width:220px;max-height:180px;border-radius:12px;object-fit:cover}.flash-tr{font-size:1.2rem;font-weight:600;margin:0}.flash-ex{font-style:italic;margin:0}
 .words{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .word{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .word:first-child{border-top:0;padding-top:0}
@@ -7515,6 +7516,581 @@ sections:[
 ]},
 SEC('Grammar','B1–B2',['eng-b1-present-perfect','eng-b2-passive','eng-b2-conditionals','eng-b2-reported','eng-b2-relative','eng-b2-linking'])
 ]});
+/* ---------- Банк задач: английский язык (школьная программа A0–C1) ---------- */
+/* Каждый тест берёт часть вопросов, поэтому при повторе задания другие. */
+var BANK=typeof BANK!=='undefined'?BANK:{};
+function bank(id,qs){BANK[id]=(BANK[id]||[]).concat(qs);}
+
+bank('eng-a0-tobe',[
+ ['I ___ twelve years old.','am','is','are','С I — am.'],
+ ['My parents ___ at work.','are','is','am','Parents — они (they): are.'],
+ ['The cat ___ black.','is','are','am','The cat = it: is.'],
+ ['___ you a student?','Are','Is','Am','Вопрос с you: Are you…?'],
+ ['She ___ not at home.','is','are','am','She — is; отрицание: is not.'],
+ ['tf','"We is friends" is correct.',false,'С we нужно are: We are friends.'],
+ ['in','Write the short form: "I am" = ___',["I'm","im","i’m"],'I am → I’m.'],
+ ['in','Write the short form: "they are" = ___',["they're","they’re","theyre"],'They are → they’re.']]);
+bank('eng-a0-pronouns',[
+ ['Tom is my friend. ___ is ten.','He','She','It','Tom — мальчик: he.'],
+ ['Anna and I are classmates. ___ study together.','We','They','You','Anna and I = we.'],
+ ['This is my bag. ___ is new.','It','He','They','О предмете — it.'],
+ ['My sisters are at school. ___ are in class 5.','They','She','We','Sisters — они: they.'],
+ ['Mary is a teacher. ___ is nice.','She','He','It','Mary — она: she.'],
+ ['tf','The pronoun "I" is always written with a capital letter.',true,'I всегда пишется с большой буквы.'],
+ ['in','Replace with a pronoun: "the books" → ___',['they'],'Книги — они: they.'],
+ ['in','Replace with a pronoun: "my brother" → ___',['he'],'Брат — он: he.']]);
+bank('eng-a0-numbers',[
+ ['What is 7 + 8?','fifteen','fifty','sixteen','7 + 8 = 15 — fifteen.'],
+ ['What is 20 − 7?','thirteen','thirty','twelve','20 − 7 = 13 — thirteen.'],
+ ['How do you write 11?','eleven','twelve','seventeen','11 — eleven.'],
+ ['How do you write 19?','nineteen','ninety','nine','19 — nineteen.'],
+ ['What is 3 × 4?','twelve','twenty','fourteen','3 × 4 = 12 — twelve.'],
+ ['tf','"Fourteen" means 40.',false,'Fourteen — 14, forty — 40.'],
+ ['in','Write the number 8 as a word.',['eight'],'8 — eight.'],
+ ['in','Write the number 16 as a word.',['sixteen'],'16 — sixteen.']]);
+bank('eng-a0-greetings',[
+ ['Someone says "How are you?" You answer:','Fine, thanks. And you?','I am Tom.','Nice to meet you, goodbye.','На «How are you?» отвечают, как дела.'],
+ ['You meet someone for the first time. You say:','Nice to meet you.','See you later.','Good night.','При знакомстве — Nice to meet you.'],
+ ['It is 8 a.m. You say:','Good morning!','Good evening!','Good night!','Утром — Good morning.'],
+ ['You leave and will see your friend tomorrow:','See you tomorrow!','Hello!','How are you?','Прощание до завтра.'],
+ ['"What’s your name?" — "___"','My name is Ali.','I’m fine.','I’m from school.','Вопрос об имени.'],
+ ['tf','"Good night" is used when you meet someone in the evening.',false,'Good night говорят перед сном или прощаясь; при встрече — Good evening.'],
+ ['tf','"Where are you from?" asks about your country or city.',true,'From — откуда.'],
+ ['in','Complete: "Nice to ___ you."',['meet'],'Nice to meet you.']]);
+bank('eng-a0-plural',[
+ ['one box — two ___','boxes','boxs','boxies','После x добавляем -es.'],
+ ['one child — three ___','children','childs','childrens','Исключение: child — children.'],
+ ['one city — two ___','cities','citys','cityes','Согласная + y → ies.'],
+ ['one tooth — many ___','teeth','tooths','teeths','Исключение: tooth — teeth.'],
+ ['one knife — two ___','knives','knifes','knivs','f/fe → ves: knife — knives.'],
+ ['tf','The plural of "boy" is "boies".',false,'Гласная + y — просто -s: boys.'],
+ ['in','Write the plural: "woman" → ___',['women'],'Исключение: woman — women.'],
+ ['in','Write the plural: "bus" → ___',['buses'],'После s — -es: buses.']]);
+bank('eng-a0-have',[
+ ['She ___ got a new phone.','has','have','is','He/she/it — has got.'],
+ ['We ___ got two cats.','have','has','are','We — have got.'],
+ ['___ you got a pen?','Have','Has','Are','Вопрос: Have you got…?'],
+ ['He ___ got a car. He walks.','hasn’t','haven’t','isn’t','Отрицание с he: hasn’t got.'],
+ ['"Has your sister got a bike?" — "Yes, she ___."','has','have','is','Краткий ответ: Yes, she has.'],
+ ['tf','"I has got a brother" is correct.',false,'С I — have got.'],
+ ['in','Short form: "I have got" = "I ___ got"',["’ve","'ve"],'I have got → I’ve got.'],
+ ['in','Complete: "My friends ___ got a ball." (have / has)',['have'],'Friends — they: have.']]);
+bank('eng-a0-colours',[
+ ['The first day of the week (in the UK) is…','Monday','Sunday','Friday','В британском календаре неделя начинается с понедельника.'],
+ ['The day after Wednesday is…','Thursday','Tuesday','Friday','Среда → четверг.'],
+ ['The month after March is…','April','May','February','Март → апрель.'],
+ ['The colour of grass is…','green','blue','red','Трава зелёная.'],
+ ['Snow is…','white','black','brown','Снег белый.'],
+ ['tf','Days of the week and months are written with a capital letter in English.',true,'Monday, January — с большой буквы.'],
+ ['in','Write the last month of the year.',['December'],'Декабрь — December.'],
+ ['in','Write the day before Saturday.',['Friday'],'Перед субботой — пятница.']]);
+bank('eng-a0-this-that',[
+ ['___ is my bag here in my hand.','This','That','Those','Рядом, одна вещь — this.'],
+ ['Look at ___ birds over there!','those','these','this','Далеко, много — those.'],
+ ['___ apples here are sweet.','These','Those','That','Рядом, много — these.'],
+ ['Who is ___ man over there?','that','this','these','Далеко, один — that.'],
+ ['Are ___ your shoes? (near you)','these','this','that','Рядом, много — these.'],
+ ['tf','"These book is mine" is correct.',false,'Book — один: This book.'],
+ ['in','Plural of "this": ___',['these'],'this → these.'],
+ ['in','Plural of "that": ___',['those'],'that → those.']]);
+
+bank('eng-present-simple',[
+ ['She ___ to school every day.','goes','go','going','He/she/it — окончание -es: goes.'],
+ ['They ___ football on Sundays.','play','plays','playing','They — без -s.'],
+ ['My dad ___ coffee in the morning.','drinks','drink','drinking','My dad = he: drinks.'],
+ ['___ he like pizza?','Does','Do','Is','Вопрос с he: Does…?'],
+ ['I ___ like spiders.','don’t','doesn’t','not','Отрицание с I: don’t.'],
+ ['tf','"He watch TV every evening" is correct.',false,'Нужно watches.'],
+ ['in','Complete: "Water ___ (boil) at 100 °C."',['boils'],'Научный факт — Present Simple, it: boils.'],
+ ['in','Complete: "My sister ___ (study) English."',['studies'],'Согласная + y → ies: studies.']]);
+bank('eng-articles',[
+ ['I saw ___ elephant at the zoo.','an','a','the','Перед гласным звуком — an.'],
+ ['She is ___ doctor.','a','an','the','Профессия — a doctor.'],
+ ['___ sun is very hot.','The','A','An','Единственный в мире предмет — the.'],
+ ['He plays ___ guitar.','the','a','—','С музыкальными инструментами — the.'],
+ ['I go to school by ___ bus.','—','a','the','By + транспорт без артикля.'],
+ ['tf','We say "an university".',false,'University начинается со звука [ju] — a university.'],
+ ['tf','We say "an hour".',true,'Буква h не читается — an hour.'],
+ ['in','Complete: "I have ___ idea!" (a / an)',['an'],'Idea начинается с гласного звука.']]);
+bank('eng-questions',[
+ ['___ do you live? — In Almaty.','Where','When','Who','Место — where.'],
+ ['___ is your birthday? — In May.','When','Where','What','Время — when.'],
+ ['___ is that girl? — My sister.','Who','What','Which','О человеке — who.'],
+ ['___ are you sad? — Because I lost my key.','Why','How','When','Причина — why.'],
+ ['___ much is this book? — 5 dollars.','How','What','Which','Цена — how much.'],
+ ['___ old are you?','How','What','Who','Возраст — how old.'],
+ ['tf','"Whose" asks about the owner of something.',true,'Whose bag is this? — Чей?'],
+ ['in','Complete: "___ many brothers have you got?"',['How'],'Количество исчисляемых — how many.']]);
+bank('eng-prepositions',[
+ ['My birthday is ___ June.','in','on','at','Месяцы — in.'],
+ ['The lesson starts ___ 9 o’clock.','at','in','on','Точное время — at.'],
+ ['We have no school ___ Sunday.','on','in','at','Дни недели — on.'],
+ ['I was born ___ 2010.','in','on','at','Годы — in.'],
+ ['We meet ___ the weekend.','at','in','on','Британский вариант: at the weekend.'],
+ ['tf','We say "in the morning" but "at night".',true,'Это устойчивые выражения.'],
+ ['in','Complete: "___ 5 May" (in / on / at)',['on'],'Даты — on.'],
+ ['in','Complete: "___ winter" (in / on / at)',['in'],'Времена года — in.']]);
+bank('eng-a1-family',[
+ ['My father’s brother is my…','uncle','cousin','nephew','Брат отца — дядя.'],
+ ['My mother’s mother is my…','grandmother','aunt','niece','Мама мамы — бабушка.'],
+ ['My uncle’s son is my…','cousin','brother','nephew','Сын дяди — двоюродный брат.'],
+ ['My sister’s daughter is my…','niece','nephew','cousin','Дочь сестры — племянница.'],
+ ['The room where you cook is the…','kitchen','bedroom','bathroom','Кухня.'],
+ ['tf','"Parents" means a mother and a father.',true,'Parents — родители.'],
+ ['tf','"Relatives" are only your brothers and sisters.',false,'Relatives — все родственники.'],
+ ['in','Write the word: your brother’s son is your ___',['nephew'],'Племянник — nephew.']]);
+bank('eng-a1-there-is',[
+ ['There ___ a book on the table.','is','are','be','Одна вещь — there is.'],
+ ['There ___ three windows in the room.','are','is','am','Много — there are.'],
+ ['___ there any milk in the fridge?','Is','Are','Do','Milk неисчисляемое — is.'],
+ ['There ___ any students in the classroom.','aren’t','isn’t','not','Отрицание с множественным: aren’t.'],
+ ['There ___ some water in the glass.','is','are','have','Water неисчисляемое — is.'],
+ ['tf','"There are a cat in the garden" is correct.',false,'A cat — один: There is.'],
+ ['in','Complete: "There ___ two parks near my house."',['are'],'Two parks — are.'],
+ ['in','Short form: "there is" = ___',["there's","there’s"],'There is → there’s.']]);
+bank('eng-a1-possessive',[
+ ['This is Tom. ___ bag is blue.','His','Her','Its','Tom — he → his.'],
+ ['We love ___ teacher.','our','us','we','Притяжательное от we — our.'],
+ ['The dog is eating ___ food.','its','it’s','his','Its — его (о животном/предмете); it’s = it is.'],
+ ['Anna and Ben live with ___ grandparents.','their','there','they','Их — their.'],
+ ['Is this ___ pen, Kate?','your','you','yours','Перед существительным — your.'],
+ ['tf','"It’s" and "its" mean the same.',false,'It’s = it is; its — его/её (притяжательное).'],
+ ['in','Possessive of "I": ___ book',['my'],'I → my.'],
+ ['in','Possessive of "she": ___ cat',['her'],'She → her.']]);
+bank('eng-a1-place',[
+ ['The cat is ___ the box. (inside)','in','on','under','Внутри — in.'],
+ ['The lamp is ___ the table. (on top)','on','in','between','На поверхности — on.'],
+ ['The ball is ___ the bed. (below)','under','on','above','Под — under.'],
+ ['The bank is ___ the café and the shop.','between','next','behind','Между двумя — between.'],
+ ['The car is ___ the house. (at the back)','behind','in front of','on','Позади — behind.'],
+ ['tf','"Next to" means "near, beside".',true,'Next to — рядом с.'],
+ ['tf','"Opposite" means "on top of".',false,'Opposite — напротив.'],
+ ['in','Complete: "The picture is ___ the wall." (in / on / at)',['on'],'На стене — on the wall.']]);
+bank('eng-a1-object',[
+ ['I like Sara. I often help ___.','her','she','hers','Объект — her.'],
+ ['Where are my keys? I can’t find ___.','them','they','their','Keys — them.'],
+ ['Can you help ___? We are lost.','us','we','our','Объект от we — us.'],
+ ['This is Mr Brown. Do you know ___?','him','he','his','Объект от he — him.'],
+ ['Listen to ___! I have news.','me','I','my','Объект от I — me.'],
+ ['tf','"Give it to I" is correct.',false,'После предлога — объектная форма: to me.'],
+ ['in','Object form of "they": ___',['them'],'They → them.'],
+ ['in','Object form of "we": ___',['us'],'We → us.']]);
+bank('eng-a1-can',[
+ ['A fish ___ swim.','can','cans','can to','После can — глагол без to, без -s.'],
+ ['I ___ speak Chinese. I never learned it.','can’t','can','don’t can','Не умею — can’t.'],
+ ['___ you play the piano?','Can','Do can','Are','Вопрос: Can you…?'],
+ ['She can ___ very fast.','run','runs','to run','После can — первая форма.'],
+ ['"Can I open the window?" means…','asking for permission','talking about the past','giving an order','Can I…? — разрешение.'],
+ ['tf','"He cans ride a bike" is correct.',false,'Can не меняется: He can ride.'],
+ ['in','Negative short form of "cannot": ___',["can't","can’t"],'Cannot → can’t.'],
+ ['in','Complete: "Penguins ___ fly." (can / can’t)',["can't","can’t"],'Пингвины не летают.']]);
+bank('eng-a1-frequency',[
+ ['I ___ go to bed at 10. (every day)','always','never','sometimes','Каждый день — always.'],
+ ['She ___ eats meat. She is vegetarian.','never','always','often','Вегетарианка — never.'],
+ ['He is ___ late. (it happens often)','often','never','ever','Часто — often.'],
+ ['Where does "usually" go? "I ___ walk to school."','I usually walk','I walk usually','Usually I walk always','Перед смысловым глаголом.'],
+ ['Where does "always" go with "be"? "She ___ happy."','is always','always is','is happy always','После be.'],
+ ['tf','"Rarely" means almost never.',true,'Rarely — редко.'],
+ ['in','Opposite of "always": ___',['never'],'Always ↔ never.'],
+ ['in','Complete: "How ___ do you go swimming?"',['often'],'How often — как часто.']]);
+
+bank('eng-present-cont',[
+ ['Be quiet! The baby ___.','is sleeping','sleeps','sleep','Сейчас — Present Continuous.'],
+ ['Look! It ___.','is raining','rains','rain','Прямо сейчас.'],
+ ['They ___ TV at the moment.','are watching','watch','is watching','At the moment — Continuous; they are.'],
+ ['What ___ you doing now?','are','do','is','Вопрос: What are you doing?'],
+ ['I ___ playing now; I’m doing homework.','am not','don’t','isn’t','Отрицание: am not + -ing.'],
+ ['tf','"I am knowing the answer" is correct.',false,'Know — глагол состояния, обычно без -ing: I know.'],
+ ['in','Write the -ing form: "swim" → ___',['swimming'],'Короткий глагол: удвоение m.'],
+ ['in','Write the -ing form: "write" → ___',['writing'],'Немая e уходит: writing.']]);
+bank('eng-past-simple',[
+ ['I ___ my grandma yesterday.','visited','visit','visits','Yesterday — Past Simple.'],
+ ['She ___ to the cinema last week.','went','goed','go','Go — went (неправильный).'],
+ ['___ you see the film?','Did','Do','Was','Вопрос в прошлом — Did.'],
+ ['We ___ watch TV last night.','didn’t','don’t','weren’t','Отрицание: didn’t + первая форма.'],
+ ['He didn’t ___ the answer.','know','knew','knows','После didn’t — первая форма.'],
+ ['tf','"Did she went to school?" is correct.',false,'После did — первая форма: Did she go?'],
+ ['in','Past Simple of "stop": ___',['stopped'],'Удвоение p: stopped.'],
+ ['in','Past Simple of "study": ___',['studied'],'y → ied.']]);
+bank('eng-irregular',[
+ ['buy — ___ — bought','bought','buyed','brought','buy — bought — bought.'],
+ ['see — saw — ___','seen','saw','seed','Третья форма — seen.'],
+ ['write — ___ — written','wrote','writed','writ','write — wrote — written.'],
+ ['take — took — ___','taken','took','taked','Третья форма — taken.'],
+ ['begin — began — ___','begun','begined','began','Третья форма — begun.'],
+ ['tf','"Think" — "thought" — "thought".',true,'Все три формы верны.'],
+ ['in','Past Simple of "eat": ___',['ate'],'eat — ate — eaten.'],
+ ['in','Past Simple of "teach": ___',['taught'],'teach — taught — taught.']]);
+bank('eng-comparison',[
+ ['An elephant is ___ than a horse.','bigger','more big','biggest','Короткое прилагательное: big — bigger.'],
+ ['This is the ___ day of my life!','best','goodest','better','Good — better — the best.'],
+ ['Maths is ___ than history for me.','more difficult','difficulter','most difficult','Длинное: more difficult.'],
+ ['My bag is ___ than yours.','heavier','heavyer','more heavy','y → ier.'],
+ ['Everest is the ___ mountain in the world.','highest','higher','most high','Превосходная: the highest.'],
+ ['tf','"Bad — worse — the worst" is correct.',true,'Неправильные формы.'],
+ ['in','Comparative of "far": ___',['farther','further'],'far — farther/further.'],
+ ['in','Superlative of "happy": the ___',['happiest'],'y → iest.']]);
+bank('eng-modals',[
+ ['You ___ wear a seatbelt. It’s the law.','must','mustn’t','can','Обязательно — must.'],
+ ['You ___ smoke here. It’s forbidden.','mustn’t','don’t have to','should','Запрещено — mustn’t.'],
+ ['You look tired. You ___ go to bed.','should','must not','can’t','Совет — should.'],
+ ['Tomorrow is Sunday. I ___ get up early.','don’t have to','mustn’t','can’t','Нет необходимости — don’t have to.'],
+ ['___ I use your phone, please?','Can','Must','Should','Просьба разрешения — Can I…?'],
+ ['tf','"Mustn’t" and "don’t have to" mean the same.',false,'Mustn’t — нельзя; don’t have to — не обязательно.'],
+ ['in','Complete the advice: "You ___ see a doctor." (should / mustn’t)',['should'],'Совет — should.'],
+ ['in','Complete: "She ___ speak three languages." (can / must)',['can'],'Умение — can.']]);
+bank('eng-a2-quantifiers',[
+ ['How ___ water do you drink?','much','many','a lot','Water неисчисляемое — much.'],
+ ['How ___ friends have you got?','many','much','any','Friends исчисляемые — many.'],
+ ['There isn’t ___ sugar left.','any','some','many','В отрицании — any.'],
+ ['Would you like ___ tea?','some','any','many','Предложение — some.'],
+ ['I have ___ money, so I can buy it.','some','any','many','В утверждении — some.'],
+ ['tf','"A lot of" can be used with both countable and uncountable nouns.',true,'A lot of apples / a lot of milk.'],
+ ['in','Complete: "Are there ___ eggs in the fridge?" (some / any)',['any'],'В вопросе — обычно any.'],
+ ['in','Complete: "We don’t have ___ time." (much / many)',['much'],'Time неисчисляемое.']]);
+bank('eng-a2-daily',[
+ ['I ___ up at 7 o’clock.','get','make','do','Get up — вставать.'],
+ ['I ___ my teeth twice a day.','brush','wash','clean up','Brush teeth — чистить зубы.'],
+ ['After school I ___ my homework.','do','make','play','Do homework.'],
+ ['We ___ breakfast at 7:30.','have','do','make up','Have breakfast — завтракать.'],
+ ['I ___ a shower in the morning.','take','do','make','Take/have a shower.'],
+ ['tf','"Make the bed" means "застелить кровать".',true,'Устойчивое выражение.'],
+ ['tf','"Go to bed" means "wake up".',false,'Go to bed — ложиться спать.'],
+ ['in','Complete: "I ___ dressed after breakfast." (get / make)',['get'],'Get dressed — одеваться.']]);
+bank('eng-a2-adverbs',[
+ ['She sings ___.','beautifully','beautiful','beauty','Как поёт? Наречие на -ly.'],
+ ['He drives very ___.','carefully','careful','care','Как водит? carefully.'],
+ ['She runs very ___.','fast','fastly','fastest','Fast — и прилагательное, и наречие; fastly не существует.'],
+ ['You speak English very ___.','well','good','goodly','Наречие от good — well.'],
+ ['He works ___. He never stops.','hard','hardly','hardy','Hard — усердно; hardly — едва.'],
+ ['tf','"Happily" is the adverb of "happy".',true,'y → ily.'],
+ ['in','Adverb of "quiet": ___',['quietly'],'quiet → quietly.'],
+ ['in','Adverb of "easy": ___',['easily'],'y → ily.']]);
+bank('eng-a2-travel',[
+ ['You need a ___ to travel to another country.','passport','ticket office','luggage','Паспорт.'],
+ ['The place where planes take off and land is…','an airport','a station','a harbour','Аэропорт.'],
+ ['Your bags and suitcases are your…','luggage','journey','platform','Багаж.'],
+ ['A ___ ticket takes you there and back.','return','single','one-way','Return — туда и обратно.'],
+ ['The train leaves from ___ 4.','platform','gate','terminal','Поезд — платформа.'],
+ ['tf','"Get on the bus" means "сесть в автобус".',true,'Get on — сесть, get off — выйти.'],
+ ['tf','"Miss the train" means you arrived on time.',false,'Miss — опоздать на поезд.'],
+ ['in','Complete: "We ___ off the bus at the museum." (got / took)',['got'],'Get off — выйти.']]);
+bank('eng-a2-too-enough',[
+ ['I can’t drink this tea. It’s ___ hot.','too','enough','very enough','Слишком — too.'],
+ ['He isn’t tall ___ to play basketball.','enough','too','very','Enough — после прилагательного.'],
+ ['We don’t have ___ chairs for everyone.','enough','too','too many','Enough — перед существительным.'],
+ ['There are ___ people here. I can’t move!','too many','too much','enough','Исчисляемые — too many.'],
+ ['I have ___ homework today. I’m tired.','too much','too many','enough of','Homework неисчисляемое — too much.'],
+ ['tf','"She is enough old to drive" is correct.',false,'Правильно: old enough.'],
+ ['in','Complete: "Is the room big ___ for ten people?"',['enough'],'Big enough.'],
+ ['in','Complete: "This bag is ___ heavy for me to carry."',['too'],'Слишком тяжёлая.']]);
+
+bank('eng-b1-present-perfect',[
+ ['I ___ never ___ to London.','have / been','did / go','was / gone','Опыт в жизни — Present Perfect.'],
+ ['She ___ just finished her work.','has','have','is','He/she — has + V3.'],
+ ['___ you ever eaten sushi?','Have','Did','Are','Вопрос об опыте — Have you ever…?'],
+ ['We have lived here ___ 2015.','since','for','from','Точка отсчёта — since.'],
+ ['They have known each other ___ ten years.','for','since','during','Период — for.'],
+ ['I saw him ___.','yesterday','already','ever','Yesterday — Past Simple, не Present Perfect.'],
+ ['tf','"I have seen this film last week" is correct.',false,'Last week — Past Simple: I saw.'],
+ ['in','Complete: "Has she ___ (finish) yet?"',['finished'],'Has + V3.']]);
+bank('eng-b1-future',[
+ ['Look at the clouds! It ___ rain.','is going to','will','rains','Признак в настоящем — going to.'],
+ ['"Don’t worry, I ___ help you," she promised.','will','help','am helping','Обещание — will.'],
+ ['The phone is ringing. — I ___ answer it!','will','am going to','answer','Решение в момент речи — will.'],
+ ['We ___ visit grandma tomorrow. We planned it.','are going to','will','visit','Заранее запланировано — going to.'],
+ ['The train ___ at 6:15 tomorrow.','leaves','will leaving','is leave','Расписание — Present Simple.'],
+ ['tf','"I will to call you" is correct.',false,'После will — без to.'],
+ ['in','Short form of "will not": ___',["won't","won’t"],'Will not → won’t.'],
+ ['in','Complete: "I promise I ___ tell anyone." (will / am going to)',['will'],'Обещание — will.']]);
+bank('eng-b1-conditionals',[
+ ['If you heat ice, it ___.','melts','will melt','melted','Нулевой тип — факт: Present + Present.'],
+ ['If it rains tomorrow, we ___ at home.','will stay','stay','stayed','Первый тип: if + Present, will + V.'],
+ ['If you ___ hard, you will pass.','study','will study','studied','После if в первом типе — Present.'],
+ ['Plants die if they ___ water.','don’t get','won’t get','didn’t get','Нулевой тип: факт.'],
+ ['Unless you hurry, you ___ the bus.','will miss','miss','missed','Unless = if not.'],
+ ['tf','"If I will see him, I will tell him" is correct.',false,'После if — Present: If I see him.'],
+ ['in','Complete: "If she calls, I ___ (tell) you."',["will tell","'ll tell","’ll tell"],'Первый тип: will tell.'],
+ ['in','Complete: "If you mix red and white, you ___ (get) pink."',['get'],'Нулевой тип — факт.']]);
+bank('eng-b1-phrasal',[
+ ['Please ___ the TV. It’s too loud.','turn down','turn up','turn on','Turn down — сделать тише.'],
+ ['I ___ my keys everywhere. Where are they?','looked for','looked after','looked up','Look for — искать.'],
+ ['She ___ her little brother when parents are away.','looks after','looks for','looks up','Look after — заботиться.'],
+ ['Don’t ___! You can do it.','give up','give in','give back','Give up — сдаваться.'],
+ ['Our plane ___ at 9 a.m.','took off','took on','took up','Take off — взлетать.'],
+ ['tf','"Find out" means "узнать, выяснить".',true,'Find out — узнать.'],
+ ['tf','"Get up" means "лечь спать".',false,'Get up — встать.'],
+ ['in','Complete: "Can you ___ me up at 7?" (pick / take)',['pick'],'Pick up — забрать (кого-то).']]);
+bank('eng-b1-past-cont',[
+ ['I ___ TV when you called.','was watching','watched','am watching','Длительное действие + прерывание.'],
+ ['They ___ football at 5 p.m. yesterday.','were playing','was playing','played','В конкретный момент — Past Continuous; they were.'],
+ ['While she was cooking, the phone ___.','rang','was ringing','rings','Короткое действие — Past Simple.'],
+ ['What ___ you doing at 8 last night?','were','was','did','You — were.'],
+ ['It ___ when we left the house.','was snowing','snowed','snows','Фон в прошлом.'],
+ ['tf','"I was knowing him" is correct.',false,'Know — глагол состояния: I knew him.'],
+ ['in','Complete: "He ___ (sleep) when the alarm went off."',['was sleeping'],'Was + -ing.'],
+ ['in','Complete: "We ___ (walk) home when it started to rain."',['were walking'],'We — were + -ing.']]);
+bank('eng-b1-used-to',[
+ ['I ___ play with dolls when I was small.','used to','use to','was used to','Привычка в прошлом — used to.'],
+ ['Did you ___ live in Astana?','use to','used to','using to','В вопросе после did — use to.'],
+ ['He didn’t ___ like vegetables.','use to','used to','uses to','После didn’t — use to.'],
+ ['This building ___ be a cinema. Now it’s a shop.','used to','is used to','use','Состояние в прошлом.'],
+ ['There ___ be a park here.','used to','use to','was use','Раньше был парк.'],
+ ['tf','"Used to" can describe something that is still true now.',false,'Used to — только о том, что было и прошло.'],
+ ['in','Complete: "We ___ to go fishing every summer."',['used'],'Used to.'],
+ ['tf','"I used to get up early" means that I don’t do it now.',true,'Это в прошлом.']]);
+bank('eng-b1-deduction',[
+ ['He’s been working for 12 hours. He ___ be tired.','must','can’t','might not','Почти уверены — must.'],
+ ['She ___ be at home — I saw her at school a minute ago.','can’t','must','might','Невозможно — can’t.'],
+ ['I’m not sure. He ___ be in the library.','might','must','can’t','Возможно — might.'],
+ ['That ___ be Tom’s car — he doesn’t have a car.','can’t','must','may','Невозможно — can’t.'],
+ ['The lights are on. Someone ___ be at home.','must','can’t','mustn’t','Логический вывод — must.'],
+ ['tf','"Might" shows more certainty than "must".',false,'Must — уверенность, might — возможность.'],
+ ['in','Complete: "Take an umbrella. It ___ rain." (might / can’t)',['might'],'Возможно пойдёт.'],
+ ['tf','"She may be ill" means it is possible that she is ill.',true,'May — возможно.']]);
+bank('eng-b1-tags',[
+ ['You are a student, ___?','aren’t you','are you','don’t you','Утверждение → отрицательный хвост.'],
+ ['She can swim, ___?','can’t she','doesn’t she','isn’t she','Can → can’t she.'],
+ ['They didn’t come, ___?','did they','didn’t they','do they','Отрицание → положительный хвост.'],
+ ['He likes tea, ___?','doesn’t he','isn’t he','don’t he','Present Simple → doesn’t he.'],
+ ['I’m right, ___?','aren’t I','am not I','isn’t I','Особый случай: aren’t I.'],
+ ['tf','"Let’s go, shall we?" is correct.',true,'После Let’s — shall we.'],
+ ['in','Complete: "You haven’t finished, ___ you?"',['have'],'Отрицание → have you.'],
+ ['in','Complete: "It will be fine, ___ it?"',["won't","won’t"],'Will → won’t it.']]);
+bank('eng-b1-past-perfect',[
+ ['When I arrived, the film ___ already started.','had','has','was','Раньше другого действия в прошлом — had + V3.'],
+ ['She was sad because she ___ her keys.','had lost','has lost','loses','Причина раньше — Past Perfect.'],
+ ['After he ___ dinner, he went out.','had eaten','has eaten','eats','Сначала поел — Past Perfect.'],
+ ['I ___ never seen snow before I went to Russia.','had','have','did','До момента в прошлом.'],
+ ['By the time we got there, everyone ___.','had left','left','has left','By the time — Past Perfect.'],
+ ['tf','Past Perfect is formed with "had + third form".',true,'Had + V3.'],
+ ['in','Complete: "They ___ (finish) the test before the bell rang."',['had finished'],'Had + V3.'],
+ ['in','Short form of "I had": ___',["I'd","I’d"],'I had → I’d.']]);
+
+bank('eng-b2-passive',[
+ ['The window ___ by the boy yesterday.','was broken','broke','is broken','Прошлое: was + V3.'],
+ ['The new school ___ next year.','will be built','will build','is built','Будущее: will be + V3.'],
+ ['The room ___ cleaned every day.','is','was being','has','Регулярно: is + V3.'],
+ ['My bike ___ stolen!','has been','have been','has','Present Perfect Passive: has been + V3.'],
+ ['The bridge ___ repaired at the moment.','is being','is been','was','Сейчас: is being + V3.'],
+ ['"Someone stole my bag" in the passive is…','My bag was stolen.','My bag stole.','My bag is stealing.','Объект становится подлежащим.'],
+ ['tf','In the passive, the doer is introduced with "by".',true,'…by Shakespeare.'],
+ ['in','Complete: "Hamlet ___ (write) by Shakespeare."',['was written'],'Was + V3.']]);
+bank('eng-b2-conditionals',[
+ ['If I ___ rich, I would buy a house.','were','am','will be','Второй тип: if + Past (were).'],
+ ['If she had studied, she ___ the exam.','would have passed','would pass','passed','Третий тип: would have + V3.'],
+ ['If I were you, I ___ apologise.','would','will','had','Совет: If I were you, I would…'],
+ ['If we ___ earlier, we wouldn’t have missed the train.','had left','left','would leave','Третий тип: if + Past Perfect.'],
+ ['What would you do if you ___ a million dollars?','won','win','had won','Второй тип — нереально сейчас.'],
+ ['tf','The third conditional talks about an unreal past.',true,'Нельзя изменить прошлое.'],
+ ['in','Complete: "If I ___ (know) his number, I would call him."',['knew'],'Второй тип: Past Simple.'],
+ ['in','Complete: "If it hadn’t rained, we ___ (go) out." (3rd conditional)',['would have gone',"’d have gone","'d have gone"],'Would have + V3.']]);
+bank('eng-b2-reported',[
+ ['"I am tired," she said. → She said that she ___ tired.','was','is','has been','Сдвиг времени: am → was.'],
+ ['"I will help you," he said. → He said he ___ help me.','would','will','had','Will → would.'],
+ ['"I saw the film," Tom said. → Tom said he ___ the film.','had seen','saw','has seen','Past Simple → Past Perfect.'],
+ ['"Where do you live?" → She asked me where I ___.','lived','do live','did live','Косвенный вопрос: прямой порядок, сдвиг времени.'],
+ ['"Don’t touch it!" → He told me ___ it.','not to touch','don’t touch','to not touching','Приказ: told + not to + V.'],
+ ['"I’m leaving tomorrow." → She said she was leaving ___.','the next day','tomorrow','yesterday','Tomorrow → the next day.'],
+ ['tf','In reported speech, "here" often changes to "there".',true,'Here → there.'],
+ ['in','"Can you swim?" → He asked if I ___ swim.',['could'],'Can → could.']]);
+bank('eng-b2-linking',[
+ ['It was raining. ___, we went out.','However','Because','So that','Противопоставление — however.'],
+ ['___ it was late, she kept working.','Although','Despite','However','Although + предложение.'],
+ ['___ the rain, we played football.','Despite','Although','Even','Despite + существительное.'],
+ ['He was ill. ___, he stayed at home.','Therefore','However','Although','Следствие — therefore.'],
+ ['I like tea. ___, I like coffee.','In addition','In contrast','Otherwise','Добавление — in addition.'],
+ ['tf','"Despite of the weather" is correct.',false,'Despite без of (или in spite of).'],
+ ['in','Complete: "In ___ of the cold, they swam." (one word)',['spite'],'In spite of.'],
+ ['in','Complete: "She studied hard. As a ___, she passed."',['result'],'As a result — в результате.']]);
+bank('eng-b2-relative',[
+ ['The girl ___ sits next to me is from Bishkek.','who','which','whose','О человеке — who.'],
+ ['The book ___ I bought is great.','which','who','whose','О предмете — which/that.'],
+ ['That’s the man ___ car was stolen.','whose','who','which','Принадлежность — whose.'],
+ ['This is the house ___ I was born.','where','which','who','Место — where.'],
+ ['I remember the day ___ we met.','when','where','which','Время — when.'],
+ ['tf','In "My brother, who lives in London, is a doctor", the commas are needed.',true,'Это дополнительная информация (non-defining).'],
+ ['tf','"That" can be used in non-defining clauses with commas.',false,'В non-defining that не используют.'],
+ ['in','Complete: "The teacher ___ helped me was kind." (who / which)',['who'],'Человек — who.']]);
+bank('eng-b2-gerund',[
+ ['I enjoy ___ books.','reading','to read','read','После enjoy — -ing.'],
+ ['She decided ___ a doctor.','to become','becoming','become','После decide — to + V.'],
+ ['He is good at ___.','drawing','to draw','draw','После предлога — -ing.'],
+ ['They want ___ the museum.','to visit','visiting','visit','After want — to + V.'],
+ ['Would you mind ___ the window?','opening','to open','open','После mind — -ing.'],
+ ['On the way home I stopped ___ some water. (= in order to buy)','to buy','buying','buy','Stop to do — остановиться, чтобы что-то сделать.'],
+ ['tf','"I look forward to see you" is correct.',false,'Look forward to + -ing: seeing.'],
+ ['in','Complete: "She avoids ___ (eat) sugar."',['eating'],'Avoid + -ing.']]);
+bank('eng-b2-perfect-cont',[
+ ['I ___ for two hours and I’m still waiting.','have been waiting','have waited','am waiting','Процесс до сих пор — Present Perfect Continuous.'],
+ ['She ___ English since 2020.','has been learning','is learning','learns','Since + продолжающийся процесс.'],
+ ['Your eyes are red. ___ you been crying?','Have','Are','Did','Have you been + -ing?'],
+ ['How long ___ you been living here?','have','are','do','How long have you been…?'],
+ ['It ___ all day. The streets are wet.','has been raining','rains','is rained','Результат длительного процесса.'],
+ ['tf','"I have been knowing her for years" is correct.',false,'Know не употребляют в Continuous: I have known.'],
+ ['in','Complete: "He has ___ (run). He is out of breath."',['been running'],'Has been + -ing.'],
+ ['in','Complete: "We ___ been working since 9." (have / has)',['have'],'We — have.']]);
+bank('eng-b2-mixed',[
+ ['If I had studied medicine, I ___ a doctor now.','would be','would have been','will be','Прошлое условие → настоящий результат.'],
+ ['If she weren’t so shy, she ___ to the party yesterday.','would have gone','would go','will go','Постоянное качество → прошлый результат.'],
+ ['If I ___ breakfast, I wouldn’t be hungry now.','had eaten','ate','have eaten','Прошлое условие: Past Perfect.'],
+ ['Which sentence is a mixed conditional?','If I had saved money, I would be rich now.','If I save money, I will be rich.','If I saved money, I would be rich.','Прошлое условие (had saved) и результат сейчас (would be).'],
+ ['A mixed conditional usually combines…','second and third conditionals','zero and first conditionals','first and second conditionals','Смешение второго и третьего типов.'],
+ ['tf','"If I had won the lottery, I would be rich now" is a mixed conditional.',true,'Прошлое → настоящее.'],
+ ['in','Complete: "If we had left earlier, we ___ (be) there now."',['would be',"’d be","'d be"],'Результат сейчас — would be.'],
+ ['tf','"If I were taller, I would have joined the team last year" mixes present condition and past result.',true,'Да, это смешанный тип.']]);
+bank('eng-b2-modals-past',[
+ ['You ___ told me! I would have helped.','should have','must have','can’t have','Упрёк — should have + V3.'],
+ ['He ___ left already — his coat is gone.','must have','should have','can’t have','Уверенный вывод о прошлом — must have.'],
+ ['She ___ seen me — she was asleep.','can’t have','must have','should have','Невозможно — can’t have.'],
+ ['I’m not sure where my phone is. I ___ left it at school.','might have','must have','should have','Возможно — might have.'],
+ ['You ___ come. It wasn’t necessary, but thanks!','needn’t have','mustn’t have','can’t have','Сделал, хотя не нужно было — needn’t have.'],
+ ['tf','"Could have done" can mean that something was possible but didn’t happen.',true,'Мог бы, но не сделал.'],
+ ['in','Complete: "You ___ have studied more." (advice about the past)',['should'],'Should have — следовало бы.'],
+ ['tf','"Must have gone" expresses criticism.',false,'Must have — уверенное предположение.']]);
+bank('eng-b2-causative',[
+ ['I ___ my hair cut yesterday.','had','did','made','Have something done — кто-то сделал за меня.'],
+ ['We are having our house ___.','painted','paint','painting','Have + объект + V3.'],
+ ['She got her phone ___.','repaired','repair','repairing','Get something done.'],
+ ['I need to have my eyes ___.','tested','test','to test','Have + объект + V3.'],
+ ['"I cut my hair" vs "I had my hair cut": in the second sentence…','someone else cut it','I cut it myself','nobody cut it','Causative — делает другой человек.'],
+ ['tf','"He had his car washed" means he washed it himself.',false,'Помыл кто-то другой.'],
+ ['in','Complete: "I’m going to have my bike ___ (fix)."',['fixed'],'V3: fixed.'],
+ ['in','Complete: "She ___ her nails done every month." (has / does)',['has'],'Have something done.']]);
+
+bank('eng-c1-inversion',[
+ ['Never ___ such a beautiful view.','have I seen','I have seen','I saw','После never в начале — инверсия.'],
+ ['Not only ___ late, but he also forgot the tickets.','was he','he was','he is','Not only + инверсия.'],
+ ['Hardly ___ arrived when it started to rain.','had we','we had','we have','Hardly … when + инверсия.'],
+ ['Rarely ___ such talent.','do we see','we see','we do see','Rarely + do + подлежащее.'],
+ ['Only then ___ the truth.','did I understand','I understood','understood I','Only then + did.'],
+ ['___ I known, I would have helped.','Had','If','Have','Had I known = If I had known.'],
+ ['tf','"Under no circumstances you should open this door" is correct.',false,'Нужна инверсия: should you open.'],
+ ['in','Complete: "No sooner ___ I sat down than the phone rang."',['had'],'No sooner had I…'],
+ ['in','Complete: "Little ___ she know what was waiting for her." (did / does)',['did'],'Little did she know.']]);
+bank('eng-c1-wish',[
+ ['I wish I ___ taller. (now)','were','am','will be','Желание о настоящем — Past (were).'],
+ ['I wish I ___ that. I’m sorry. (past)','hadn’t said','didn’t say','don’t say','Сожаление о прошлом — Past Perfect.'],
+ ['I wish you ___ making that noise! (annoying)','would stop','stopped','had stopped','Раздражение — wish + would.'],
+ ['If only I ___ more time now!','had','have','would have','If only = I wish.'],
+ ['She wishes she ___ go to the party yesterday.','could have','can','could','Сожаление о невозможности в прошлом.'],
+ ['tf','"I wish I would be rich" is natural English.',false,'С I обычно: I wish I were rich.'],
+ ['in','Complete: "I wish I ___ (know) the answer." (now)',['knew'],'Past Simple.'],
+ ['in','Complete: "If only we ___ (listen) to him!" (past)',['had listened'],'Past Perfect.']]);
+bank('eng-c1-collocations',[
+ ['___ a decision','make','do','take up','Make a decision.'],
+ ['___ attention to','pay','give','make','Pay attention.'],
+ ['___ a mistake','make','do','have','Make a mistake.'],
+ ['___ your best','do','make','take','Do your best.'],
+ ['___ a risk','take','make','do','Take a risk.'],
+ ['heavy ___ (сильный дождь)','rain','wind','sun','Heavy rain.'],
+ ['tf','"Strong coffee" is a natural collocation.',true,'Strong coffee — крепкий кофе.'],
+ ['in','Complete: "to ___ a promise" (make / do)',['make'],'Make a promise.'],
+ ['in','Complete: "to ___ progress" (make / do)',['make'],'Make progress.']]);
+bank('eng-c1-register',[
+ ['Formal for "get":','obtain','grab','pick','Obtain — формальный синоним.'],
+ ['Formal for "ask for":','request','beg','shout','Request.'],
+ ['Formal for "buy":','purchase','get hold of','grab','Purchase.'],
+ ['Formal opening of a letter to an unknown person:','Dear Sir or Madam,','Hi there!','Hey,','Формально, имя неизвестно.'],
+ ['Which ending matches "Dear Sir or Madam"?','Yours faithfully','Yours sincerely','Cheers','Имя неизвестно — Yours faithfully.'],
+ ['Informal for "Furthermore,":','Also,','Moreover,','In addition,','Also — нейтрально-разговорное.'],
+ ['tf','Contractions (I’m, don’t) are typical of formal writing.',false,'В формальном стиле — полные формы.'],
+ ['in','Formal synonym of "help" (verb): ___',['assist'],'Assist.']]);
+bank('eng-c1-cleft',[
+ ['___ I need is a holiday.','What','That','Which','What-cleft: What I need is…'],
+ ['It was Tom ___ broke the window.','who','what','which','It was … who/that.'],
+ ['It was in 2010 ___ we met.','that','what','who','It was + время + that.'],
+ ['___ annoys me is his rudeness.','What','That','It','What annoys me is…'],
+ ['All I want ___ some sleep.','is','are','be','All I want is…'],
+ ['tf','Cleft sentences are used to emphasise one part of the sentence.',true,'Для выделения.'],
+ ['in','Complete: "It ___ my sister who called." (is / was, past)',['was'],'It was my sister…'],
+ ['in','Complete: "___ I like about her is her honesty."',['What'],'What I like…']]);
+bank('eng-c1-subjunctive',[
+ ['The teacher insisted that he ___ the test again.','take','takes','took','Subjunctive: базовая форма без -s.'],
+ ['It is essential that every student ___ on time.','be','is','was','It is essential that … be.'],
+ ['I suggest that she ___ a doctor.','see','sees','will see','Suggest that + базовая форма.'],
+ ['It’s time we ___ home.','went','go','will go','It’s time + Past.'],
+ ['I’d rather you ___ smoke here.','didn’t','don’t','won’t','I’d rather + Past.'],
+ ['tf','"It is important that he is present" uses the subjunctive.',false,'Subjunctive: that he be present.'],
+ ['in','Complete: "They demanded that the manager ___ (resign)."',['resign'],'Базовая форма.'],
+ ['tf','"God save the King" is an example of the subjunctive.',true,'Устойчивая форма subjunctive.']]);
+bank('eng-c1-participle',[
+ ['___ the door, she saw a letter.','Opening','Opened','Open','Одновременное действие — -ing.'],
+ ['___ in 1890, the bridge is still used.','Built','Building','Having building','Пассивное значение — V3.'],
+ ['___ finished her work, she went home.','Having','Being','Had','Having + V3 — сначала одно, потом другое.'],
+ ['Not ___ what to say, he stayed silent.','knowing','known','to know','Not + -ing.'],
+ ['The boy ___ next to me is my cousin.','sitting','sat','sits','Причастие вместо who is sitting.'],
+ ['tf','"Walking down the street, a car hit him" is a dangling participle error.',true,'Получается, что машина шла по улице.'],
+ ['in','Complete: "___ (tire) after the trip, we went to bed." (one word)',['tired'],'Tired — уставшие.'],
+ ['in','Complete: "___ eaten, they left." (one word)',['having'],'Having eaten.']]);
+bank('eng-c1-passive-reporting',[
+ ['It ___ that he is a millionaire.','is said','says','is saying','Безличный пассив: It is said that…'],
+ ['He is said ___ very rich.','to be','be','being','Personal passive: He is said to be…'],
+ ['She is believed ___ the country last year.','to have left','to leave','leaving','Прошлое: to have + V3.'],
+ ['It ___ that the prices will rise.','is expected','expects','expected','It is expected that…'],
+ ['The thief is thought ___ in the city now.','to be hiding','to hide','hiding','Процесс сейчас: to be + -ing.'],
+ ['tf','"People say he is clever" = "He is said to be clever".',true,'Тот же смысл.'],
+ ['in','Complete: "It is ___ (believe) that the ship sank."',['believed'],'It is believed that…'],
+ ['in','Complete: "They are reported ___ (to + arrive) yesterday." (3 words)',['to have arrived'],'Прошлое: to have arrived.']]);
+/* ---------- Карточки словаря: пример предложения и картинка-эмодзи для каждого слова ---------- */
+var CARDX={
+big:['An elephant is a big animal.','🐘'],good:['This is a good book.','👍'],happy:['She is happy today.','😊'],hot:['The tea is very hot.','🔥'],new:['I have a new phone.','✨'],
+open:['Please open the window.','🚪'],day:['Have a nice day!','☀️'],friend:['Tom is my best friend.','🤝'],fast:['A cheetah is very fast.','🐆'],easy:['This test is easy.','✅'],
+small:['A mouse is a small animal.','🐭'],old:['My grandfather is old.','👴'],cold:['It is cold in winter.','🥶'],sad:['He is sad because he lost his dog.','😢'],bad:['The weather is bad today.','👎'],
+long:['The river is very long.','📏'],tall:['My brother is very tall.','🧍'],young:['The children are young.','👶'],rich:['He is a rich man.','💰'],full:['The glass is full of water.','🥛'],
+come:['Come here, please!','👋'],love:['I love my family.','❤️'],give:['Give me the book, please.','🎁'],start:['The lesson starts at nine.','🏁'],up:['The balloon goes up.','⬆️'],
+'in':['The cat is in the box.','📦'],left:['Turn left at the bank.','⬅️'],yes:['Yes, I can swim.','✔️'],morning:['I drink milk in the morning.','🌅'],boy:['The boy is playing football.','👦'],
+man:['The man is reading a newspaper.','👨'],white:['Snow is white.','⬜'],light:['The room is light and warm.','💡'],clever:['She is a clever girl.','🧠'],near:['The shop is near my house.','📍'],
+eat:['We eat lunch at one.','🍽️'],house:['They live in a big house.','🏠'],school:['I go to school by bus.','🏫'],book:['I am reading a good book.','📖'],water:['Drink some water.','💧'],
+family:['My family is very big.','👨‍👩‍👧‍👦'],teacher:['Our teacher is kind.','👩‍🏫'],run:['I run in the park every morning.','🏃'],laugh:['The joke made us laugh.','😂'],
+begin:['The film begins at seven.','▶️'],buy:['I want to buy a new bag.','🛒'],cheap:['These shoes are cheap.','🏷️'],early:['I get up early.','⏰'],clean:['My room is clean.','🧽'],
+answer:['Please answer the question.','💬'],strong:['He is strong enough to lift it.','💪'],remember:['I remember your name.','💭'],beautiful:['What a beautiful flower!','🌸'],quiet:['Be quiet in the library.','🤫'],
+ask:['Can I ask you a question?','❓'],'catch':['Catch the ball!','⚾'],carry:['Can you carry this box?','📦'],choose:['Choose one colour.','👉'],close:['Close the door, please.','🚪'],
+cook:['My dad likes to cook dinner.','🍳'],dry:['The towel is dry now.','🏜️'],hard:['This problem is hard.','🪨'],heavy:['This bag is heavy.','🏋️'],hungry:['I am hungry. Let’s eat!','🍔'],
+kind:['She is kind to everyone.','🤗'],late:['Don’t be late for school.','⌛'],lose:['Don’t lose your keys.','🔑'],pull:['Pull the door to open it.','🪢'],short:['My hair is short.','✂️'],
+sleep:['Babies sleep a lot.','😴'],slow:['A snail is slow.','🐌'],thin:['The book is thin.','📄'],tired:['I am tired after work.','🥱'],'true':['Is it true?','☑️'],
+warm:['It is warm in spring.','🌤️'],win:['Our team will win.','🏆'],wrong:['Sorry, that answer is wrong.','❌'],busy:['I’m busy right now.','📅'],funny:['The film is very funny.','🤣'],
+wide:['The road is wide.','↔️'],awake:['Are you still awake?','👀'],send:['Send me a message.','📩'],travel:['I love to travel by train.','🧳'],weather:['The weather is sunny today.','🌦️'],
+healthy:['Fruit is healthy food.','🍎'],learn:['I learn English at school.','📚'],
+arrive:['The train arrives at 6 p.m.','🚉'],borrow:['Can I borrow your pen?','🖊️'],dangerous:['Swimming here is dangerous.','⚠️'],enough:['We have enough time.','👌'],famous:['She is a famous singer.','🌟'],
+improve:['I want to improve my English.','📈'],polite:['Always be polite to people.','🙇'],increase:['Prices increase every year.','📊'],accept:['Please accept my apology.','🤲'],empty:['The box is empty.','🫙'],
+afraid:['I am afraid of spiders.','😨'],agree:['I agree with you.','🙆'],allow:['My parents allow me to go out.','🆗'],careful:['Be careful on the road!','🦺'],common:['This name is very common.','👥'],
+complete:['Complete the form, please.','📝'],decide:['I can’t decide what to wear.','🤔'],different:['We are very different.','🔀'],explain:['Can you explain this rule?','🧑‍🏫'],huge:['A whale is huge.','🐋'],
+lazy:['My cat is lazy.','🛋️'],modern:['They live in a modern flat.','🏙️'],narrow:['The street is narrow.','🛤️'],patient:['Be patient, please.','⏳'],'private':['This is a private room.','🔒'],
+quickly:['She ran quickly to the bus.','💨'],remove:['Remove your shoes, please.','🗑️'],save:['Save your money.','🐷'],simple:['The rules are simple.','🔹'],succeed:['If you work hard, you will succeed.','🎯'],
+tidy:['Keep your desk tidy.','🧹'],wild:['Lions are wild animals.','🦁'],worried:['Mum is worried about me.','😟'],ill:['He is ill and stays in bed.','🤒'],interesting:['This book is interesting.','🤩'],
+deep:['The lake is very deep.','🌊'],include:['The price includes breakfast.','➕'],honest:['Be honest with me.','😇'],lucky:['You are lucky!','🍀'],noise:['What is that noise?','🔊'],
+achieve:['She achieved her goal.','🥇'],advantage:['Speaking two languages is an advantage.','➕'],ancient:['We visited an ancient castle.','🏛️'],confident:['He feels confident before the exam.','😎'],effort:['It takes a lot of effort.','🏋️'],
+generous:['My uncle is very generous.','🎁'],reduce:['We must reduce plastic waste.','📉'],temporary:['This is only a temporary job.','⏱️'],reliable:['My old car is still reliable.','🛡️'],opportunity:['This is a great opportunity.','🚪'],
+abroad:['She wants to study abroad.','✈️'],accurate:['The clock is very accurate.','🎯'],admire:['I admire my grandmother.','👏'],anxious:['I feel anxious before tests.','😰'],attract:['Flowers attract bees.','🐝'],
+avoid:['Avoid eating too much sugar.','🚫'],benefit:['Sport has many benefits.','🌱'],brave:['The firefighter was brave.','🦸'],cancel:['They cancelled the match.','❎'],compare:['Compare these two pictures.','⚖️'],
+convince:['I convinced him to come.','🗣️'],curious:['Cats are curious animals.','🐱'],deny:['He denied breaking the window.','🙅'],encourage:['My coach encourages me.','📣'],essential:['Water is essential for life.','💧'],
+frequent:['There are frequent buses to the city.','🔁'],ignore:['Don’t ignore my messages!','🙉'],independent:['She is very independent.','🦅'],major:['This is a major problem.','❗'],prevent:['Vaccines prevent diseases.','💉'],
+rare:['This bird is very rare.','🦜'],similar:['Our bags are similar.','👯'],solve:['I solved the puzzle.','🧩'],strict:['Our teacher is strict.','📏'],suitable:['This film is suitable for children.','👍'],
+support:['My friends always support me.','🤝'],wealthy:['He comes from a wealthy family.','💎'],wonder:['I wonder what time it is.','🤔'],gradually:['The weather gradually got warmer.','📶'],
+reluctant:['He was reluctant to help.','😒'],significant:['There was a significant change.','📈'],maintain:['It is hard to maintain a garden.','🔧'],consequence:['Every action has a consequence.','➡️'],crucial:['Sleep is crucial for health.','🔑'],
+flexible:['My working hours are flexible.','🧘'],obvious:['The answer is obvious.','👁️'],enhance:['Music can enhance a film.','✨'],scarce:['Water is scarce in the desert.','🏜️'],decline:['Sales declined last year.','📉'],
+abandon:['They had to abandon the car.','🚗'],abundant:['Fruit is abundant in summer.','🍇'],acknowledge:['He acknowledged his mistake.','🙋'],adequate:['The room has adequate light.','👌'],bold:['That was a bold decision.','🦁'],
+cautious:['Be cautious when you cross the road.','🚸'],comprehensive:['We need a comprehensive plan.','🗂️'],conceal:['She tried to conceal her fear.','🙈'],consistent:['His results are consistent.','📐'],deliberate:['It was a deliberate mistake.','🎯'],
+diminish:['The pain diminished slowly.','🔻'],efficient:['This machine is very efficient.','⚙️'],evident:['It was evident that he was tired.','🔍'],genuine:['This is a genuine diamond.','💎'],hostile:['The crowd was hostile.','😠'],
+modest:['She is modest about her success.','🙂'],notorious:['The city is notorious for traffic.','🚦'],persuade:['I persuaded my dad to buy a dog.','🗣️'],precise:['Give me a precise answer.','📍'],rapid:['The country saw rapid growth.','🚀'],
+reject:['They rejected my idea.','👎'],sincere:['Please accept my sincere thanks.','💌'],substantial:['He earns a substantial salary.','💵'],thrive:['Plants thrive in sunlight.','🌿'],vague:['His answer was vague.','🌫️'],
+ambiguous:['The question was ambiguous.','❔'],meticulous:['She is meticulous about details.','🔬'],inevitable:['Change is inevitable.','⏭️'],plausible:['His story sounds plausible.','🧐'],undermine:['Lies undermine trust.','⛏️'],
+resilient:['Children are often resilient.','🌱'],scrutiny:['The plan came under scrutiny.','🔎'],advocate:['She advocates healthy eating.','📢'],profound:['The book had a profound effect on me.','🌌'],mitigate:['Trees mitigate the heat.','🌳'],
+ambivalent:['I feel ambivalent about moving.','😶'],arbitrary:['The choice seemed arbitrary.','🎲'],candid:['Thank you for your candid answer.','🗨️'],coherent:['Write a coherent essay.','🔗'],complacent:['Don’t become complacent after one win.','😌'],
+conspicuous:['A red coat is conspicuous in the snow.','🔴'],detrimental:['Smoking is detrimental to health.','🚭'],diligent:['She is a diligent student.','✍️'],elusive:['Success can be elusive.','🦊'],eloquent:['He gave an eloquent speech.','🎤'],
+ephemeral:['Fame is often ephemeral.','🫧'],exacerbate:['Stress can exacerbate the problem.','🔺'],feasible:['Is this plan feasible?','🛠️'],indispensable:['A phone is indispensable today.','📱'],nuance:['Learn the nuances of the language.','🎨'],
+obsolete:['This technology is obsolete.','📼'],pragmatic:['We need a pragmatic solution.','🧰'],prevalent:['The flu is prevalent in winter.','🌡️'],scrutinise:['Scrutinise the contract before you sign.','🧾'],spontaneous:['It was a spontaneous trip.','🎒'],
+tedious:['The work was long and tedious.','🥱'],tentative:['We made a tentative plan.','✏️'],ubiquitous:['Smartphones are ubiquitous.','🌐'],versatile:['Eggs are a versatile food.','🥚'],wary:['Be wary of strangers online.','🕵️']
+};
+/* ---------- Банк задач: добавляем вопросы к темам (школьным и программам) ---------- */
+(function(){
+  if(typeof BANK==='undefined')return;
+  var done={};
+  function put(t){if(!t||done[t.id])return;var b=BANK[t.id];if(!b)return;done[t.id]=1;if(!t.qs)t.qs=[];Array.prototype.push.apply(t.qs,b);}
+  if(typeof DATA!=='undefined')DATA.forEach(function(s){(s.sections||[]).forEach(function(sec){(sec.topics||[]).forEach(put);});});
+  if(typeof PROGS!=='undefined')Object.keys(PROGS).forEach(function(k){PROGS[k].sections.forEach(function(sec){sec.topics.forEach(put);});});
+})();
 /* Программы: задачи только с «красивыми» ответами — генератор пропускает неудачные числа */
 (function(){
   Object.keys(PROGS).forEach(function(k){PROGS[k].sections.forEach(function(s){s.topics.forEach(function(t){
@@ -8888,10 +9464,22 @@ function askAI(text){
 }
 var TLABEL={school:'Школьные задачи',olymp:'Олимпиадные задачи',alevel:'Задачи A-level',exam:'Экзаменационные задачи'};
 var LVD=['','лёгкий: задачи в одно действие','средний: задачи в два действия, с типичными ловушками','сложный: задачи в несколько шагов, уровень экзамена или олимпиады'];
+/* Без ИИ: задачи уровней 2–3 и тренировка — из банка темы и генератора */
+function localPractice(subj,t,level,depth){
+  var lv=Math.max(1,Math.min(3,level||2)),last=Array.isArray(SEEN[t.id])?SEEN[t.id]:[];
+  var g=genTasks(t.id,4).map(function(x,i){return genQ(x,lv>=3?i%2===0:i===1&&lv===2);});
+  var pool=(t.qs||[]).filter(function(q){return last.indexOf(Core.norm(q).text)<0;});
+  if(pool.length<4)pool=(t.qs||[]).slice();
+  pool=pool.map(function(q){var n=Core.norm(q);return {q:q,w:(n.lv>=lv?2:0)+(n.lv===lv?1:0)+Math.random()};}).sort(function(a,b){return b.w-a.w;}).map(function(x){return x.q;});
+  var ng=g.length?Math.min(g.length,lv>=3?3:2):0,qs=g.slice(0,ng).concat(pool.slice(0,4-ng));
+  if(qs.length<4)qs=qs.concat(g.slice(ng,ng+4-qs.length));
+  if(!qs.length){ui.chat.genErr=aiNote();render();return;}
+  startQuiz(subj.id,{topicId:t.id,aiQs:Core.shuffle(qs),title:t.title,level:lv,depth:depth||0,label:TT('Тренировка','Жаттығу')});
+}
 function aiPractice(level,depth,trackKey){
   var subj=Core.subject(state,ui.subjectId),f=subj&&Core.find(state,subj,ui.topicId),chat=ui.chat;
   if(!f||chat.busy||chat.gen)return;
-  if(aiState!=='ready'){chat.genErr=aiNote();render();return;}
+  if(aiState!=='ready'){localPractice(subj,f.topic,level,depth);return;}
   var t=f.topic,old=(t.qs||[]).map(function(q){return Core.norm(q).text;});
   var trk=Core.track(state,subj.id);
   chat.genErr='';chat.gen=true;render();
@@ -9286,7 +9874,13 @@ function finalHtml(q,subj){
 var SEEN=loadMap('skillmap.seen');
 function topicItems(t){
   var st=(t.qs||[]).slice(),g=genTasks(t.id,3);
-  if(!g.length)return Core.buildQuiz([t],0,null,true);
+  if(!g.length){
+    if(st.length<=5)return Core.buildQuiz([t],0,null,true);
+    var seen0=Array.isArray(SEEN[t.id])?SEEN[t.id]:[],fr=Core.shuffle(st.filter(function(q){return seen0.indexOf(Core.norm(q).text)<0;}));
+    if(fr.length<5)fr=fr.concat(Core.shuffle(st.filter(function(q){return seen0.indexOf(Core.norm(q).text)>=0;})).slice(0,5-fr.length));
+    var pk=fr.slice(0,5);SEEN[t.id]=pk.map(function(q){return Core.norm(q).text;});saveMap('skillmap.seen',SEEN);
+    return Core.buildQuiz([{id:t.id,title:t.title,qs:pk}],0,null,true);
+  }
   var last=Array.isArray(SEEN[t.id])?SEEN[t.id]:[],fresh=st.filter(function(q){return last.indexOf(Core.norm(q).text)<0;});
   if(fresh.length<2)fresh=st;
   var pick=Core.shuffle(fresh).slice(0,2);
@@ -9627,16 +10221,16 @@ function viewTopic(){
   var n1=prog?(pl?pl.qs.length:0):n,res1=prog?state.results['ptopic:'+tk+':'+t.id]:res,lv2=st>=1||(prog&&pdn);
   h+='<section class="card stack" style="gap:12px" id="check-card"><h2>'+(++step)+'. Проверка и уровни темы</h2>'+
      '<p class="muted small">Тему можно проходить глубже: каждый уровень даёт звезду и задачи сложнее.</p><ol class="levels">'+
-     lvRow(1,prog?'Основа программы':'Основа',prog?(n1?'Мини-тест: '+n1+' '+plural(n1,'задача','задачи','задач')+' уровня «'+esc(trk[1])+'». Нужно решить все без ошибок.':'Мини-тест появится, когда Барс составит урок этого уровня.'):(n?(GEN[t.id]?TT('Мини-тест: 5 заданий — 2 из урока и 3 задачи с новыми числами. При каждом повторе в задачах меняются данные и то, что нужно найти, поэтому ответы не запомнить. Нужно пройти без ошибок.','Шағын тест: 5 тапсырма — 2-еуі сабақтан, 3-еуі жаңа сандармен. Әр қайталағанда есептің берілгені мен табу керек шамасы өзгереді, сондықтан жауапты жаттап алу мүмкін емес. Қатесіз өту керек.'):'Мини-тест: '+n+' '+plural(n,'задание','задания','заданий')+' от лёгкого к сложному — выбор ответа, «верно или неверно» и ввод своего ответа. Нужно пройти без ошибок.'+(res?TT(' При повторе Барс составит новые задачи.',' Қайталағанда Барс жаңа есептер құрастырады.'):'')):'У этой темы пока нет вопросов. Добавьте их ниже, чтобы появился мини-тест.'),prog?pdn:st>=1,
+     lvRow(1,prog?'Основа программы':'Основа',prog?(n1?'Мини-тест: '+n1+' '+plural(n1,'задача','задачи','задач')+' уровня «'+esc(trk[1])+'». Нужно решить все без ошибок.':'Мини-тест появится, когда Барс составит урок этого уровня.'):(n?(GEN[t.id]?TT('Мини-тест: 5 заданий — 2 из урока и 3 задачи с новыми числами. При каждом повторе в задачах меняются данные и то, что нужно найти, поэтому ответы не запомнить. Нужно пройти без ошибок.','Шағын тест: 5 тапсырма — 2-еуі сабақтан, 3-еуі жаңа сандармен. Әр қайталағанда есептің берілгені мен табу керек шамасы өзгереді, сондықтан жауапты жаттап алу мүмкін емес. Қатесіз өту керек.'):(n>5?TT('Мини-тест: 5 заданий из '+n+' вопросов темы — выбор ответа, «верно или неверно» и ввод своего ответа. При каждом повторе вопросы другие. Нужно пройти без ошибок.','Шағын тест: тақырыптың '+n+' сұрағынан 5 тапсырма — жауап таңдау, «дұрыс па, қате ме» және өз жауабыңды жазу. Әр қайталағанда сұрақтар басқа. Қатесіз өту керек.'):'Мини-тест: '+n+' '+plural(n,'задание','задания','заданий')+' от лёгкого к сложному — выбор ответа, «верно или неверно» и ввод своего ответа. Нужно пройти без ошибок.'+(res&&aiState==='ready'?TT(' При повторе Барс составит новые задачи.',' Қайталағанда Барс жаңа есептер құрастырады.'):''))):'У этой темы пока нет вопросов. Добавьте их ниже, чтобы появился мини-тест.'),prog?pdn:st>=1,
        '<button class="btn primary" id="start-test" data-a="'+(prog?'quizProg':'quizTopic')+'" data-id="'+sid+esc(t.id)+'"'+(n1?'':' disabled')+'>Начать мини-тест</button>'+(res1?'<span class="small muted">Лучший результат: '+res1.best+' из '+res1.total+'</span>':''))+
-     lvRow(2,'Практика','4 новые задачи посложнее от Барса: два действия и типичные ловушки. Программа: '+esc(trk[1])+'. Нужно решить 3 из 4.',st>=2,
+     lvRow(2,'Практика',(aiState==='ready'?'4 новые задачи посложнее от Барса: два действия и типичные ловушки. Программа: '+esc(trk[1])+'.':TT('4 задачи посложнее из банка темы — не те, что были в мини-тесте.','Тақырып банкінен күрделірек 4 есеп — шағын тестте болмағандары.'))+' Нужно решить 3 из 4.',st>=2,
        '<button class="btn" id="depth-2" data-a="depth" data-id="2"'+(lv2&&!off?'':' disabled')+'>'+(lv2?'Получить задачи уровня 2':'Сначала пройдите уровень 1')+'</button>')+
-     lvRow(3,'Мастер','4 сложные задачи в несколько шагов в стиле программы «'+esc(trk[1])+'». Нужно решить 3 из 4.',st>=3,
+     lvRow(3,'Мастер',(aiState==='ready'?'4 сложные задачи в несколько шагов в стиле программы «'+esc(trk[1])+'».':TT('4 самые сложные задачи темы: чаще всего нужно вписать ответ самому.','Тақырыптың ең күрделі 4 есебі: көбіне жауапты өзің жазу керек.'))+' Нужно решить 3 из 4.',st>=3,
        '<button class="btn" id="depth-3" data-a="depth" data-id="3"'+(st>=2&&!off?'':' disabled')+'>'+(st>=2?'Получить задачи уровня 3':'Сначала пройдите уровень 2')+'</button>')+
      '</ol>';
   if(chat.gen) h+=coach('think','<p id="gen-live">Составляю задачи. Это займёт до минуты.</p>',44);
   if(chat.genErr) h+='<p class="msg err" id="gen-msg">'+esc(chat.genErr)+'</p>';
-  h+='<p class="small muted">Задачи уровней 2 и 3 каждый раз новые: их составляет ИИ, поэтому в них возможны ошибки.</p>'+
+  h+='<p class="small muted">'+(aiState==='ready'?'Задачи уровней 2 и 3 каждый раз новые: их составляет ИИ, поэтому в них возможны ошибки.':TT('Без ИИ задачи уровней 2 и 3 берутся из банка темы и генератора задач: каждый раз другой набор.','ЖИ-сіз 2 және 3-деңгей есептері тақырып банкі мен есеп генераторынан алынады: әр жолы басқа жиынтық.'))+'</p>'+
      '<h3>Ещё задачи</h3><p class="small muted">4 новые задачи по теме в программе «'+esc(trk[1])+'». Это тренировка без зачёта.</p>'+
      '<div class="inline"><label class="f" for="ai-level">Сложность<select id="ai-level"><option value="1">Лёгкие</option><option value="2" selected>Средние</option><option value="3">Сложные</option></select></label><button class="btn" data-a="aiPractice" id="ai-practice"'+off+'>Получить 4 задачи</button></div>'+
      '<div><button class="link" data-a="'+(prog?'ptoggle':'toggle')+'" data-id="'+(prog?tk+'|':'')+esc(t.id)+'">'+(pdn?'Снять отметку «изучено»':'Отметить изученной без теста')+'</button></div></section>';
@@ -9759,6 +10353,7 @@ function viewVocab(){
   function listen(w){return hasVoice()?'<button class="btn small" data-a="sayWord" data-id="'+esc(w)+'">Послушать</button>':'';}
   var h='<div class="stack" '+col(subj)+' style="max-width:720px"><div><button class="link" data-a="subject" data-id="eng">← Английский язык</button></div>'+
     '<h1>Словарь</h1><div class="row" style="gap:8px" role="group" aria-label="Уровень">'+VOCAB.map(function(v,i){return '<button class="btn'+(i===lv?' primary':'')+'" data-a="vocab" data-id="'+i+'" aria-pressed="'+(i===lv)+'">'+v.level+'</button>';}).join('')+'</div>';
+  h+=cardSection(lv,V);
   h+='<section class="card stack" style="gap:12px"><div class="row between"><h2>Тренировка слов уровня '+V.level+'</h2>'+(res?'<span class="pill'+(res.best===res.total?' ok':'')+'">лучший: '+res.best+' из '+res.total+'</span>':'')+'</div>'+
      '<p class="muted small">10 заданий на перевод, синонимы, антонимы и идиомы. Каждый раз набор другой.</p><div><button class="btn primary" id="vocab-quiz" data-a="quizVocab" data-id="'+lv+'">Начать тренировку</button></div></section>';
   h+='<section class="card stack" style="gap:12px"><h2>Слова уровня '+V.level+'</h2><p class="muted small">Транскрипция показывает британское произношение.'+(tts?'':' Кнопка «Послушать» появится, когда доступен голос.')+'</p><ul class="words">'+
@@ -9769,6 +10364,55 @@ function viewVocab(){
   h+='<section class="card stack" style="gap:12px"><h2>Идиомы уровня '+V.level+'</h2><ul class="words">'+
      V.idioms.map(function(x){return '<li class="word idiom"><div class="row between"><strong lang="en">'+esc(x[0])+'</strong>'+listen(x[0])+'</div><p>'+esc(x[1])+'</p></li>';}).join('')+'</ul></section>';
   return h+'</div>';
+}
+/* ---------- Карточки слов: интервальное повторение (коробки Лейтнера) ---------- */
+var CARDS=loadMap('skillmap.cards'),CARD_INT=[0,1,2,4,8,16,32];
+function cardRec(w){var r=CARDS[w];return Array.isArray(r)&&typeof r[0]==='number'?r:null;}
+function cardStats(V){var today=Core.day(new Date()),n=0,due=0,fresh=0;V.words.forEach(function(w){var r=cardRec(w[0]);if(!r)fresh++;else{if(r[0]>=3)n++;if(r[1]<=today)due++;}});return {learned:n,due:due,fresh:fresh,total:V.words.length};}
+function cardPic(w){var p=photos['w:'+w];if(p)return '<img class="card-img" src="'+p+'" alt="">';var x=typeof CARDX!=='undefined'&&CARDX[w];return x&&x[1]?'<div class="card-emoji" aria-hidden="true">'+x[1]+'</div>':'';}
+function cardSection(lv,V){
+  var c=ui.card&&ui.card.lv===lv?ui.card:null,st=cardStats(V);
+  var h='<section class="card stack" style="gap:12px" id="cards"><div class="row between"><h2>'+TT('Карточки уровня ','Деңгей карточкалары ')+V.level+'</h2><span class="pill'+(st.learned===st.total?' ok':'')+'" id="cards-learned">'+TT('выучено ','жатталды ')+st.learned+' / '+st.total+'</span></div>';
+  if(!c){
+    h+='<p class="muted small">'+TT('Слово, картинка, пример, синоним и антоним. Нажмите «Помню» или «Не помню» — карточка вернётся через 1, 2, 4, 8… дней. Слово выучено после трёх «Помню» подряд.','Сөз, сурет, мысал, синоним мен антоним. «Есімде» не «Есімде жоқ» басыңыз — карточка 1, 2, 4, 8… күннен кейін қайтады. Қатарынан үш рет «Есімде» болса, сөз жатталды.')+'</p>'+
+      '<p class="small" id="cards-due">'+TT('Сегодня повторить: ','Бүгін қайталау: ')+st.due+TT(' · новых слов: ',' · жаңа сөздер: ')+st.fresh+'</p>'+
+      '<div class="row" style="gap:8px"><button class="btn primary" id="cards-start" data-a="cardStart" data-id="'+lv+'|en">'+TT('Учить: английский → русский','Жаттау: ағылшынша → орысша')+'</button><button class="btn" id="cards-start-ru" data-a="cardStart" data-id="'+lv+'|ru">'+TT('Русский → английский','Орысша → ағылшынша')+'</button></div>';
+    return h+'</section>';
+  }
+  if(c.i>=c.list.length){
+    h+='<p id="cards-done"><strong>'+TT('Готово!','Дайын!')+'</strong> '+TT('Помню: ','Есімде: ')+c.ok+TT(' · повторить: ',' · қайталау: ')+c.bad+'</p><div class="row" style="gap:8px"><button class="btn primary" data-a="cardStart" data-id="'+lv+'|'+c.dir+'">'+TT('Ещё карточки','Тағы карточкалар')+'</button><button class="btn" data-a="cardEnd">'+TT('Закрыть','Жабу')+'</button></div>';
+    return h+'</section>';
+  }
+  var w=c.list[c.i],x=(typeof CARDX!=='undefined'&&CARDX[w[0]])||['',''],en=c.dir==='en',voice=hasVoice();
+  function sp(t,id){return voice?'<button class="btn small" data-a="sayWord" data-id="'+esc(t)+'" id="'+id+'" aria-label="'+TT('Послушать','Тыңдау')+'">🔊</button>':'';}
+  h+='<p class="small muted">'+TT('Карточка ','Карточка ')+(c.i+1)+TT(' из ',' / ')+c.list.length+'</p>';
+  h+='<div class="flash'+(c.flip?' back':'')+'" id="flash">'+cardPic(w[0])+
+     (en||c.flip?'<div class="row" style="gap:8px;justify-content:center"><strong class="flash-word" lang="en">'+esc(w[0])+'</strong>'+sp(w[0],'say-word')+'</div><div class="ipa">'+esc(w[1])+'</div>':'<strong class="flash-word">'+esc(w[2])+'</strong>');
+  if(!c.flip){
+    h+='<button class="btn primary" id="card-flip" data-a="cardFlip">'+TT('Показать ответ','Жауапты көрсету')+'</button></div>';
+  }else{
+    h+=(en?'<p class="flash-tr">'+esc(w[2])+'</p>':'')+
+      (x[0]?'<div class="row" style="gap:8px;justify-content:center"><p class="flash-ex" lang="en">'+esc(x[0])+'</p>'+sp(x[0],'say-ex')+'</div>':'')+
+      '<p class="small muted">'+(w[3]?TT('Синоним: ','Синоним: ')+'<span lang="en">'+esc(w[3])+'</span>':'')+(w[3]&&w[4]?' · ':'')+(w[4]?TT('Антоним: ','Антоним: ')+'<span lang="en">'+esc(w[4])+'</span>':'')+'</p>'+
+      photoBox('w:'+w[0],TT('Своя картинка','Өз суретің'))+
+      '<div class="row" style="gap:8px;justify-content:center"><button class="btn" id="card-bad" data-a="cardRate" data-id="0">'+TT('Не помню','Есімде жоқ')+'</button><button class="btn primary" id="card-ok" data-a="cardRate" data-id="1">'+TT('Помню','Есімде')+'</button></div></div>';
+  }
+  if(ui.msg&&ui.msg.at==='photo') h+='<p class="msg err" id="photo-msg">'+esc(ui.msg.text)+'</p>';
+  h+='<div><button class="link" data-a="cardEnd">'+TT('Закончить','Аяқтау')+'</button></div>';
+  return h+'</section>';
+}
+function cardStart(lv,dir){
+  var V=VOCAB[lv];if(!V)return;var today=Core.day(new Date());
+  var due=V.words.filter(function(w){var r=cardRec(w[0]);return r&&r[1]<=today;}),fresh=V.words.filter(function(w){return !cardRec(w[0]);});
+  var list=Core.shuffle(due).slice(0,15);list=list.concat(fresh.slice(0,Math.max(0,10-list.length)));
+  if(!list.length)list=Core.shuffle(V.words.slice()).slice(0,10);
+  ui.card={lv:lv,dir:dir==='ru'?'ru':'en',list:list,i:0,flip:false,ok:0,bad:0,again:{}};
+}
+function cardRate(ok){
+  var c=ui.card;if(!c||c.i>=c.list.length)return;var w=c.list[c.i][0],r=cardRec(w)||[0,''],today=Core.day(new Date());
+  if(ok){var b=Math.min(r[0]+1,CARD_INT.length-1);CARDS[w]=[b,Core.addDays(today,CARD_INT[b])];if(!c.again[w])c.ok++;}
+  else{CARDS[w]=[0,today];if(!c.again[w]){c.bad++;c.again[w]=1;c.list.push(c.list[c.i]);}}
+  saveMap('skillmap.cards',CARDS);c.i++;c.flip=false;
 }
 function byTime(a,b){return (a.time||'99').localeCompare(b.time||'99');}
 function itemRow(x){
@@ -10102,7 +10746,7 @@ function startQuiz(subjectId,opt){
   }else if(opt.topicId){
     topics=topics.filter(function(t){return t.id===opt.topicId;});if(!topics.length)return;
     title=(opt.review?TT('Интервальное повторение: ','Аралықпен қайталау: '):opt.repeat?TT('Повтор прошлого урока: ','Өткен сабақты қайталау: '):'Мини-тест: ')+topics[0].title;key='topic:'+opt.topicId;items=topicItems(topics[0]);
-    if(!GEN[opt.topicId]&&state.results[key])opt.same=true;
+    if(!GEN[opt.topicId]&&state.results[key]&&(topics[0].qs||[]).length<=5)opt.same=true;
   }else if(opt.section!==undefined){
     var sec=Core.sections(state,subj)[opt.section];if(!sec)return;
     title='Тест по разделу: '+sec.title;key='section:'+subjectId+':'+opt.section;items=Core.buildQuiz(sec.topics,8);
@@ -10133,6 +10777,10 @@ var actions={
   vocab:function(id){ui.vocab=Math.max(0,Math.min(VOCAB.length-1,Number(id)||0));go('vocab');},
   quizVocab:function(id){startQuiz('eng',{vocab:Number(id)||0});},
   sayWord:function(id){say(String(id),true,'en');},
+  cardStart:function(id){var p=String(id).split('|');cardStart(Number(p[0])||0,p[1]);render();var el=document.getElementById('cards');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'});},
+  cardFlip:function(){if(ui.card){ui.card.flip=true;render();}},
+  cardRate:function(id){cardRate(String(id)==='1');render();var el=document.getElementById('cards');if(el&&el.scrollIntoView)el.scrollIntoView({block:'start'});},
+  cardEnd:function(){ui.card=null;render();},
   delPhoto:function(id){delete photos[id];savePhotos();render();},
   delPic:function(id){var a=id.split('|'),g=photos['g:'+a[0]];if(g){g.splice(Number(a[1]),1);if(!g.length)delete photos['g:'+a[0]];savePhotos();}render();},
   track:function(id){var a=id.split('|');if(Core.tracksFor(a[0]).some(function(x){return x[0]===a[1];})){state.track[a[0]]=a[1];save();render();}},
@@ -10283,7 +10931,7 @@ var actions={
     var p=key.split(':');
     if(p[0]==='examEnd'){examFinish(false);return;}
     if(p[0]==='repClear'){state.reports=[];save();render();return;}
-    if(p[0]==='reset'){photos={};savePhotos();SEEN={};saveMap('skillmap.seen',SEEN);progCache={};saveMap(PRKEY,progCache);KKC={};saveMap('skillmap.kk',KKC);state=Core.empty();applyTheme();applyLang();state.weekDone.key=Core.weekKey(new Date());save();ui.msg={text:'Все данные удалены.'};render();}
+    if(p[0]==='reset'){photos={};savePhotos();SEEN={};saveMap('skillmap.seen',SEEN);CARDS={};saveMap('skillmap.cards',CARDS);ui.card=null;progCache={};saveMap(PRKEY,progCache);KKC={};saveMap('skillmap.kk',KKC);state=Core.empty();applyTheme();applyLang();state.weekDone.key=Core.weekKey(new Date());save();ui.msg={text:'Все данные удалены.'};render();}
     else if(p[0]==='delTopic'){
       state.topics=state.topics.filter(function(t){return t.id!==p[1];});dropTopic(p[1]);save();go('subject');
     }
